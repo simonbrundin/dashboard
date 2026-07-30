@@ -4,8 +4,7 @@ RUN npm install -g nub
 
 WORKDIR /app
 
-COPY package*.json pnpm-lock.yaml ./
-RUN nub install
+COPY package*.json ./
 
 COPY . .
 
