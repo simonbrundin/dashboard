@@ -1,15 +1,15 @@
 FROM node:20-alpine AS builder
 
-RUN corepack enable && corepack prepare pnpm@11.17.0 --activate
+RUN npm install -g nub
 
 WORKDIR /app
 
 COPY package*.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile
+RUN nub install
 
 COPY . .
 
-RUN pnpm run build
+RUN nub run build
 
 FROM node:20-alpine AS runner
 
