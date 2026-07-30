@@ -3,7 +3,7 @@ FROM node:20-alpine AS builder
 RUN apk add --no-cache curl bash && \
     curl -fsSL https://nubjs.com/install.sh | bash
 
-ENV PATH="/root/.local/bin:${PATH}"
+ENV PATH="/root/.nub/bin:${PATH}"
 
 WORKDIR /app
 
