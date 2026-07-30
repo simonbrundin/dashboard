@@ -1,10 +1,12 @@
 FROM node:20-alpine AS builder
 
-RUN npm install -g nub
+RUN npm install -g nub && \
+    ln -s /usr/local/bin/nub /usr/bin/nub
 
 WORKDIR /app
 
 COPY package*.json ./
+RUN nub install
 
 COPY . .
 
