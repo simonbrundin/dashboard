@@ -1,8 +1,9 @@
 FROM node:20-alpine AS builder
 
-ENV PATH="/usr/local/bin:${PATH}"
+RUN apk add --no-cache curl bash && \
+    curl -fsSL https://nubjs.com/install.sh | bash
 
-RUN npm install -g nub
+ENV PATH="/root/.local/bin:${PATH}"
 
 WORKDIR /app
 
