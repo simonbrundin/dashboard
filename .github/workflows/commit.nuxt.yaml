@@ -1,0 +1,65 @@
+name: CI för Nuxt applikation
+on:
+  push:
+    paths:
+      - src/nuxt/**
+jobs:
+  unit-tests:
+    permissions:
+      contents: read
+    uses: >-
+      simonbrundin/deployment-pipeline/.github/workflows/run-tests-bun.yaml@main
+    with:
+      package-json-path: src/nuxt
+  build-publish-image:
+    needs: unit-tests
+    permissions:
+      contents: read
+      packages: write
+    uses: >-
+      simonbrundin/deployment-pipeline/.github/workflows/commit.build-publish-image.yaml@main
+    secrets:
+      REGISTRY_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
+    with:
+      dockerfile: src/nuxt/Dockerfile
+      dockerfile-context: src/nuxt
+      registry: ghcr.io/simonbrundin/dashboard
+  update-deployment:
+    needs: build-publish-image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: true
+          ref: main
+
+      - name: Update deployment image
+        env:
+          IMAGE: ${{ needs.build-publish-image.outputs.image }}
+        run: |
+          echo "Updating image to: $IMAGE"
+          sed -i "s|image: ghcr.io/simonbrundin/dashboard.*|image: $IMAGE|" \
+            environments/production/patches/deployment.yaml
+          cat environments/production/patches/deployment.yaml
+
+      - name: Create PR
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: update dashboard-app image [skip ci]"
+          branch: bot/update-dashboard-app-image
+          delete-branch: true
+          title: "chore: update dashboard-app image"
+          body: |
+            Automated image update from commit workflow
+            - Image: `${{ needs.build-publish-image.outputs.image }}`
+          labels: |
+            ci
+            skip-review
+          add-paths: |
+            environments/production/patches/deployment.yaml
