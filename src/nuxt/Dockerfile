@@ -1,7 +1,7 @@
 FROM node:20-alpine AS builder
 
-RUN npm install -g nub && \
-    ln -s /usr/local/bin/nub /usr/bin/nub
+RUN npm config set prefix /usr/local && \
+    npm install -g nub
 
 WORKDIR /app
 
