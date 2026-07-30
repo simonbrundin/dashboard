@@ -1,0 +1,27 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: dashboard-route
+  namespace: dashboard
+spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: simons-gateway
+      namespace: envoy
+  hostnames:
+    - "TODO-dashboard.simonbrundin.com"
+  rules:
+    - backendRefs:
+        - group: ""
+          kind: Service
+          name: dashboard-service
+          port: 80
+          weight: 1
+          namespace: dashboard
+      matches:
+        - path:
+            type: PathPrefix
+            value: /
+      timeouts:
+        request: 30s

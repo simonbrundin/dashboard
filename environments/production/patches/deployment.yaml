@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dashboard-app
+spec:
+  template:
+    spec:
+      containers:
+        - name: dashboard-app
+          # Updated by .github/workflows/commit.nuxt.yaml.
+          image: ghcr.io/simonbrundin/dashboard@sha256:TODO
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: NUXT_PUBLIC_APP_URL
+              value: "https://dashboard.simonbrundin.com"
+            - name: NUXT_MINIMAX_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: dashboard-auth
+                  key: NUXT_MINIMAX_API_KEY

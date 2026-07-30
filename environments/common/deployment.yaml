@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dashboard-app
+  labels:
+    app: dashboard-app
+spec:
+  selector:
+    matchLabels:
+      app: dashboard-app
+  template:
+    metadata:
+      labels:
+        app: dashboard-app
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+      containers:
+        - name: dashboard-app
+          image: ghcr.io/simonbrundin/dashboard:frontend-TODO
+          ports:
+            - containerPort: 3000
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            timeoutSeconds: 10
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
