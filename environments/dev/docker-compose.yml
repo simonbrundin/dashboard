@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  dashboard:
+    build:
+      context: ../..
+      dockerfile: environments/dev/Dockerfile.dev
+    container_name: dashboard-dev
+    ports:
+      - "${DASHBOARD_PORT:-3000}:3000"
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ../../..:/app
+      - /app/node_modules
+      - /app/.nuxt
+    command: ["sh", "-c", "nub run dev --host 0.0.0.0"]

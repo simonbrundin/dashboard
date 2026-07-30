@@ -1,0 +1,25 @@
+# ==================================================================
+# Dashboard Development Environment - Tiltfile
+# ==================================================================
+#
+# Användning:
+#   tilt up
+#
+# Miljövariabler:
+#   DASHBOARD_PORT - Port för Dashboard (default: 3000)
+#
+# ==================================================================
+
+tilt_port = os.environ.get('TILT_PORT', '10350')
+
+print('==========================================')
+print('Dashboard Dev Environment')
+print('Tilt Port: ' + tilt_port)
+print('==========================================')
+
+local_resource(
+  'dashboard',
+  serve_cmd='nub run dev',
+  serve_dir='/home/simon/repos/dashboard',
+  labels=['Frontend'],
+)
