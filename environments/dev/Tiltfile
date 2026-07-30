@@ -6,7 +6,7 @@
 #   tilt up
 #
 # Miljövariabler:
-#   DASHBOARD_PORT - Port för Dashboard (default: 3000)
+#   DOCKER_GATEWAY_HOST - Host för att nå Docker-nätverk från container
 #
 # ==================================================================
 
@@ -20,6 +20,6 @@ print('==========================================')
 local_resource(
   'dashboard',
   serve_cmd='nub run dev',
-  serve_dir='/home/simon/repos/dashboard',
+  serve_dir='/home/simon/repos/dashboard/src/nuxt',
   labels=['Frontend'],
 )
