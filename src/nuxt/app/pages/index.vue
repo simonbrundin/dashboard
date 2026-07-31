@@ -62,6 +62,7 @@ const period = ref<Period>('daily')
 
     <template #body>
       <HomeStats :period="period" :range="range" />
+      <HomeUptimeKuma />
       <HomeTokenUsage />
       <HomeSales :period="period" :range="range" />
     </template>

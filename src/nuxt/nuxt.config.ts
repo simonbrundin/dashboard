@@ -11,6 +11,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     // Server-only keys
     minimaxApiKey: "",
+    uptimeKumaUrl: "",
+    uptimeKumaApiKey: "",
   },
 
   routeRules: {
