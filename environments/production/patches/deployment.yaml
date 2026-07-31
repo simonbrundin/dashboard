@@ -19,3 +19,6 @@ spec:
                 secretKeyRef:
                   name: dashboard-auth
                   key: NUXT_MINIMAX_API_KEY
+          envFrom:
+            - secretRef:
+                name: dashboard-uptime-kuma
