@@ -13,6 +13,13 @@ const links = [[{
   onSelect: () => {
     open.value = false
   }
+}, {
+  label: 'GitHub Repos',
+  icon: 'i-lucide-git-branch',
+  to: '/github-repos',
+  onSelect: () => {
+    open.value = false
+  }
 }]] satisfies NavigationMenuItem[][]
 
 const groups = computed(() => [{

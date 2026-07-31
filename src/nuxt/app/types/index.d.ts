@@ -59,6 +59,24 @@ export interface Range {
 	end: Date;
 }
 
+// GitHub types
+export interface GitHubRepo {
+	id: number;
+	name: string;
+	full_name: string;
+	description: string | null;
+	html_url: string;
+	stargazers_count: number;
+	forks_count: number;
+	language: string | null;
+	topics: string[];
+	private: boolean;
+	updated_at: string;
+	pushed_at: string;
+	default_branch: string;
+	open_issues_count: number;
+}
+
 // Uptime Kuma types
 export type UptimeKumaStatus = 0 | 1 | 2 | 3;
 

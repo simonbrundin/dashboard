@@ -13,6 +13,8 @@ export default defineNuxtConfig({
     minimaxApiKey: "",
     uptimeKumaUrl: "",
     uptimeKumaApiKey: "",
+    githubUsername: "",
+    githubToken: "",
   },
 
   routeRules: {
