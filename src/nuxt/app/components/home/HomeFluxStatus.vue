@@ -17,7 +17,8 @@ const { data, status, refresh } = await useFetch<FluxStatus>('/api/flux-status',
       helmReleasesReady: 0,
       helmReleasesTotal: 0
     }
-  })
+  }),
+  refetchInterval: 30000 // Refresh every 30 seconds
 })
 
 const summary = computed(() => data.value?.summary)
