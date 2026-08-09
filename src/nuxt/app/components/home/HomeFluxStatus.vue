@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { FluxStatus } from '~/types'
 
-const { data, status, refresh } = await useFetch<FluxStatus>('/api/flux-status', {
+const { data, refresh } = await useAsyncData<FluxStatus>('flux-status', () => $fetch('/api/flux-status'), {
   default: () => ({
     controllers: [],
     sources: [],
@@ -17,8 +17,22 @@ const { data, status, refresh } = await useFetch<FluxStatus>('/api/flux-status',
       helmReleasesReady: 0,
       helmReleasesTotal: 0
     }
-  }),
-  refetchInterval: 30000 // Refresh every 30 seconds
+  })
+})
+
+// Refresh every 30 seconds on client
+const refreshInterval = ref<ReturnType<typeof setInterval> | null>(null)
+
+onMounted(() => {
+  refreshInterval.value = setInterval(() => {
+    refresh()
+  }, 30000)
+})
+
+onUnmounted(() => {
+  if (refreshInterval.value) {
+    clearInterval(refreshInterval.value)
+  }
 })
 
 const summary = computed(() => data.value?.summary)
@@ -102,7 +116,7 @@ const allHealthy = computed(() => {
   )
 })
 
-const isLoading = computed(() => status.value === 'pending')
+const isLoading = computed(() => false) // Initial load is handled by useAsyncData
 const isMockData = computed(() => {
   if (!data.value) return false
   const mockPattern = ['source-controller', 'kustomize-controller', 'helm-controller', 'notification-controller']
