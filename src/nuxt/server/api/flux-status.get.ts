@@ -36,6 +36,7 @@ export default eventHandler(async (): Promise<FluxStatus> => {
 interface FluxCondition {
   type: string
   status: string
+  reason?: string
   message?: string
 }
 
@@ -55,9 +56,15 @@ function getConditionStatus(conditions: FluxCondition[]): FluxResourceStatus {
     return 'Ready'
   }
 
-  // Ready is False - check if it's actively retrying
+  // Ready is False
   if (reconciling && reconciling.status === 'True') {
-    // Reconciling is True means it's actively retrying
+    // Check the reason to determine if it's actually failing
+    const reason = reconciling.reason?.toLowerCase() || ''
+    // ProgressingWithRetry means it's failing repeatedly
+    if (reason.includes('retry') || reason.includes('failed')) {
+      return 'NotReady'
+    }
+    // Just progressing
     return 'Progressing'
   }
 
