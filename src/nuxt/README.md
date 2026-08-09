@@ -15,7 +15,7 @@ Get started with the Nuxt dashboard template with multiple pages, collapsible si
   </picture>
 </a>
 
-> The dashboard template for Vue is on https://github.com/nuxt-ui-templates/dashboard-vue.
+> The dashboard template for Vue is on <https://github.com/nuxt-ui-templates/dashboard-vue>.
 
 ## Quick Start
 
@@ -62,4 +62,6 @@ Check out the [deployment documentation](https://nuxt.com/docs/getting-started/d
 ## Renovate integration
 
 Install [Renovate GitHub app](https://github.com/apps/renovate/installations/select_target) on your repository and you are good to go.
+
+# trigger CI
 # trigger CI
