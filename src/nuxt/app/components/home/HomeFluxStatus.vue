@@ -22,10 +22,12 @@ const { data, refresh } = await useAsyncData<FluxStatus>('flux-status', () => $f
 
 // Refresh every 30 seconds on client
 const refreshInterval = ref<ReturnType<typeof setInterval> | null>(null)
+const lastFetched = ref<Date>(new Date())
 
 onMounted(() => {
   refreshInterval.value = setInterval(() => {
     refresh()
+    lastFetched.value = new Date()
   }, 30000)
 })
 
@@ -125,6 +127,30 @@ const isMockData = computed(() => {
   const hasDefaultSources = (data.value.sources ?? []).some(s => s.url.includes('github.com/simonbrundin/infrastructure'))
   return controllersMatch && hasDefaultSources
 })
+
+// Format time since last fetch
+const timeSinceLastFetch = computed(() => {
+  const seconds = Math.floor((Date.now() - lastFetched.value.getTime()) / 1000)
+  if (seconds < 60) return `${seconds}s`
+  const minutes = Math.floor(seconds / 60)
+  return `${minutes}m`
+})
+
+// Update the display every second
+const updateInterval = ref<ReturnType<typeof setInterval> | null>(null)
+
+onMounted(() => {
+  updateInterval.value = setInterval(() => {
+    // Force reactivity update for the time display
+    lastFetched.value = new Date(lastFetched.value.getTime())
+  }, 1000)
+})
+
+onUnmounted(() => {
+  if (updateInterval.value) {
+    clearInterval(updateInterval.value)
+  }
+})
 </script>
 
 <template>
@@ -172,12 +198,17 @@ const isMockData = computed(() => {
           </UBadge>
         </template>
 
+        <UBadge color="neutral" variant="subtle">
+          <UIcon name="i-lucide-clock" class="size-3 mr-1" />
+          {{ timeSinceLastFetch }}
+        </UBadge>
+
         <UButton
           variant="ghost"
           size="sm"
           square
           :loading="isLoading"
-          @click="refresh()"
+          @click="refresh(); lastFetched = new Date()"
         >
           <UIcon name="i-lucide-refresh-cw" class="size-4" />
         </UButton>
