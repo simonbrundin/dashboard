@@ -13,6 +13,7 @@ spec:
       labels:
         app: dashboard-app
     spec:
+      serviceAccountName: dashboard
       imagePullSecrets:
         - name: ghcr-secret
       containers:

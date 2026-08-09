@@ -6,3 +6,6 @@ resources:
   - deployment.yaml
   - service.yaml
   - http-route.yaml
+  - service-account.yaml
+  - cluster-role.yaml
+  - cluster-role-binding.yaml

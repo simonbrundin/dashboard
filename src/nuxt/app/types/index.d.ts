@@ -110,3 +110,80 @@ export interface UptimeKumaSummary {
 	maintenance: number;
 	pending: number;
 }
+
+// Flux types
+export type FluxResourceStatus =
+	| "Ready"
+	| "NotReady"
+	| "Progressing"
+	| "Unknown";
+
+export interface FluxCondition {
+	type: string;
+	status: string;
+	message?: string;
+}
+
+export interface FluxController {
+	name: string;
+	namespace: string;
+	ready: boolean;
+	status: FluxResourceStatus;
+	replicas: number;
+	readyReplicas: number;
+	age: string;
+	message?: string;
+}
+
+export interface FluxSource {
+	name: string;
+	namespace: string;
+	kind: "GitRepository" | "HelmRepository" | "OCIRepository";
+	url: string;
+	ready: boolean;
+	status: FluxResourceStatus;
+	age: string;
+	lastUpdated?: string;
+	message?: string;
+}
+
+export interface FluxKustomization {
+	name: string;
+	namespace: string;
+	enabled: boolean;
+	ready: boolean;
+	status: FluxResourceStatus;
+	suspended: boolean;
+	age: string;
+	lastReconciled?: string;
+	error?: string;
+}
+
+export interface FluxHelmRelease {
+	name: string;
+	namespace: string;
+	chart: string;
+	revision: string;
+	ready: boolean;
+	status: FluxResourceStatus;
+	age: string;
+	lastReconciled?: string;
+	message?: string;
+}
+
+export interface FluxStatus {
+	controllers: FluxController[];
+	sources: FluxSource[];
+	kustomizations: FluxKustomization[];
+	helmReleases: FluxHelmRelease[];
+	summary: {
+		controllersReady: number;
+		controllersTotal: number;
+		sourcesReady: number;
+		sourcesTotal: number;
+		kustomizationsReady: number;
+		kustomizationsTotal: number;
+		helmReleasesReady: number;
+		helmReleasesTotal: number;
+	};
+}
