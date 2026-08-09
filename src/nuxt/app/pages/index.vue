@@ -9,10 +9,14 @@
     </template>
 
     <template #body>
-      <div class="flex flex-col gap-4 home-content">
-        <HomeFluxStatus />
-        <HomeUptimeKuma />
-        <HomeTokenUsage />
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 home-content">
+        <div class="flex flex-col gap-4 w-full">
+          <HomeUptimeKuma />
+          <HomeFluxStatus />
+        </div>
+        <div class="self-start">
+          <HomeTokenUsage />
+        </div>
       </div>
     </template>
   </UDashboardPanel>

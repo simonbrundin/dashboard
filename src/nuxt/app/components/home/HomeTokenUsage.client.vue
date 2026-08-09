@@ -82,71 +82,69 @@ const progressColor = computed(() => {
 </script>
 
 <template>
-  <div class="max-w-md">
-    <UCard ref="cardRef">
-      <template #header>
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <UIcon
-              name="i-simple-icons-minimax"
-              class="size-5 text-[#24c8a8]"
-            />
-            <div>
-              <p class="text-xs text-muted">
-                MinMax Tokens
-              </p>
-              <template v-if="isLoading && !usageData">
-                <p class="text-lg font-semibold animate-pulse">
-                  --
-                </p>
-              </template>
-              <template v-else-if="error">
-                <p class="text-lg font-semibold text-red-500">
-                  Fel
-                </p>
-              </template>
-              <template v-else>
-                <p class="text-lg font-semibold">
-                  {{ currentPercentage }}%
-                </p>
-              </template>
-            </div>
-          </div>
-
-          <div class="text-right">
-            <p class="text-xs text-muted">
-              Kvar
-            </p>
-            <p class="font-medium">
-              {{ formattedRemainingTime }}
-            </p>
-            <p
-              v-if="formattedIntervalEnd"
-              class="text-xs text-muted"
-            >
-              Intervall slut {{ formattedIntervalEnd }}
-            </p>
-          </div>
-        </div>
-      </template>
-
-      <div v-if="isLoading && !usageData" class="py-2">
-        <div class="h-2 bg-muted rounded-full animate-pulse" />
-      </div>
-      <div v-else-if="error" class="py-2 text-center text-sm text-red-500">
-        {{ error }}
-      </div>
-      <div v-else>
-        <div class="h-2 bg-muted rounded-full overflow-hidden">
-          <div
-            class="h-full transition-all duration-500"
-            :style="{
-              width: `${currentPercentage}%`,
-              backgroundColor: progressColor
-            }"
+  <UCard ref="cardRef">
+    <template #header>
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <UIcon
+            name="i-simple-icons-minimax"
+            class="size-5 text-[#24c8a8]"
           />
+          <div>
+            <p class="text-xs text-muted">
+              MinMax Tokens
+            </p>
+            <template v-if="isLoading && !usageData">
+              <p class="text-lg font-semibold animate-pulse">
+                --
+              </p>
+            </template>
+            <template v-else-if="error">
+              <p class="text-lg font-semibold text-red-500">
+                Fel
+              </p>
+            </template>
+            <template v-else>
+              <p class="text-lg font-semibold">
+                {{ currentPercentage }}%
+              </p>
+            </template>
+          </div>
+        </div>
+
+        <div class="text-right">
+          <p class="text-xs text-muted">
+            Kvar
+          </p>
+          <p class="font-medium">
+            {{ formattedRemainingTime }}
+          </p>
+          <p
+            v-if="formattedIntervalEnd"
+            class="text-xs text-muted"
+          >
+            Intervall slut {{ formattedIntervalEnd }}
+          </p>
         </div>
       </div>
-    </UCard>
-  </div>
+    </template>
+
+    <div v-if="isLoading && !usageData" class="py-2">
+      <div class="h-2 bg-muted rounded-full animate-pulse" />
+    </div>
+    <div v-else-if="error" class="py-2 text-center text-sm text-red-500">
+      {{ error }}
+    </div>
+    <div v-else>
+      <div class="h-2 bg-muted rounded-full overflow-hidden">
+        <div
+          class="h-full transition-all duration-500"
+          :style="{
+            width: `${currentPercentage}%`,
+            backgroundColor: progressColor
+          }"
+        />
+      </div>
+    </div>
+  </UCard>
 </template>
