@@ -1,4 +1,4 @@
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
 
 RUN apk add --no-cache curl bash && \
     curl -fsSL https://nubjs.com/install.sh | bash
@@ -14,7 +14,7 @@ COPY . .
 
 RUN nub run build
 
-FROM node:20-alpine AS runner
+FROM node:22-alpine AS runner
 
 WORKDIR /app
 
