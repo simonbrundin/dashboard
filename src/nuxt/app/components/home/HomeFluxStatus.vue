@@ -23,11 +23,15 @@ const { data, refresh } = await useAsyncData<FluxStatus>('flux-status', () => $f
 // Refresh every 30 seconds on client
 const refreshInterval = ref<ReturnType<typeof setInterval> | null>(null)
 const lastFetched = ref<Date>(new Date())
+const isRefreshing = ref(false)
 
 onMounted(() => {
   refreshInterval.value = setInterval(() => {
-    refresh()
-    lastFetched.value = new Date()
+    isRefreshing.value = true
+    refresh().then(() => {
+      lastFetched.value = new Date()
+      isRefreshing.value = false
+    })
   }, 30000)
 })
 
@@ -207,8 +211,8 @@ onUnmounted(() => {
           variant="ghost"
           size="sm"
           square
-          :loading="isLoading"
-          @click="refresh(); lastFetched = new Date()"
+          :loading="isRefreshing"
+          @click="isRefreshing = true; refresh().then(() => { lastFetched = new Date(); isRefreshing = false })"
         >
           <UIcon name="i-lucide-refresh-cw" class="size-4" />
         </UButton>
