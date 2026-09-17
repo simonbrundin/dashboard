@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { Category, SortColumn } from '~/composables/useModelFilters'
+import type { SortColumn } from '~/composables/useModelFilters'
+import type { Category } from '~/utils/modelFormatters'
 
 const props = defineProps<{
   selectedCategory: Category
