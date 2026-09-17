@@ -5,7 +5,7 @@
 # PostgreSQL database (runs schema.sql on startup via docker-compose)
 docker_compose(
     "postgres",
-    docker_compose_file = "environments/dev/docker-compose.yml",
+    df = "environments/dev/docker-compose.yml",
     service = "postgres",
 )
 
