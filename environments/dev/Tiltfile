@@ -3,7 +3,7 @@
 #
 # Access the app at: http://localhost:40807
 # Models page: http://localhost:40807/models
-# pgAdmin: http://localhost:5050
+# pg-view: http://localhost:5050
 # ==================================================================
 
 # PostgreSQL database via docker compose up
@@ -24,10 +24,10 @@ local_resource(
     auto_init = True,
 )
 
-# pgAdmin - PostgreSQL management tool
+# pg-view - lightweight PostgreSQL web interface
 local_resource(
-    "pgadmin",
-    serve_cmd = ["docker", "run", "--rm", "-p", "5050:80", "-e", "PGADMIN_DEFAULT_EMAIL=admin@admin.com", "-e", "PGADMIN_DEFAULT_PASSWORD=admin", "-e", "PGADMIN_CONFIG_SERVER_MODE=False", "dpage/pgadmin4"],
+    "pgview",
+    serve_cmd = ["docker", "run", "--rm", "-p", "5050:3000", "-e", "PGVIEW_DEFAULT_CONNECTION=postgresql://postgres:postgres@host.docker.internal:5432/dashboard", "lcurrol/pg-view"],
     labels = ["Database"],
     resource_deps = ["postgres"],
     auto_init = False,
