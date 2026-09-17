@@ -1,6 +1,6 @@
 import type { ModelData } from '~/data/models'
+import type { Category } from '~/utils/modelFormatters'
 
-export type Category = 'all' | 'frontier' | 'high' | 'mid' | 'budget'
 export type SortColumn = 'value' | 'intelligence' | 'cost' | 'speed'
 
 export function useModelFilters(models: Ref<ModelData[]>) {
