@@ -22,7 +22,6 @@ local_resource(
     labels = ["Frontend"],
     resource_deps = ["postgres"],
     auto_init = True,
-    port_forwards = [8080],
 )
 
 # pg-view - lightweight PostgreSQL web interface (auto-connects to database)
