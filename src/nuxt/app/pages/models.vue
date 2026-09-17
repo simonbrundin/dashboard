@@ -78,12 +78,11 @@ const filteredModels = computed(() => {
 })
 
 const sortedModels = computed(() => {
-  // Include all models (including free ones with cost = 0)
   const models = [...filteredModels.value]
+  const dir = sortDirection.value === 'desc' ? -1 : 1
 
   switch (sortBy.value) {
     case 'value':
-      const dir = sortDirection.value === 'desc' ? -1 : 1
       return models.sort((a, b) => {
         if (a.costPerTask === 0 && b.costPerTask === 0) return 0
         if (a.costPerTask === 0) return -1 * dir
