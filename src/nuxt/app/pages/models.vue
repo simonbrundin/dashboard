@@ -10,6 +10,74 @@ const isRefreshing = ref(false)
 const lastError = ref<string | null>(null)
 const modelsData = ref<ModelData[]>([])
 const metaData = ref<{ source: string; updatedAt: string; totalModels: number } | null>(null)
+const showProgress = ref(false)
+const progressPercent = ref(0)
+const progressCurrent = ref(0)
+const progressTotal = ref(0)
+const estimatedTimeRemaining = ref('')
+
+// Calculate estimated time remaining
+function updateEstimatedTime() {
+  if (progressPercent.value >= 100) {
+    estimatedTimeRemaining.value = 'Klart!'
+    return
+  }
+  const elapsed = Date.now() - startTime
+  if (progressPercent.value > 0) {
+    const totalTime = (elapsed / progressPercent.value) * 100
+    const remaining = totalTime - elapsed
+    const minutes = Math.ceil(remaining / 60000)
+    if (minutes < 1) {
+      estimatedTimeRemaining.value = '< 1 min'
+    } else if (minutes < 60) {
+      estimatedTimeRemaining.value = `~${minutes} min`
+    } else {
+      const hours = Math.floor(minutes / 60)
+      const mins = minutes % 60
+      estimatedTimeRemaining.value = `~${hours}h ${mins}m`
+    }
+  } else {
+    estimatedTimeRemaining.value = 'Beräknar...'
+  }
+}
+
+let startTime = Date.now()
+let progressInterval: ReturnType<typeof setInterval> | null = null
+
+// Start progress tracking
+function startProgress(total: number) {
+  showProgress.value = true
+  progressTotal.value = total
+  progressCurrent.value = 0
+  progressPercent.value = 0
+  startTime = Date.now()
+  estimatedTimeRemaining.value = 'Beräknar...'
+  
+  progressInterval = setInterval(() => {
+    updateEstimatedTime()
+  }, 5000)
+}
+
+// Update progress
+function updateProgress(current: number, total: number) {
+  progressCurrent.value = current
+  progressTotal.value = total
+  progressPercent.value = total > 0 ? Math.round((current / total) * 100) : 0
+  updateEstimatedTime()
+}
+
+// Stop progress tracking
+function stopProgress() {
+  if (progressInterval) {
+    clearInterval(progressInterval)
+    progressInterval = null
+  }
+  progressPercent.value = 100
+  estimatedTimeRemaining.value = 'Klart!'
+  setTimeout(() => {
+    showProgress.value = false
+  }, 2000)
+}
 
 // Fetch data from API
 async function fetchModels() {
@@ -37,12 +105,29 @@ async function fetchModels() {
   }
 }
 
+// Fetch models from AA API (for progress tracking)
+async function fetchModelsFromAA(): Promise<number> {
+  try {
+    const response = await $fetch<{ status: number; data: unknown[] }>(
+      'https://artificialanalysis.ai/api/v2/data/llms/models',
+      { headers: { 'x-api-key': import.meta.env.VITE_ARTIFICIAL_ANALYSIS_API_KEY || '' } }
+    )
+    return response.data?.length || 0
+  } catch {
+    return 0
+  }
+}
+
 // Refresh prices from Artificial Analysis (updates all existing models)
 async function refreshPrices() {
   isRefreshing.value = true
   lastError.value = null
   
   try {
+    // Get current count
+    const currentCount = modelsData.value.length
+    startProgress(currentCount)
+    
     const result = await $fetch<{
       success: boolean
       updated: number
@@ -52,11 +137,13 @@ async function refreshPrices() {
     })
     
     if (result.success) {
+      stopProgress()
       await fetchModels()
     }
   } catch (error: any) {
     console.error('Failed to refresh prices:', error)
     lastError.value = error.data?.message || error.message || 'Failed to refresh prices'
+    stopProgress()
   } finally {
     isRefreshing.value = false
   }
@@ -68,23 +155,37 @@ async function fetchMorePrices() {
   lastError.value = null
   
   try {
+    // Get stats for progress estimation
+    const stats = await $fetch<{
+      aaTotal: number
+      dbTotal: number
+      withPrices: number
+    }>('/api/models/stats')
+    
+    const modelsToScrape = stats.dbTotal - stats.withPrices
+    startProgress(modelsToScrape)
+    
     const result = await $fetch<{
       success: boolean
       newModelsAdded: number
       pricesAdded: number
       totalModels: number
       totalWithPrices: number
+      totalToScrape: number
+      scraped: number
       updatedAt: string
     }>('/api/models/fetch-more', {
       method: 'POST'
     })
     
     if (result.success) {
+      stopProgress()
       await fetchModels()
     }
   } catch (error: any) {
     console.error('Failed to fetch more:', error)
     lastError.value = error.data?.message || error.message || 'Failed to fetch more'
+    stopProgress()
   } finally {
     isRefreshing.value = false
   }
@@ -299,8 +400,24 @@ function formatDate(dateStr: string): string {
 }
 
 // Fetch on mount
-onMounted(() => {
-  fetchModels()
+onMounted(async () => {
+  await fetchModels()
+  
+  // Check if we need to import more models
+  try {
+    const stats = await $fetch<{
+      aaTotal: number
+      dbTotal: number
+      needsImport: boolean
+    }>('/api/models/stats')
+    
+    if (stats.needsImport) {
+      console.log(`AA has ${stats.aaTotal} models, DB has ${stats.dbTotal}. Starting auto-import...`)
+      await fetchMorePrices()
+    }
+  } catch (error) {
+    console.error('Failed to check stats:', error)
+  }
 })
 
 // Head
@@ -397,6 +514,26 @@ useSeoMeta({
               <div class="text-2xl font-bold">{{ totalModelsInDb }}</div>
               <div class="text-xs text-muted-foreground">I databasen</div>
             </div>
+          </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div v-if="showProgress" class="bg-primary/10 rounded-lg p-4 border border-primary/20">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2">
+              <UIcon name="i-lucide-loader-2" class="w-4 h-4 animate-spin text-primary" />
+              <span class="text-sm font-medium">Hämtar modeller...</span>
+            </div>
+            <div class="text-right">
+              <span class="text-sm font-semibold">{{ progressCurrent }} / {{ progressTotal }}</span>
+              <span class="text-xs text-muted-foreground ml-2">{{ estimatedTimeRemaining }}</span>
+            </div>
+          </div>
+          <div class="h-2 bg-primary/20 rounded-full overflow-hidden">
+            <div 
+              class="h-full bg-primary transition-all duration-300 rounded-full"
+              :style="{ width: `${progressPercent}%` }"
+            />
           </div>
         </div>
 
