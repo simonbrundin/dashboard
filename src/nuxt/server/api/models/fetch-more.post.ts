@@ -1,6 +1,7 @@
 import type { H3Event } from 'h3'
 import { query } from '../../utils/db'
 import { scrapeModelCostPerTask } from '../../utils/scraper'
+import { pauseForRateLimit } from '../../utils/rateLimit'
 
 interface AAModel {
   id: string
@@ -162,10 +163,6 @@ async function scrapeMissingPrices(stream: ProgressStream): Promise<{ pricesAdde
     await pauseForRateLimit()
   }
   return { pricesAdded, total }
-}
-
-function pauseForRateLimit(): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, 1200))
 }
 
 export default defineEventHandler(async (event) => {
