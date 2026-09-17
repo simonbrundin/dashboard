@@ -1,5 +1,6 @@
 import { query } from '../../utils/db'
 import { scrapeModelCostPerTask } from '../../utils/scraper'
+import { pauseForRateLimit } from '../../utils/rateLimit'
 
 export default defineEventHandler(async () => {
   try {
@@ -23,8 +24,7 @@ export default defineEventHandler(async () => {
         console.log(`[${updated}/${models.length}] ${model.slug}: $${costPerTask}/task`)
       }
 
-      // Rate limit
-      await new Promise(resolve => setTimeout(resolve, 1200))
+      await pauseForRateLimit()
     }
 
     return {
