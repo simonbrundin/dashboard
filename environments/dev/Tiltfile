@@ -3,7 +3,7 @@
 #
 # Access the app at: http://localhost:40807
 # Models page: http://localhost:40807/models
-# pg-view: http://localhost:5050
+# pg-view: http://localhost:5051
 # ==================================================================
 
 # PostgreSQL database via docker compose up
@@ -29,7 +29,7 @@ local_resource(
     "pgview",
     cmd = [
         "docker", "run", "--rm",
-        "-p", "5050:3000",
+        "-p", "5051:3000",
         "-e", "DB_URL=postgresql://postgres:postgres@host.docker.internal:5432/dashboard",
         "lcurrol/pg-view"
     ],
