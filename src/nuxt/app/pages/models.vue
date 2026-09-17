@@ -4,6 +4,7 @@ import type { ModelData } from '~/data/models'
 // State
 const selectedCategory = ref<'all' | 'frontier' | 'high' | 'mid' | 'budget'>('all')
 const sortBy = ref<'value' | 'intelligence' | 'cost' | 'speed'>('value')
+const sortDirection = ref<'asc' | 'desc'>('desc')
 const showOnlyOpenWeights = ref(false)
 const isRefreshing = ref(false)
 const lastError = ref<string | null>(null)
@@ -82,25 +83,34 @@ const sortedModels = computed(() => {
 
   switch (sortBy.value) {
     case 'value':
+      const dir = sortDirection.value === 'desc' ? -1 : 1
       return models.sort((a, b) => {
-        // Free models (cost = 0) are always best value
         if (a.costPerTask === 0 && b.costPerTask === 0) return 0
-        if (a.costPerTask === 0) return -1  // a is free, b is not
-        if (b.costPerTask === 0) return 1   // b is free, a is not
+        if (a.costPerTask === 0) return -1 * dir
+        if (b.costPerTask === 0) return 1 * dir
         const aRatio = a.intelligenceIndex / a.costPerTask
         const bRatio = b.intelligenceIndex / b.costPerTask
-        return bRatio - aRatio
+        return (bRatio - aRatio) * dir
       })
     case 'intelligence':
-      return models.sort((a, b) => b.intelligenceIndex - a.intelligenceIndex)
+      return models.sort((a, b) => (b.intelligenceIndex - a.intelligenceIndex) * dir)
     case 'cost':
-      return models.sort((a, b) => a.costPerTask - b.costPerTask)
+      return models.sort((a, b) => (a.costPerTask - b.costPerTask) * dir)
     case 'speed':
-      return models.sort((a, b) => (b.speed || 0) - (a.speed || 0))
+      return models.sort((a, b) => ((b.speed || 0) - (a.speed || 0)) * dir)
     default:
       return models
   }
 })
+
+function handleSort(column: 'value' | 'intelligence' | 'cost' | 'speed') {
+  if (sortBy.value === column) {
+    sortDirection.value = sortDirection.value === 'desc' ? 'asc' : 'desc'
+  } else {
+    sortBy.value = column
+    sortDirection.value = 'desc'
+  }
+}
 
 const categoryStats = computed(() => ({
   all: modelsData.value.length,
@@ -484,11 +494,32 @@ useSeoMeta({
               <thead>
                 <tr class="border-b border-border">
                   <th class="text-left py-3 px-4 font-medium text-muted-foreground">Model</th>
+                  <th class="text-center py-3 px-4 font-medium text-muted-foreground cursor-pointer hover:bg-muted/50" @click="handleSort('value')">
+                    <span class="flex items-center justify-center gap-1">
+                      Value
+                      <UIcon v-if="sortBy === 'value'" :name="sortDirection === 'desc' ? 'i-lucide-arrow-down' : 'i-lucide-arrow-up'" class="w-4 h-4" />
+                    </span>
+                  </th>
                   <th class="text-center py-3 px-4 font-medium text-muted-foreground">Category</th>
-                  <th class="text-right py-3 px-4 font-medium text-muted-foreground">Intelligence</th>
-                  <th class="text-right py-3 px-4 font-medium text-muted-foreground">Cost/Task</th>
-                  <th class="text-right py-3 px-4 font-medium text-muted-foreground">Value Ratio</th>
-                  <th class="text-right py-3 px-4 font-medium text-muted-foreground">Speed</th>
+                  <th class="text-right py-3 px-4 font-medium text-muted-foreground cursor-pointer hover:bg-muted/50" @click="handleSort('intelligence')">
+                    <span class="flex items-center justify-end gap-1">
+                      Intelligence
+                      <UIcon v-if="sortBy === 'intelligence'" :name="sortDirection === 'desc' ? 'i-lucide-arrow-down' : 'i-lucide-arrow-up'" class="w-4 h-4" />
+                    </span>
+                  </th>
+                  <th class="text-right py-3 px-4 font-medium text-muted-foreground cursor-pointer hover:bg-muted/50" @click="handleSort('cost')">
+                    <span class="flex items-center justify-end gap-1">
+                      Cost/Task
+                      <UIcon v-if="sortBy === 'cost'" :name="sortDirection === 'desc' ? 'i-lucide-arrow-down' : 'i-lucide-arrow-up'" class="w-4 h-4" />
+                    </span>
+                  </th>
+                  <th class="text-right py-3 px-4 font-medium text-muted-foreground">Ratio</th>
+                  <th class="text-right py-3 px-4 font-medium text-muted-foreground cursor-pointer hover:bg-muted/50" @click="handleSort('speed')">
+                    <span class="flex items-center justify-end gap-1">
+                      Speed
+                      <UIcon v-if="sortBy === 'speed'" :name="sortDirection === 'desc' ? 'i-lucide-arrow-down' : 'i-lucide-arrow-up'" class="w-4 h-4" />
+                    </span>
+                  </th>
                   <th class="text-center py-3 px-4 font-medium text-muted-foreground">Open</th>
                 </tr>
               </thead>
