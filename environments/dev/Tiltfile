@@ -2,20 +2,10 @@
 # Dashboard Development Environment
 # ==================================================================
 
-# Ensure .nuxt directory is generated before starting dev server
-local_resource(
-    "prepare",
-    cmd = ["/home/linuxbrew/.linuxbrew/bin/nub", "run", "postinstall"],
-    dir = "../../src/nuxt",
-    labels = ["Frontend"],
-    auto_init = False,
-)
-
 local_resource(
     "dev",
     cmd = ["/home/linuxbrew/.linuxbrew/bin/nub", "run", "dev", "--port", "0"],
     dir = "../../src/nuxt",
     labels = ["Frontend"],
     auto_init = False,
-    resource_deps = ["prepare"],
 )
