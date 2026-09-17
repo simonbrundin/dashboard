@@ -62,7 +62,7 @@ async function refreshPrices() {
   }
 }
 
-// Fetch more prices (only for models without prices)
+// Fetch more models and prices (import from AA API + scrape prices)
 async function fetchMorePrices() {
   isRefreshing.value = true
   lastError.value = null
@@ -70,8 +70,10 @@ async function fetchMorePrices() {
   try {
     const result = await $fetch<{
       success: boolean
-      added: number
-      total: number
+      newModelsAdded: number
+      pricesAdded: number
+      totalModels: number
+      totalWithPrices: number
       updatedAt: string
     }>('/api/models/fetch-more', {
       method: 'POST'
@@ -81,8 +83,34 @@ async function fetchMorePrices() {
       await fetchModels()
     }
   } catch (error: any) {
-    console.error('Failed to fetch more prices:', error)
-    lastError.value = error.data?.message || error.message || 'Failed to fetch more prices'
+    console.error('Failed to fetch more:', error)
+    lastError.value = error.data?.message || error.message || 'Failed to fetch more'
+  } finally {
+    isRefreshing.value = false
+  }
+}
+
+// Import all models from AA API (without scraping prices)
+async function importModels() {
+  isRefreshing.value = true
+  lastError.value = null
+  
+  try {
+    const result = await $fetch<{
+      success: boolean
+      imported: number
+      total: number
+      updatedAt: string
+    }>('/api/models/import', {
+      method: 'POST'
+    })
+    
+    if (result.success) {
+      await fetchModels()
+    }
+  } catch (error: any) {
+    console.error('Failed to import models:', error)
+    lastError.value = error.data?.message || error.message || 'Failed to import models'
   } finally {
     isRefreshing.value = false
   }
@@ -166,6 +194,11 @@ const modelsWithoutCostCount = computed(() => {
     const cost = parseFloat(String(m.costPerTask)) || 0
     return cost === 0
   }).length
+})
+
+// Total models in database
+const totalModelsInDb = computed(() => {
+  return modelsData.value.length
 })
 
 // Best value models (top 3)
@@ -298,9 +331,18 @@ useSeoMeta({
         </template>
         <template #trailing>
           <UButton
+            variant="outline"
+            size="sm"
+            icon="i-lucide-download"
+            @click="importModels"
+          >
+            Importera ({{ totalModelsInDb }})
+          </UButton>
+          <UButton
             v-if="modelsWithoutCostCount > 0"
             variant="outline"
             size="sm"
+            :loading="isRefreshing"
             icon="i-lucide-plus"
             @click="fetchMorePrices"
           >
@@ -340,9 +382,10 @@ useSeoMeta({
                   Intelligence Index vs. Cost per Task
                 </h2>
                 <p class="text-sm text-muted-foreground mt-1">
-                  <span class="font-semibold">{{ modelsWithCostCount }}</span> modeller med prisdata.
+                  <span class="font-semibold">{{ totalModelsInDb }}</span> modeller i databasen.
+                  <span v-if="modelsWithCostCount > 0"> ({{ modelsWithCostCount }} med pris)</span>
                   <span v-if="modelsWithoutCostCount > 0">
-                    {{ modelsWithoutCostCount }} saknar pris - klicka "Fler" för att hämta.
+                    , {{ modelsWithoutCostCount }} utan pris
                   </span>
                 </p>
                 <p v-if="metaData?.updatedAt" class="text-xs text-muted-foreground mt-1">
@@ -351,8 +394,8 @@ useSeoMeta({
               </div>
             </div>
             <div class="text-right">
-              <div class="text-2xl font-bold">{{ modelsWithCostCount }}</div>
-              <div class="text-xs text-muted-foreground">Models with Cost</div>
+              <div class="text-2xl font-bold">{{ totalModelsInDb }}</div>
+              <div class="text-xs text-muted-foreground">I databasen</div>
             </div>
           </div>
         </div>
