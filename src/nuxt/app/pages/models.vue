@@ -8,214 +8,11 @@ const sortDirection = ref<'asc' | 'desc'>('desc')
 const showOnlyOpenWeights = ref(false)
 const isRefreshing = ref(false)
 const lastError = ref<string | null>(null)
-const modelsData = ref<ModelData[]>([])
-const metaData = ref<{ source: string; updatedAt: string; totalModels: number } | null>(null)
-const showProgress = ref(false)
-const progressPercent = ref(0)
-const progressCurrent = ref(0)
-const progressTotal = ref(0)
-const estimatedTimeRemaining = ref('')
 
-// Calculate estimated time remaining
-function updateEstimatedTime() {
-  if (progressPercent.value >= 100) {
-    estimatedTimeRemaining.value = 'Klart!'
-    return
-  }
-  const elapsed = Date.now() - startTime
-  if (progressPercent.value > 0) {
-    const totalTime = (elapsed / progressPercent.value) * 100
-    const remaining = totalTime - elapsed
-    const minutes = Math.ceil(remaining / 60000)
-    if (minutes < 1) {
-      estimatedTimeRemaining.value = '< 1 min'
-    } else if (minutes < 60) {
-      estimatedTimeRemaining.value = `~${minutes} min`
-    } else {
-      const hours = Math.floor(minutes / 60)
-      const mins = minutes % 60
-      estimatedTimeRemaining.value = `~${hours}h ${mins}m`
-    }
-  } else {
-    estimatedTimeRemaining.value = 'Beräknar...'
-  }
-}
-
-let startTime = Date.now()
-let progressInterval: ReturnType<typeof setInterval> | null = null
-
-// Start progress tracking
-function startProgress(total: number) {
-  showProgress.value = true
-  progressTotal.value = total
-  progressCurrent.value = 0
-  progressPercent.value = 0
-  startTime = Date.now()
-  estimatedTimeRemaining.value = 'Beräknar...'
-  
-  progressInterval = setInterval(() => {
-    updateEstimatedTime()
-  }, 5000)
-}
-
-// Update progress
-function updateProgress(current: number, total: number) {
-  progressCurrent.value = current
-  progressTotal.value = total
-  progressPercent.value = total > 0 ? Math.round((current / total) * 100) : 0
-  updateEstimatedTime()
-}
-
-// Stop progress tracking
-function stopProgress() {
-  if (progressInterval) {
-    clearInterval(progressInterval)
-    progressInterval = null
-  }
-  progressPercent.value = 100
-  estimatedTimeRemaining.value = 'Klart!'
-  setTimeout(() => {
-    showProgress.value = false
-  }, 2000)
-}
-
-// Fetch data from API
-async function fetchModels() {
-  try {
-    const data = await $fetch<{
-      source: string
-      updatedAt: string
-      totalModels: number
-      models: ModelData[]
-      needsRefresh?: boolean
-      message?: string
-    }>('/api/models')
-    
-    if (data.models && data.models.length > 0) {
-      modelsData.value = data.models
-      metaData.value = {
-        source: data.source || 'artificialanalysis.ai',
-        updatedAt: data.updatedAt,
-        totalModels: data.totalModels
-      }
-    }
-  } catch (error: any) {
-    console.error('Failed to fetch models:', error)
-    lastError.value = error.message || 'Failed to load models'
-  }
-}
-
-// Fetch models from AA API (for progress tracking)
-async function fetchModelsFromAA(): Promise<number> {
-  try {
-    const response = await $fetch<{ status: number; data: unknown[] }>(
-      'https://artificialanalysis.ai/api/v2/data/llms/models',
-      { headers: { 'x-api-key': import.meta.env.VITE_ARTIFICIAL_ANALYSIS_API_KEY || '' } }
-    )
-    return response.data?.length || 0
-  } catch {
-    return 0
-  }
-}
-
-// Refresh prices from Artificial Analysis (updates all existing models)
-async function refreshPrices() {
-  isRefreshing.value = true
-  lastError.value = null
-  
-  try {
-    // Get current count
-    const currentCount = modelsData.value.length
-    startProgress(currentCount)
-    
-    const result = await $fetch<{
-      success: boolean
-      updated: number
-      updatedAt: string
-    }>('/api/models/refresh-prices', {
-      method: 'POST'
-    })
-    
-    if (result.success) {
-      stopProgress()
-      await fetchModels()
-    }
-  } catch (error: any) {
-    console.error('Failed to refresh prices:', error)
-    lastError.value = error.data?.message || error.message || 'Failed to refresh prices'
-    stopProgress()
-  } finally {
-    isRefreshing.value = false
-  }
-}
-
-// Fetch more models and prices (import from AA API + scrape prices)
-async function fetchMorePrices() {
-  isRefreshing.value = true
-  lastError.value = null
-  
-  try {
-    // Get stats for progress estimation
-    const stats = await $fetch<{
-      aaTotal: number
-      dbTotal: number
-      withPrices: number
-    }>('/api/models/stats')
-    
-    const modelsToScrape = stats.dbTotal - stats.withPrices
-    startProgress(modelsToScrape)
-    
-    const result = await $fetch<{
-      success: boolean
-      newModelsAdded: number
-      pricesAdded: number
-      totalModels: number
-      totalWithPrices: number
-      totalToScrape: number
-      scraped: number
-      updatedAt: string
-    }>('/api/models/fetch-more', {
-      method: 'POST'
-    })
-    
-    if (result.success) {
-      stopProgress()
-      await fetchModels()
-    }
-  } catch (error: any) {
-    console.error('Failed to fetch more:', error)
-    lastError.value = error.data?.message || error.message || 'Failed to fetch more'
-    stopProgress()
-  } finally {
-    isRefreshing.value = false
-  }
-}
-
-// Import all models from AA API (without scraping prices)
-async function importModels() {
-  isRefreshing.value = true
-  lastError.value = null
-  
-  try {
-    const result = await $fetch<{
-      success: boolean
-      imported: number
-      total: number
-      updatedAt: string
-    }>('/api/models/import', {
-      method: 'POST'
-    })
-    
-    if (result.success) {
-      await fetchModels()
-    }
-  } catch (error: any) {
-    console.error('Failed to import models:', error)
-    lastError.value = error.data?.message || error.message || 'Failed to import models'
-  } finally {
-    isRefreshing.value = false
-  }
-}
+// Composables
+const { modelsData, metaData, fetchModels, getStats, modelsWithCost, modelsWithoutCost, totalInDb } = useModels()
+const progress = useProgress()
+const actions = useModelActions(modelsData, fetchModels)
 
 // Computed
 const filteredModels = computed(() => {
@@ -280,27 +77,6 @@ const categoryStats = computed(() => ({
   budget: modelsData.value.filter((m) => m.category === 'budget').length,
   openWeights: modelsData.value.filter((m) => m.openWeights).length
 }))
-
-// Count of models with cost data
-const modelsWithCostCount = computed(() => {
-  return modelsData.value.filter(m => {
-    const cost = m.costPerTask
-    return cost !== null && cost !== undefined && cost > 0
-  }).length
-})
-
-// Count of models without cost data
-const modelsWithoutCostCount = computed(() => {
-  return modelsData.value.filter(m => {
-    const cost = m.costPerTask
-    return cost === null || cost === undefined || cost === 0
-  }).length
-})
-
-// Total models in database
-const totalModelsInDb = computed(() => {
-  return modelsData.value.length
-})
 
 // Best value models (top 3)
 const bestValueModels = computed(() => {
@@ -405,15 +181,10 @@ onMounted(async () => {
   
   // Check if we need to import more models
   try {
-    const stats = await $fetch<{
-      aaTotal: number
-      dbTotal: number
-      needsImport: boolean
-    }>('/api/models/stats')
-    
+    const stats = await getStats()
     if (stats.needsImport) {
       console.log(`AA has ${stats.aaTotal} models, DB has ${stats.dbTotal}. Starting auto-import...`)
-      await fetchMorePrices()
+      await actions.fetchMorePrices()
     }
   } catch (error) {
     console.error('Failed to check stats:', error)
@@ -451,28 +222,28 @@ useSeoMeta({
             variant="outline"
             size="sm"
             icon="i-lucide-download"
-            @click="importModels"
+            @click="actions.importModels"
           >
-            Importera ({{ totalModelsInDb }})
+            Importera ({{ totalInDb }})
           </UButton>
           <UButton
-            v-if="modelsWithoutCostCount > 0"
+            v-if="modelsWithoutCost.length > 0"
             variant="outline"
             size="sm"
-            :loading="isRefreshing"
+            :loading="progress.show.value"
             icon="i-lucide-plus"
-            @click="fetchMorePrices"
+            @click="actions.fetchMorePrices"
           >
-            Fler ({{ modelsWithoutCostCount }})
+            Fler ({{ modelsWithoutCost.length }})
           </UButton>
           <UButton
             variant="outline"
             size="sm"
-            :loading="isRefreshing"
+            :loading="progress.show.value"
             icon="i-lucide-refresh-cw"
-            @click="refreshPrices"
+            @click="actions.refreshPrices"
           >
-            Uppdatera priser ({{ modelsWithCostCount }})
+            Uppdatera priser ({{ modelsWithCost.length }})
           </UButton>
           <UButton
             variant="ghost"
@@ -499,10 +270,10 @@ useSeoMeta({
                   Intelligence Index vs. Cost per Task
                 </h2>
                 <p class="text-sm text-muted-foreground mt-1">
-                  <span class="font-semibold">{{ totalModelsInDb }}</span> modeller i databasen.
-                  <span v-if="modelsWithCostCount > 0"> ({{ modelsWithCostCount }} med pris)</span>
-                  <span v-if="modelsWithoutCostCount > 0">
-                    , {{ modelsWithoutCostCount }} utan pris
+                  <span class="font-semibold">{{ totalInDb }}</span> modeller i databasen.
+                  <span v-if="modelsWithCost.length > 0"> ({{ modelsWithCost.length }} med pris)</span>
+                  <span v-if="modelsWithoutCost.length > 0">
+                    , {{ modelsWithoutCost.length }} utan pris
                   </span>
                 </p>
                 <p v-if="metaData?.updatedAt" class="text-xs text-muted-foreground mt-1">
@@ -511,28 +282,28 @@ useSeoMeta({
               </div>
             </div>
             <div class="text-right">
-              <div class="text-2xl font-bold">{{ totalModelsInDb }}</div>
+              <div class="text-2xl font-bold">{{ totalInDb }}</div>
               <div class="text-xs text-muted-foreground">I databasen</div>
             </div>
           </div>
         </div>
 
         <!-- Progress Bar -->
-        <div v-if="showProgress" class="bg-primary/10 rounded-lg p-4 border border-primary/20">
+        <div v-if="progress.show.value" class="bg-primary/10 rounded-lg p-4 border border-primary/20">
           <div class="flex items-center justify-between mb-2">
             <div class="flex items-center gap-2">
               <UIcon name="i-lucide-loader-2" class="w-4 h-4 animate-spin text-primary" />
               <span class="text-sm font-medium">Hämtar modeller...</span>
             </div>
             <div class="text-right">
-              <span class="text-sm font-semibold">{{ progressCurrent }} / {{ progressTotal }}</span>
-              <span class="text-xs text-muted-foreground ml-2">{{ estimatedTimeRemaining }}</span>
+              <span class="text-sm font-semibold">{{ progress.current.value }} / {{ progress.total.value }}</span>
+              <span class="text-xs text-muted-foreground ml-2">{{ progress.timeRemaining.value }}</span>
             </div>
           </div>
           <div class="h-2 bg-primary/20 rounded-full overflow-hidden">
             <div 
               class="h-full bg-primary transition-all duration-300 rounded-full"
-              :style="{ width: `${progressPercent}%` }"
+              :style="{ width: `${progress.percent.value}%` }"
             />
           </div>
         </div>
@@ -558,9 +329,9 @@ useSeoMeta({
               </p>
             </div>
             <UButton
-              :loading="isRefreshing"
+              :loading="progress.show.value"
               icon="i-lucide-refresh-cw"
-              @click="refreshModels"
+              @click="actions.fetchMorePrices"
             >
               Update Data
             </UButton>
