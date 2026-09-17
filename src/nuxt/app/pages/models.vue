@@ -22,11 +22,16 @@ const filteredModels = computed(() => {
 })
 
 const sortedModels = computed(() => {
-  const models = [...filteredModels.value].filter((m) => m.costPerTask > 0)
+  // Include all models (including free ones with cost = 0)
+  const models = [...filteredModels.value]
 
   switch (sortBy.value) {
     case 'value':
       return models.sort((a, b) => {
+        // Free models (cost = 0) are always best value
+        if (a.costPerTask === 0 && b.costPerTask === 0) return 0
+        if (a.costPerTask === 0) return -1  // a is free, b is not
+        if (b.costPerTask === 0) return 1   // b is free, a is not
         const aRatio = a.intelligenceIndex / a.costPerTask
         const bRatio = b.intelligenceIndex / b.costPerTask
         return bRatio - aRatio
@@ -60,7 +65,8 @@ function getCategoryColor(category: string) {
   return colors[category as keyof typeof colors] || 'text-gray-500 bg-gray-500/10'
 }
 
-function getValueRating(ratio: number): { stars: number; label: string } {
+function getValueRating(ratio: number | undefined): { stars: number; label: string } {
+  if (ratio === undefined || !isFinite(ratio)) return { stars: 5, label: 'Free' }
   if (ratio >= 200) return { stars: 5, label: 'Excellent' }
   if (ratio >= 100) return { stars: 4, label: 'Great' }
   if (ratio >= 50) return { stars: 3, label: 'Good' }
@@ -321,12 +327,15 @@ useSeoMeta({
                   <td class="py-4 px-4 text-right">
                     <div class="flex items-center justify-end gap-2">
                       <URating
-                        :model-value="getValueRating(model.intelligenceIndex / model.costPerTask).stars"
+                        :model-value="model.costPerTask === 0 ? 5 : getValueRating(model.intelligenceIndex / model.costPerTask).stars"
                         :max="5"
                         size="xs"
                         readonly
                       />
-                      <span class="text-sm font-semibold text-primary">
+                      <span v-if="model.costPerTask === 0" class="text-sm font-semibold text-green-500">
+                        Free
+                      </span>
+                      <span v-else class="text-sm font-semibold text-primary">
                         {{ (model.intelligenceIndex / model.costPerTask).toFixed(0) }}x
                       </span>
                     </div>
