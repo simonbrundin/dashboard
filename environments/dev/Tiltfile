@@ -30,5 +30,5 @@ local_resource(
     serve_cmd = ["docker", "run", "--rm", "-p", "5050:3000", "-e", "PGVIEW_DEFAULT_CONNECTION=postgresql://postgres:postgres@host.docker.internal:5432/dashboard", "lcurrol/pg-view"],
     labels = ["Database"],
     resource_deps = ["postgres"],
-    auto_init = False,
+    auto_init = True,
 )
