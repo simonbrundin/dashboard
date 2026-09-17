@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS models (
     provider VARCHAR(255) NOT NULL,
     provider_logo VARCHAR(100),
     intelligence_index INTEGER NOT NULL,
-    cost_per_task DECIMAL(10, 4) NOT NULL,
+    cost_per_task DECIMAL(10, 4),
     input_price_per_m DECIMAL(10, 2),
     output_price_per_m DECIMAL(10, 2),
     category VARCHAR(50) NOT NULL,
