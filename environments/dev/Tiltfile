@@ -3,6 +3,7 @@
 #
 # Access the app at: http://localhost:40807
 # Models page: http://localhost:40807/models
+# Drizzle Studio: http://localhost:49830
 # ==================================================================
 
 # PostgreSQL database via docker compose up
@@ -21,4 +22,15 @@ local_resource(
     labels = ["Frontend"],
     resource_deps = ["postgres"],
     auto_init = True,
+)
+
+# Drizzle Studio - visual database viewer
+# Connects to postgres at localhost:5432 with user postgres/password postgres
+local_resource(
+    "drizzle-studio",
+    serve_cmd = ["npx", "drizzle-kit", "studio", "--config", "src/nuxt/drizzle.config.ts", "--port", "49830", "--host", "0.0.0.0"],
+    serve_dir = "../..",
+    labels = ["Database"],
+    resource_deps = ["postgres"],
+    auto_init = False,
 )
