@@ -63,6 +63,32 @@ async function refreshModels() {
   }
 }
 
+// Add new models (scrape missing ones)
+async function addModels() {
+  isRefreshing.value = true
+  lastError.value = null
+  
+  try {
+    const result = await $fetch<{
+      success: boolean
+      totalModels: number
+      scraped: number
+      updatedAt: string
+    }>('/api/models/scrape', {
+      method: 'POST'
+    })
+    
+    if (result.success) {
+      await fetchModels()
+    }
+  } catch (error: any) {
+    console.error('Failed to scrape models:', error)
+    lastError.value = error.data?.message || error.message || 'Failed to add models'
+  } finally {
+    isRefreshing.value = false
+  }
+}
+
 // Computed
 const filteredModels = computed(() => {
   let models = modelsData.value
@@ -120,6 +146,16 @@ const categoryStats = computed(() => ({
   budget: modelsData.value.filter((m) => m.category === 'budget').length,
   openWeights: modelsData.value.filter((m) => m.openWeights).length
 }))
+
+// Count of models with cost data
+const modelsWithCostCount = computed(() => {
+  return modelsData.value.filter(m => m.costPerTask > 0).length
+})
+
+// Total models count (from metadata)
+const totalModelsCount = computed(() => {
+  return metaData.value.totalModels || 0
+})
 
 // Best value models (top 3)
 const bestValueModels = computed(() => {
@@ -236,13 +272,22 @@ useSeoMeta({
         </template>
         <template #trailing>
           <UButton
+            v-if="modelsWithCostCount < totalModelsCount && totalModelsCount > 0"
+            variant="outline"
+            size="sm"
+            icon="i-lucide-plus"
+            @click="addModels"
+          >
+            Add {{ totalModelsCount - modelsWithCostCount }}
+          </UButton>
+          <UButton
             variant="outline"
             size="sm"
             :loading="isRefreshing"
             icon="i-lucide-refresh-cw"
             @click="refreshModels"
           >
-            Scrape Data
+            Refresh ({{ modelsWithCostCount }})
           </UButton>
           <UButton
             variant="ghost"
@@ -269,19 +314,20 @@ useSeoMeta({
                   Intelligence Index vs. Cost per Task
                 </h2>
                 <p class="text-sm text-muted-foreground mt-1">
-                  Live data from Artificial Analysis.
-                  <span class="font-semibold">$/task</span> = cost per Intelligence Index task.
-                  Click "Scrape Data" to fetch cost per task from AA (~15 min for all models).
+                  Showing <span class="font-semibold">{{ modelsWithCostCount }}</span> models with cost data.
+                  <span v-if="totalModelsCount - modelsWithCostCount > 0">
+                    Click "Add {{ totalModelsCount - modelsWithCostCount }}" to scrape cost for remaining models.
+                  </span>
                 </p>
                 <p v-if="metaData?.updatedAt" class="text-xs text-muted-foreground mt-1">
-                  Last updated: {{ formatDate(metaData.updatedAt) }} • 
-                  {{ metaData.totalModels }} models available
+                  Last updated: {{ formatDate(metaData.updatedAt) }}
                 </p>
               </div>
             </div>
-            <UBadge v-if="metaData?.source" variant="subtle" color="primary" size="sm">
-              {{ metaData.source }}
-            </UBadge>
+            <div class="text-right">
+              <div class="text-2xl font-bold">{{ modelsWithCostCount }}</div>
+              <div class="text-xs text-muted-foreground">Models with Cost</div>
+            </div>
           </div>
         </div>
 
