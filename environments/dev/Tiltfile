@@ -1,8 +1,8 @@
 # ==================================================================
 # Dashboard Development Environment
 #
-# Access the app at: http://localhost:33117
-# Models page: http://localhost:33117/models
+# Access the app at: http://localhost:40807
+# Models page: http://localhost:40807/models
 # ==================================================================
 
 # PostgreSQL database via docker compose up
@@ -16,7 +16,7 @@ local_resource(
 # Nuxt dev server (depends on postgres being ready)
 local_resource(
     "dev",
-    cmd = ["/home/linuxbrew/.linuxbrew/bin/nub", "run", "dev", "--port", "0"],
+    serve_cmd = ["/home/linuxbrew/.linuxbrew/bin/nub", "run", "dev", "--port", "0"],
     dir = "../../src/nuxt",
     labels = ["Frontend"],
     resource_deps = ["postgres"],
