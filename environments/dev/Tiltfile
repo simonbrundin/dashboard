@@ -25,12 +25,11 @@ local_resource(
 )
 
 # Drizzle Studio - visual database viewer
-# Connects to postgres at localhost:5432 with user postgres/password postgres
 local_resource(
     "drizzle-studio",
-    serve_cmd = ["npx", "drizzle-kit", "studio", "--config", "src/nuxt/drizzle.config.ts", "--port", "49830", "--host", "0.0.0.0"],
+    serve_cmd = ["/home/linuxbrew/.linuxbrew/bin/npx", "drizzle-kit", "studio", "--config", "src/nuxt/drizzle.config.ts", "--port", "49830", "--host", "0.0.0.0"],
     serve_dir = "../..",
     labels = ["Database"],
     resource_deps = ["postgres"],
-    auto_init = False,
+    auto_init = True,
 )
