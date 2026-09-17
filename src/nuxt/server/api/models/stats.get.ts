@@ -11,9 +11,9 @@ export default defineEventHandler(async (event) => {
     )
     const dbCount = parseInt(dbCountResult[0]?.count || '0')
     
-    // Get count with prices (cost IS NOT NULL AND cost > 0)
+    // Get count with prices
     const withPricesResult = await query<{ count: string }>(
-      "SELECT COUNT(*) as count FROM models WHERE cost_per_task IS NOT NULL AND cost_per_task::text != '' AND cost_per_task > 0"
+      "SELECT COUNT(*) as count FROM models WHERE cost_per_task > 0"
     )
     const withPricesCount = parseInt(withPricesResult[0]?.count || '0')
     
@@ -38,7 +38,7 @@ export default defineEventHandler(async (event) => {
       dbTotal: dbCount,
       withPrices: withPricesCount,
       needsImport: aaCount > dbCount,
-      needsPrices: dbCount - withPricesCount > 0
+      needsPrices: dbCount - withPricesCount
     }
   } catch (error: any) {
     throw createError({

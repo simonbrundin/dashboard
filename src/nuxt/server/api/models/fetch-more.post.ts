@@ -81,7 +81,7 @@ export default defineEventHandler(async (event) => {
 
     // 3. Scrape prices for models without cost data
     const modelsWithoutCost = await query<{ slug: string }>(
-      "SELECT slug FROM models WHERE cost_per_task IS NULL OR cost_per_task = '' LIMIT 10"
+      "SELECT slug FROM models WHERE cost_per_task IS NULL"
     )
 
     let pricesAdded = 0
