@@ -6,28 +6,25 @@
 # pg-view: http://localhost:5050
 # ==================================================================
 
-# Create shared network
-docker_network("dashboard-net")
-
-# PostgreSQL database via docker compose up
+# Create network and postgres
 local_resource(
-    "postgres",
-    cmd = ["docker", "compose", "-f", "environments/dev/docker-compose.yml", "up", "-d", "postgres"],
-    dir = "../..",
+    "postgres-setup",
+    cmd = ["sh", "-c", "docker network create dashboard-net 2>/dev/null || true; docker run -d --name plan-dev-postgres --network dashboard-net -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=dashboard -p 5432:5432 postgres:16-alpine"],
     labels = ["Database"],
+    auto_init = True,
 )
 
-# Nuxt dev server (depends on postgres being ready)
+# Nuxt dev server
 local_resource(
     "dev",
     serve_cmd = ["/home/linuxbrew/.linuxbrew/bin/nub", "run", "dev", "--port", "0"],
     serve_dir = "../../src/nuxt",
     labels = ["Frontend"],
-    resource_deps = ["postgres"],
+    resource_deps = ["postgres-setup"],
     auto_init = True,
 )
 
-# pg-view - lightweight PostgreSQL web interface (auto-connects to database)
+# pg-view - connects to postgres via shared network
 local_resource(
     "pgview",
     cmd = [
@@ -38,6 +35,6 @@ local_resource(
         "lcurrol/pg-view"
     ],
     labels = ["Database"],
-    resource_deps = ["postgres"],
+    resource_deps = ["postgres-setup"],
     auto_init = True,
 )
