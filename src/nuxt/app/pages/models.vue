@@ -125,6 +125,7 @@ useSeoMeta({
           :total="progress.total.value"
           :time-remaining="progress.timeRemaining.value"
           :percent="progress.percent.value"
+          :status-message="actions.statusMessage.value"
         />
 
         <!-- Error Message -->

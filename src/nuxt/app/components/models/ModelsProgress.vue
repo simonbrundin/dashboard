@@ -4,6 +4,7 @@ defineProps<{
   total: number
   timeRemaining: string
   percent: number
+  statusMessage?: string
 }>()
 </script>
 
@@ -12,7 +13,7 @@ defineProps<{
     <div class="flex items-center justify-between mb-2">
       <div class="flex items-center gap-2">
         <UIcon name="i-lucide-loader-2" class="w-4 h-4 animate-spin text-primary" />
-        <span class="text-sm font-medium">Hämtar modeller...</span>
+        <span class="text-sm font-medium">{{ statusMessage || 'Hämtar...' }}</span>
       </div>
       <div class="text-right">
         <span class="text-sm font-semibold">{{ current }} / {{ total }}</span>

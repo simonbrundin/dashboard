@@ -4,6 +4,9 @@ export function useModelActions(
   onSuccess?: () => void
 ) {
   const error = ref<string | null>(null)
+  const phase = ref<string>('')
+  const statusMessage = ref<string>('')
+  let abortController = new AbortController()
 
   async function importModels() {
     error.value = null
@@ -19,20 +22,80 @@ export function useModelActions(
 
   async function fetchMorePrices() {
     error.value = null
-    try {
-      const stats = await $fetch<{ needsPrices: number }>('/api/models/stats')
-      const total = stats.needsPrices
-      progress.start(total)
+    phase.value = ''
+    statusMessage.value = 'Startar...'
+    progress.start(100)
 
-      const result = await $fetch<{ success: boolean; pricesAdded: number }>('/api/models/fetch-more', { method: 'POST' })
-      if (result.success) {
-        progress.stop()
-        onSuccess?.()
+    try {
+      // Start the fetch-more process
+      const response = await fetch('/api/models/fetch-more', { 
+        method: 'POST',
+        signal: abortController?.signal
+      })
+
+      const reader = response.body?.getReader()
+      const decoder = new TextDecoder()
+
+      if (!reader) {
+        throw new Error('No response body')
       }
+
+      let buffer = ''
+
+      while (true) {
+        const { done, value } = await reader.read()
+        
+        if (done) break
+
+        buffer += decoder.decode(value, { stream: true })
+        
+        // Process complete SSE messages
+        const lines = buffer.split('\n')
+        buffer = lines.pop() || '' // Keep incomplete line in buffer
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            try {
+              const data = JSON.parse(line.slice(6))
+              
+              phase.value = data.phase
+              statusMessage.value = data.message
+
+              if (data.total > 0) {
+                progress.update(data.progress, data.total)
+              }
+
+              if (data.phase === 'done' || data.success) {
+                progress.stop()
+                onSuccess?.()
+                return
+              }
+
+              if (data.phase === 'error') {
+                error.value = data.error || 'Misslyckades'
+                progress.stop()
+                return
+              }
+            } catch (e) {
+              // Ignore parse errors for incomplete JSON
+            }
+          }
+        }
+      }
+
+      progress.stop()
     } catch (e: any) {
-      error.value = e.data?.message || e.message || 'Failed to fetch more'
+      if (e.name === 'AbortError') {
+        return // Cancelled, not an error
+      }
+      console.error('Fetch error:', e)
+      error.value = e.data?.message || e.message || 'Misslyckades'
       progress.stop()
     }
+  }
+
+  function cancelFetch() {
+    abortController?.abort()
   }
 
   async function refreshPrices() {
@@ -54,9 +117,12 @@ export function useModelActions(
 
   return {
     progress,
+    phase,
+    statusMessage,
     error,
     importModels,
     fetchMorePrices,
-    refreshPrices
+    refreshPrices,
+    cancelFetch
   }
 }
