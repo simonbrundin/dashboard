@@ -178,12 +178,13 @@ function getValueRating(ratio: number | undefined): { stars: number; label: stri
   return { stars: 1, label: 'Basic' }
 }
 
-function formatCost(costPerMillion: number): string {
-  if (costPerMillion === 0) return 'Free'
-  if (costPerMillion < 0.1) return `$${costPerMillion.toFixed(3)}/M`
-  if (costPerMillion < 1) return `$${costPerMillion.toFixed(2)}/M`
-  if (costPerMillion < 10) return `$${costPerMillion.toFixed(1)}/M`
-  return `$${costPerMillion.toFixed(0)}/M`
+function formatCost(cost: number): string {
+  if (cost === 0) return 'Free'
+  if (cost < 0.01) return `$${cost.toFixed(3)}/task`
+  if (cost < 0.1) return `$${cost.toFixed(2)}/task`
+  if (cost < 1) return `$${cost.toFixed(2)}/task`
+  if (cost < 10) return `$${cost.toFixed(1)}/task`
+  return `$${cost.toFixed(0)}/task`
 }
 
 function formatDate(dateStr: string): string {
@@ -258,9 +259,9 @@ useSeoMeta({
                   Intelligence Index vs. Cost per Task
                 </h2>
                 <p class="text-sm text-muted-foreground mt-1">
-                  Live pricing from Artificial Analysis API.
-                  <span class="font-semibold">$/M</span> = price per million tokens.
-                  Click "Update Data" to refresh.
+                  Live data from Artificial Analysis.
+                  <span class="font-semibold">$/task</span> = cost per Intelligence Index task.
+                  Click "Update Data" to refresh (first time scraping ~15 min).
                 </p>
                 <p v-if="metaData?.updatedAt" class="text-xs text-muted-foreground mt-1">
                   Last updated: {{ formatDate(metaData.updatedAt) }} • 
