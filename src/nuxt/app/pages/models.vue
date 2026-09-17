@@ -343,7 +343,17 @@ useSeoMeta({
 
           <!-- Open Weights Toggle -->
           <div class="flex items-center gap-2">
-            <UToggle v-model="showOnlyOpenWeights" size="xs" />
+            <button
+              type="button"
+              class="relative inline-flex h-5 w-9 items-center rounded-full bg-muted transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              :class="{ 'bg-primary': showOnlyOpenWeights }"
+              @click="showOnlyOpenWeights = !showOnlyOpenWeights"
+            >
+              <span
+                class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
+                :class="{ 'translate-x-4': showOnlyOpenWeights, 'translate-x-0': !showOnlyOpenWeights }"
+              />
+            </button>
             <span class="text-sm text-muted-foreground">Open weights only</span>
             <span class="text-xs text-muted-foreground">({{ categoryStats.openWeights }} models)</span>
           </div>
