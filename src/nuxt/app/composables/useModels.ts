@@ -14,7 +14,7 @@ export function useModels() {
 
   // Computed: models without price data
   const modelsWithoutCost = computed(() =>
-    modelsData.value.filter(m => m.costPerTask == null || m.costPerTask === 0)
+    modelsData.value.filter(m => !m.costPerTask || m.costPerTask <= 0)
   )
 
   // Computed: total in database
