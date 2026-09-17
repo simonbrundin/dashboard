@@ -369,7 +369,15 @@ useSeoMeta({
               </div>
               <div>
                 <p class="text-sm text-muted-foreground">Best Value Model</p>
-                <p class="font-bold text-lg">{{ bestValueModels[0]?.name }}</p>
+                <a
+                  v-if="bestValueModels[0]"
+                  :href="`https://artificialanalysis.ai/models/${bestValueModels[0].slug}`"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="font-bold text-lg hover:underline hover:text-primary"
+                >
+                  {{ bestValueModels[0].name }}
+                </a>
                 <p class="text-sm text-green-500">
                   Ratio: {{ bestValueModels[0] ? (bestValueModels[0].intelligenceIndex / bestValueModels[0].costPerTask).toFixed(0) : 0 }}x
                 </p>
@@ -385,7 +393,15 @@ useSeoMeta({
               </div>
               <div>
                 <p class="text-sm text-muted-foreground">Highest Intelligence</p>
-                <p class="font-bold text-lg">{{ topIntelligenceModels[0]?.name }}</p>
+                <a
+                  v-if="topIntelligenceModels[0]"
+                  :href="`https://artificialanalysis.ai/models/${topIntelligenceModels[0].slug}`"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="font-bold text-lg hover:underline hover:text-primary"
+                >
+                  {{ topIntelligenceModels[0].name }}
+                </a>
                 <p class="text-sm text-purple-500">
                   Index: {{ topIntelligenceModels[0]?.intelligenceIndex }}
                 </p>
@@ -401,7 +417,15 @@ useSeoMeta({
               </div>
               <div>
                 <p class="text-sm text-muted-foreground">Lowest Cost per Task</p>
-                <p class="font-bold text-lg">{{ lowestCostModels[0]?.name }}</p>
+                <a
+                  v-if="lowestCostModels[0]"
+                  :href="`https://artificialanalysis.ai/models/${lowestCostModels[0].slug}`"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="font-bold text-lg hover:underline hover:text-primary"
+                >
+                  {{ lowestCostModels[0].name }}
+                </a>
                 <p class="text-sm text-amber-500">
                   {{ formatCost(lowestCostModels[0]?.costPerTask || 0) }}/task
                 </p>
@@ -420,7 +444,14 @@ useSeoMeta({
           <div class="flex flex-wrap gap-2">
             <UCard v-for="model in paretoOptimalModels" :key="model.id" class="min-w-[200px] flex-1">
               <div class="flex items-center gap-2 mb-2">
-                <span class="font-medium text-sm truncate">{{ model.name }}</span>
+                <a
+                  :href="`https://artificialanalysis.ai/models/${model.slug}`"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="font-medium text-sm truncate hover:underline hover:text-primary"
+                >
+                  {{ model.name }}
+                </a>
                 <UBadge :class="getCategoryColor(model.category)" size="xs">
                   {{ model.category }}
                 </UBadge>
@@ -473,7 +504,14 @@ useSeoMeta({
                         {{ index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉' }}
                       </span>
                       <div>
-                        <p class="font-medium">{{ model.name }}</p>
+                        <a
+                          :href="`https://artificialanalysis.ai/models/${model.slug}`"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="font-medium hover:underline hover:text-primary"
+                        >
+                          {{ model.name }}
+                        </a>
                         <p class="text-xs text-muted-foreground">{{ model.provider }}</p>
                       </div>
                     </div>
