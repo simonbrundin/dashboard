@@ -178,12 +178,12 @@ function getValueRating(ratio: number | undefined): { stars: number; label: stri
   return { stars: 1, label: 'Basic' }
 }
 
-function formatCost(cost: number): string {
-  if (cost === 0) return 'Free'
-  if (cost < 0.001) return `$${cost.toFixed(4)}`
-  if (cost < 0.01) return `$${cost.toFixed(3)}`
-  if (cost < 1) return `$${cost.toFixed(2)}`
-  return `$${cost.toFixed(2)}`
+function formatCost(costPerMillion: number): string {
+  if (costPerMillion === 0) return 'Free'
+  if (costPerMillion < 0.1) return `$${costPerMillion.toFixed(3)}/M`
+  if (costPerMillion < 1) return `$${costPerMillion.toFixed(2)}/M`
+  if (costPerMillion < 10) return `$${costPerMillion.toFixed(1)}/M`
+  return `$${costPerMillion.toFixed(0)}/M`
 }
 
 function formatDate(dateStr: string): string {
@@ -258,9 +258,9 @@ useSeoMeta({
                   Intelligence Index vs. Cost per Task
                 </h2>
                 <p class="text-sm text-muted-foreground mt-1">
-                  Live data from Artificial Analysis. Models ranked by
-                  <span class="font-semibold text-primary">Intelligence / Cost</span> ratio
-                  (higher is better value).
+                  Live pricing from Artificial Analysis API.
+                  <span class="font-semibold">$/M</span> = price per million tokens.
+                  Click "Update Data" to refresh.
                 </p>
                 <p v-if="metaData?.updatedAt" class="text-xs text-muted-foreground mt-1">
                   Last updated: {{ formatDate(metaData.updatedAt) }} • 
@@ -483,8 +483,8 @@ useSeoMeta({
                       </div>
                     </div>
                   </td>
-                  <td class="py-4 px-4 text-right font-mono">
-                    {{ formatCost(model.costPerTask) }}
+                  <td class="py-4 px-4 text-right">
+                    <span class="font-mono">{{ formatCost(model.costPerTask) }}</span>
                   </td>
                   <td class="py-4 px-4 text-right">
                     <div class="flex items-center justify-end gap-2">

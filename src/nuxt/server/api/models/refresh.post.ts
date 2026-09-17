@@ -77,8 +77,10 @@ export default defineEventHandler(async (event) => {
       .filter(m => m.evaluations?.artificial_analysis_intelligence_index && m.pricing?.price_1m_blended_3_to_1)
       .map(m => {
         const intelligenceIndex = Math.round(m.evaluations.artificial_analysis_intelligence_index)
+        // Store the blended price per million tokens
+        // Note: "Cost per Intelligence Index Task" on AA is a weighted calculation 
+        // that includes token counts per benchmark task, not just the price
         const pricePerMillion = m.pricing.price_1m_blended_3_to_1
-        const costPerTask = pricePerMillion === 0 ? 0 : pricePerMillion / 1000 // Convert per million to per 1K tokens
         
         return {
           id: m.id,
@@ -86,7 +88,7 @@ export default defineEventHandler(async (event) => {
           provider: m.model_creator.name,
           providerLogo: getProviderLogo(m.model_creator.slug),
           intelligenceIndex,
-          costPerTask: Math.round(costPerTask * 10000) / 10000, // Round to 4 decimals
+          costPerTask: pricePerMillion, // Price per million tokens
           inputPricePerM: m.pricing.price_1m_input_tokens,
           outputPricePerM: m.pricing.price_1m_output_tokens,
           category: determineCategoryFromPrice(pricePerMillion),
