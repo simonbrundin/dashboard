@@ -31,7 +31,8 @@ local_resource(
     cmd = [
         "docker", "run", "--rm",
         "-p", "5050:3000",
-        "-e", "DB_URL=postgresql://postgres:postgres@host.docker.internal:5432/dashboard",
+        "-e", "DB_URL=postgresql://postgres:postgres@127.0.0.1:5432/dashboard",
+        "--network=host",
         "lcurrol/pg-view"
     ],
     labels = ["Database"],
