@@ -1,12 +1,74 @@
+interface ProgressEvent {
+  phase: string
+  message: string
+  progress: number
+  total: number
+  success?: boolean
+  error?: string
+}
+
+function extractErrorMessage(e: any, fallback: string): string {
+  return e.data?.message || e.message || fallback
+}
+
+function parseSseLine(line: string): ProgressEvent | null {
+  if (!line.startsWith('data: ')) return null
+  try {
+    return JSON.parse(line.slice(6))
+  } catch {
+    return null // partial JSON at chunk boundary
+  }
+}
+
+async function* readSseEvents(response: Response): AsyncGenerator<ProgressEvent> {
+  const reader = response.body?.getReader()
+  if (!reader) throw new Error('No response body')
+
+  const decoder = new TextDecoder()
+  let buffer = ''
+
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) break
+
+    buffer += decoder.decode(value, { stream: true })
+    const lines = buffer.split('\n')
+    buffer = lines.pop() || ''
+
+    for (const line of lines) {
+      const event = parseSseLine(line)
+      if (event) yield event
+    }
+  }
+}
+
 export function useModelActions(
   models: Ref<ModelData[]>,
   progress: ReturnType<typeof useProgress>,
   onSuccess?: () => void
 ) {
   const error = ref<string | null>(null)
-  const phase = ref<string>('')
   const statusMessage = ref<string>('')
-  let abortController = new AbortController()
+
+  function handleProgressEvent(event: ProgressEvent): boolean {
+    statusMessage.value = event.message
+
+    if (event.total > 0) {
+      progress.update(event.progress, event.total)
+    }
+
+    if (event.phase === 'error') {
+      error.value = event.error || 'Misslyckades'
+      return true
+    }
+
+    if (event.phase === 'done' || event.success) {
+      onSuccess?.()
+      return true
+    }
+
+    return false
+  }
 
   async function importModels() {
     error.value = null
@@ -16,113 +78,50 @@ export function useModelActions(
         onSuccess?.()
       }
     } catch (e: any) {
-      error.value = e.data?.message || e.message || 'Import failed'
+      error.value = extractErrorMessage(e, 'Import failed')
     }
   }
 
   async function fetchMorePrices() {
     error.value = null
-    phase.value = ''
     statusMessage.value = 'Startar...'
     progress.start(100)
 
     try {
-      // Start the fetch-more process
-      const response = await fetch('/api/models/fetch-more', { 
-        method: 'POST',
-        signal: abortController?.signal
-      })
+      const response = await fetch('/api/models/fetch-more', { method: 'POST' })
 
-      const reader = response.body?.getReader()
-      const decoder = new TextDecoder()
-
-      if (!reader) {
-        throw new Error('No response body')
+      for await (const event of readSseEvents(response)) {
+        if (handleProgressEvent(event)) return
       }
-
-      let buffer = ''
-
-      while (true) {
-        const { done, value } = await reader.read()
-        
-        if (done) break
-
-        buffer += decoder.decode(value, { stream: true })
-        
-        // Process complete SSE messages
-        const lines = buffer.split('\n')
-        buffer = lines.pop() || '' // Keep incomplete line in buffer
-
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            try {
-              const data = JSON.parse(line.slice(6))
-              
-              phase.value = data.phase
-              statusMessage.value = data.message
-
-              if (data.total > 0) {
-                progress.update(data.progress, data.total)
-              }
-
-              if (data.phase === 'done' || data.success) {
-                progress.stop()
-                onSuccess?.()
-                return
-              }
-
-              if (data.phase === 'error') {
-                error.value = data.error || 'Misslyckades'
-                progress.stop()
-                return
-              }
-            } catch (e) {
-              // Ignore parse errors for incomplete JSON
-            }
-          }
-        }
-      }
-
-      progress.stop()
     } catch (e: any) {
-      if (e.name === 'AbortError') {
-        return // Cancelled, not an error
-      }
-      console.error('Fetch error:', e)
-      error.value = e.data?.message || e.message || 'Misslyckades'
+      error.value = extractErrorMessage(e, 'Misslyckades')
+    } finally {
       progress.stop()
     }
-  }
-
-  function cancelFetch() {
-    abortController?.abort()
   }
 
   async function refreshPrices() {
     error.value = null
     try {
-      const count = models.value.length
-      progress.start(count)
+      progress.start(models.value.length)
 
       const result = await $fetch<{ success: boolean; updated: number }>('/api/models/refresh-prices', { method: 'POST' })
       if (result.success) {
-        progress.stop()
         onSuccess?.()
       }
     } catch (e: any) {
-      error.value = e.data?.message || e.message || 'Failed to refresh'
+      error.value = extractErrorMessage(e, 'Failed to refresh')
+    } finally {
       progress.stop()
     }
   }
 
   return {
     progress,
-    phase,
     statusMessage,
     error,
     importModels,
     fetchMorePrices,
-    refreshPrices,
-    cancelFetch
+    refreshPrices
   }
 }
