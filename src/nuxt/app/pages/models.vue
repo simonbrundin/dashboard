@@ -154,7 +154,7 @@ const modelsWithCostCount = computed(() => {
 
 // Total models count (from metadata)
 const totalModelsCount = computed(() => {
-  return metaData.value.totalModels || 0
+  return metaData.value?.totalModels || modelsData.value.length
 })
 
 // Best value models (top 3)
