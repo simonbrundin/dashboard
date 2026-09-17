@@ -160,9 +160,9 @@ export default defineEventHandler(async (event) => {
 
     console.log(`Added ${newModelsAdded} new models to database`)
 
-        // Step 3: Get models that need price scraping (limit to 20 for faster initial import)
+        // Step 3: Get models that need price scraping (only scrape a few for demo)
     const modelsWithoutCost = await query<{ slug: string; name: string }>(
-      'SELECT slug, name FROM models WHERE cost_per_task = 0 LIMIT 20'
+      'SELECT slug, name FROM models WHERE cost_per_task IS NULL OR cost_per_task = 0 LIMIT 5'
     )
 
     console.log(`Scraping prices for ${modelsWithoutCost.length} models...`)
@@ -173,7 +173,6 @@ export default defineEventHandler(async (event) => {
     for (const model of modelsWithoutCost) {
       const costPerTask = await scrapeModelCostPerTask(model.slug)
       
-      // Only save if we got a valid price (> 0)
       if (costPerTask !== null && costPerTask > 0) {
         await query(
           'UPDATE models SET cost_per_task = $1, updated_at = CURRENT_TIMESTAMP WHERE slug = $2',
@@ -182,11 +181,6 @@ export default defineEventHandler(async (event) => {
         pricesAdded++
         console.log(`[${pricesAdded}/${total}] ${model.slug}: $${costPerTask}/task ✓`)
       } else {
-        // Mark as scraped with a small price so we don't retry
-        await query(
-          'UPDATE models SET cost_per_task = 0.001, updated_at = CURRENT_TIMESTAMP WHERE slug = $1',
-          [model.slug]
-        )
         console.log(`[${pricesAdded}/${total}] ${model.slug}: skipped (no price found)`)
       }
       
@@ -195,9 +189,9 @@ export default defineEventHandler(async (event) => {
     }
 
     // Get final counts
-    const withCost = await query<{ count: string }>('SELECT COUNT(*) as count FROM models WHERE cost_per_task > 0')
+    const withCost = await query<{ count: string }>('SELECT COUNT(*) as count FROM models WHERE cost_per_task IS NOT NULL AND cost_per_task > 0')
     const totalModels = await query<{ count: string }>('SELECT COUNT(*) as count FROM models')
-    const stillNeedPrices = await query<{ count: string }>('SELECT COUNT(*) as count FROM models WHERE cost_per_task = 0')
+    const stillNeedPrices = await query<{ count: string }>('SELECT COUNT(*) as count FROM models WHERE cost_per_task IS NULL OR cost_per_task = 0')
 
     console.log(`Complete! ${pricesAdded} new prices scraped.`)
 
@@ -208,8 +202,6 @@ export default defineEventHandler(async (event) => {
       totalModels: parseInt(totalModels[0]?.count || '0'),
       totalWithPrices: parseInt(withCost[0]?.count || '0'),
       stillNeedPrices: parseInt(stillNeedPrices[0]?.count || '0'),
-      totalToScrape: parseInt(stillNeedPrices[0]?.count || '0') + pricesAdded,
-      scraped: pricesAdded,
       updatedAt: new Date().toISOString()
     }
 

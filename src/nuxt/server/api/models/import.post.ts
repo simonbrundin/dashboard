@@ -91,7 +91,7 @@ export default defineEventHandler(async (event) => {
           id, name, slug, provider, provider_logo, intelligence_index,
           cost_per_task, input_price_per_m, output_price_per_m, category,
           strengths, context_window, open_weights, speed, latency
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+        ) VALUES ($1, $2, $3, $4, $5, $6, NULL, $7, $8, $9, $10, $11, $12, $13, $14)
         ON CONFLICT (slug) DO UPDATE SET
           name = EXCLUDED.name,
           provider = EXCLUDED.provider,
@@ -111,7 +111,6 @@ export default defineEventHandler(async (event) => {
         model.model_creator.name,
         model.model_creator.slug,
         intelligenceIndex,
-        0, // cost_per_task - keep existing if already set
         model.pricing.price_1m_input_tokens,
         model.pricing.price_1m_output_tokens,
         determineCategoryFromPrice(pricePerMillion),

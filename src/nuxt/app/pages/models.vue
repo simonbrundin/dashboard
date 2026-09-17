@@ -239,8 +239,8 @@ const sortedModels = computed(() => {
   switch (sortBy.value) {
     case 'value':
       return models.sort((a, b) => {
-        const aCost = parseFloat(String(a.costPerTask)) || 0
-        const bCost = parseFloat(String(b.costPerTask)) || 0
+        const aCost = a.costPerTask ?? 0
+        const bCost = b.costPerTask ?? 0
         if (aCost === 0 && bCost === 0) return 0
         if (aCost === 0) return -1 * dir
         if (bCost === 0) return 1 * dir
@@ -252,8 +252,8 @@ const sortedModels = computed(() => {
       return models.sort((a, b) => (b.intelligenceIndex - a.intelligenceIndex) * dir)
     case 'cost':
       return models.sort((a, b) => {
-        const aCost = parseFloat(String(a.costPerTask)) || 0
-        const bCost = parseFloat(String(b.costPerTask)) || 0
+        const aCost = a.costPerTask ?? 0
+        const bCost = b.costPerTask ?? 0
         return (aCost - bCost) * dir
       })
     case 'speed':
@@ -284,16 +284,16 @@ const categoryStats = computed(() => ({
 // Count of models with cost data
 const modelsWithCostCount = computed(() => {
   return modelsData.value.filter(m => {
-    const cost = parseFloat(String(m.costPerTask)) || 0
-    return cost >= 0.001
+    const cost = m.costPerTask
+    return cost !== null && cost !== undefined && cost > 0
   }).length
 })
 
 // Count of models without cost data
 const modelsWithoutCostCount = computed(() => {
   return modelsData.value.filter(m => {
-    const cost = parseFloat(String(m.costPerTask)) || 0
-    return cost < 0.001
+    const cost = m.costPerTask
+    return cost === null || cost === undefined || cost === 0
   }).length
 })
 
@@ -306,12 +306,12 @@ const totalModelsInDb = computed(() => {
 const bestValueModels = computed(() => {
   return [...modelsData.value]
     .filter(m => {
-      const cost = parseFloat(String(m.costPerTask)) || 0
+      const cost = m.costPerTask ?? 0
       return cost > 0
     })
     .sort((a, b) => {
-      const aCost = parseFloat(String(a.costPerTask)) || 0
-      const bCost = parseFloat(String(b.costPerTask)) || 0
+      const aCost = a.costPerTask ?? 0
+      const bCost = b.costPerTask ?? 0
       const aRatio = a.intelligenceIndex / aCost
       const bRatio = b.intelligenceIndex / bCost
       return bRatio - aRatio
@@ -330,12 +330,12 @@ const topIntelligenceModels = computed(() => {
 const lowestCostModels = computed(() => {
   return [...modelsData.value]
     .filter(m => {
-      const cost = parseFloat(String(m.costPerTask)) || 0
+      const cost = m.costPerTask ?? 0
       return cost > 0
     })
     .sort((a, b) => {
-      const aCost = parseFloat(String(a.costPerTask)) || 0
-      const bCost = parseFloat(String(b.costPerTask)) || 0
+      const aCost = a.costPerTask ?? 0
+      const bCost = b.costPerTask ?? 0
       return aCost - bCost
     })
     .slice(0, 1)
@@ -346,9 +346,9 @@ const paretoOptimalModels = computed(() => {
   const pareto: ModelData[] = []
   
   for (const model of modelsData.value) {
-    const modelCost = parseFloat(String(model.costPerTask)) || 0
+    const modelCost = model.costPerTask ?? 0
     const isDominated = modelsData.value.some(other => {
-      const otherCost = parseFloat(String(other.costPerTask)) || 0
+      const otherCost = other.costPerTask ?? 0
       return otherCost <= modelCost &&
              other.intelligenceIndex >= model.intelligenceIndex &&
              (otherCost < modelCost || other.intelligenceIndex > model.intelligenceIndex)
@@ -641,7 +641,7 @@ useSeoMeta({
                   {{ bestValueModels[0].name }}
                 </a>
                 <p class="text-sm text-green-500">
-                  Ratio: {{ bestValueModels[0] ? (bestValueModels[0].intelligenceIndex / (parseFloat(String(bestValueModels[0].costPerTask)) || 1)).toFixed(0) : 0 }}x
+                  Ratio: {{ bestValueModels[0] ? (bestValueModels[0].intelligenceIndex / (bestValueModels[0].costPerTask ?? 1)).toFixed(0) : 0 }}x
                 </p>
               </div>
             </div>
@@ -820,17 +820,17 @@ useSeoMeta({
                   </td>
                   <td class="py-4 px-4 text-right">
                     <div class="flex items-center justify-end gap-2">
-                      <span v-if="parseFloat(String(model.costPerTask)) === 0" class="text-sm font-semibold text-green-500">
+                      <span v-if="(model.costPerTask ?? 0) === 0" class="text-sm font-semibold text-green-500">
                         Free
                       </span>
                       <template v-else>
                         <div class="flex items-center gap-1">
                           <span v-for="n in 5" :key="n" class="text-primary">
-                            {{ n <= Math.round(getValueRating(model.intelligenceIndex / (parseFloat(String(model.costPerTask)) || 1)).stars) ? '★' : '☆' }}
+                            {{ n <= Math.round(getValueRating(model.intelligenceIndex / (model.costPerTask ?? 1)).stars) ? '★' : '☆' }}
                           </span>
                         </div>
                         <span class="text-sm font-semibold text-primary">
-                          {{ (model.intelligenceIndex / (parseFloat(String(model.costPerTask)) || 1)).toFixed(0) }}x
+                          {{ (model.intelligenceIndex / (model.costPerTask ?? 1)).toFixed(0) }}x
                         </span>
                       </template>
                     </div>
