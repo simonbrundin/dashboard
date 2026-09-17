@@ -3,13 +3,20 @@
 #
 # Access the app at: http://localhost:40807
 # Models page: http://localhost:40807/models
-# pg-view: http://localhost:5050
+# pg-view: http://localhost:5050 (auto-starts with postgres)
 # ==================================================================
 
-# Create network and postgres
+# PostgreSQL and pg-view setup
 local_resource(
     "postgres-setup",
-    cmd = ["sh", "-c", "docker network create dashboard-net 2>/dev/null || true; docker run -d --name plan-dev-postgres --network dashboard-net -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=dashboard -p 5432:5432 postgres:16-alpine"],
+    cmd = ["sh", "-c", """
+        docker network create dashboard-net 2>/dev/null || true
+        docker rm -f plan-dev-postgres pgview 2>/dev/null || true
+        docker run -d --name plan-dev-postgres --network dashboard-net -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=dashboard -p 5432:5432 postgres:16-alpine
+        sleep 2
+        docker run -d --name pgview --network dashboard-net -p 5050:3000 -e DB_URL=postgresql://postgres:postgres@plan-dev-postgres:5432/dashboard lcurrol/pg-view
+        echo 'PostgreSQL and pg-view started successfully'
+    """],
     labels = ["Database"],
     auto_init = True,
 )
@@ -20,21 +27,6 @@ local_resource(
     serve_cmd = ["/home/linuxbrew/.linuxbrew/bin/nub", "run", "dev", "--port", "0"],
     serve_dir = "../../src/nuxt",
     labels = ["Frontend"],
-    resource_deps = ["postgres-setup"],
-    auto_init = True,
-)
-
-# pg-view - connects to postgres via shared network
-local_resource(
-    "pgview",
-    cmd = [
-        "docker", "run", "--rm",
-        "-p", "5050:3000",
-        "--network", "dashboard-net",
-        "-e", "DB_URL=postgresql://postgres:postgres@plan-dev-postgres:5432/dashboard",
-        "lcurrol/pg-view"
-    ],
-    labels = ["Database"],
     resource_deps = ["postgres-setup"],
     auto_init = True,
 )
