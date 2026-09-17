@@ -12,6 +12,8 @@ export interface ModelData {
   contextWindow: string
   openWeights: boolean
   notes?: string
+  speed?: number       // tokens per second
+  latency?: number      // time to first token in seconds
 }
 
 // Data baserad på Artificial Analysis Intelligence Index och kostnadsjämförelser

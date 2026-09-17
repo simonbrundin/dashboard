@@ -15,6 +15,7 @@ export default defineNuxtConfig({
     uptimeKumaApiKey: "",
     githubUsername: "",
     githubToken: "",
+    artificialAnalysisApiKey: "",
   },
 
   routeRules: {

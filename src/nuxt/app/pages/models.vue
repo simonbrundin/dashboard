@@ -1,14 +1,69 @@
 <script setup lang="ts">
-import { modelsData, bestValueModels, topIntelligenceModels, lowestCostModels, paretoOptimalModels, providerLogos } from '~/data/models'
+import type { ModelData } from '~/data/models'
 
 // State
 const selectedCategory = ref<'all' | 'frontier' | 'high' | 'mid' | 'budget'>('all')
-const sortBy = ref<'value' | 'intelligence' | 'cost'>('value')
+const sortBy = ref<'value' | 'intelligence' | 'cost' | 'speed'>('value')
 const showOnlyOpenWeights = ref(false)
+const isRefreshing = ref(false)
+const lastError = ref<string | null>(null)
+const modelsData = ref<ModelData[]>([])
+const metaData = ref<{ source: string; updatedAt: string; totalModels: number } | null>(null)
+
+// Fetch data from API
+async function fetchModels() {
+  try {
+    const data = await $fetch<{
+      source: string
+      updatedAt: string
+      totalModels: number
+      models: ModelData[]
+      needsRefresh?: boolean
+      message?: string
+    }>('/api/models')
+    
+    if (data.models && data.models.length > 0) {
+      modelsData.value = data.models
+      metaData.value = {
+        source: data.source || 'artificialanalysis.ai',
+        updatedAt: data.updatedAt,
+        totalModels: data.totalModels
+      }
+    }
+  } catch (error: any) {
+    console.error('Failed to fetch models:', error)
+    lastError.value = error.message || 'Failed to load models'
+  }
+}
+
+// Refresh data from Artificial Analysis
+async function refreshModels() {
+  isRefreshing.value = true
+  lastError.value = null
+  
+  try {
+    const result = await $fetch<{
+      success: boolean
+      totalModels: number
+      updatedAt: string
+    }>('/api/models/refresh', {
+      method: 'POST'
+    })
+    
+    if (result.success) {
+      await fetchModels()
+    }
+  } catch (error: any) {
+    console.error('Failed to refresh models:', error)
+    lastError.value = error.data?.message || error.message || 'Failed to refresh models'
+  } finally {
+    isRefreshing.value = false
+  }
+}
 
 // Computed
 const filteredModels = computed(() => {
-  let models = modelsData
+  let models = modelsData.value
 
   if (selectedCategory.value !== 'all') {
     models = models.filter((m) => m.category === selectedCategory.value)
@@ -40,19 +95,68 @@ const sortedModels = computed(() => {
       return models.sort((a, b) => b.intelligenceIndex - a.intelligenceIndex)
     case 'cost':
       return models.sort((a, b) => a.costPerTask - b.costPerTask)
+    case 'speed':
+      return models.sort((a, b) => (b.speed || 0) - (a.speed || 0))
     default:
       return models
   }
 })
 
 const categoryStats = computed(() => ({
-  all: modelsData.length,
-  frontier: modelsData.filter((m) => m.category === 'frontier').length,
-  high: modelsData.filter((m) => m.category === 'high').length,
-  mid: modelsData.filter((m) => m.category === 'mid').length,
-  budget: modelsData.filter((m) => m.category === 'budget').length,
-  openWeights: modelsData.filter((m) => m.openWeights).length
+  all: modelsData.value.length,
+  frontier: modelsData.value.filter((m) => m.category === 'frontier').length,
+  high: modelsData.value.filter((m) => m.category === 'high').length,
+  mid: modelsData.value.filter((m) => m.category === 'mid').length,
+  budget: modelsData.value.filter((m) => m.category === 'budget').length,
+  openWeights: modelsData.value.filter((m) => m.openWeights).length
 }))
+
+// Best value models (top 3)
+const bestValueModels = computed(() => {
+  return [...modelsData.value]
+    .filter(m => m.costPerTask > 0)
+    .sort((a, b) => {
+      const aRatio = a.intelligenceIndex / a.costPerTask
+      const bRatio = b.intelligenceIndex / b.costPerTask
+      return bRatio - aRatio
+    })
+    .slice(0, 3)
+})
+
+// Top intelligence models
+const topIntelligenceModels = computed(() => {
+  return [...modelsData.value]
+    .sort((a, b) => b.intelligenceIndex - a.intelligenceIndex)
+    .slice(0, 1)
+})
+
+// Lowest cost models
+const lowestCostModels = computed(() => {
+  return [...modelsData.value]
+    .filter(m => m.costPerTask > 0)
+    .sort((a, b) => a.costPerTask - b.costPerTask)
+    .slice(0, 1)
+})
+
+// Pareto optimal models (best in each category)
+const paretoOptimalModels = computed(() => {
+  const pareto: ModelData[] = []
+  
+  for (const model of modelsData.value) {
+    const isDominated = modelsData.value.some(other => {
+      return other.costPerTask <= model.costPerTask &&
+             other.intelligenceIndex >= model.intelligenceIndex &&
+             (other.costPerTask < model.costPerTask || other.intelligenceIndex > model.intelligenceIndex)
+    })
+    if (!isDominated) {
+      pareto.push(model)
+    }
+  }
+  
+  return pareto
+    .sort((a, b) => b.intelligenceIndex - a.intelligenceIndex)
+    .slice(0, 6)
+})
 
 // Methods
 function getCategoryColor(category: string) {
@@ -80,6 +184,17 @@ function formatCost(cost: number): string {
   if (cost < 1) return `$${cost.toFixed(2)}`
   return `$${cost.toFixed(2)}`
 }
+
+function formatDate(dateStr: string): string {
+  if (!dateStr) return 'Never'
+  const date = new Date(dateStr)
+  return date.toLocaleString()
+}
+
+// Fetch on mount
+onMounted(() => {
+  fetchModels()
+})
 
 // Head
 useHead({
@@ -111,12 +226,19 @@ useSeoMeta({
           <UButton
             variant="outline"
             size="sm"
+            :loading="isRefreshing"
+            icon="i-lucide-refresh-cw"
+            @click="refreshModels"
+          >
+            Update Data
+          </UButton>
+          <UButton
+            variant="ghost"
+            size="sm"
             :href="'https://artificialanalysis.ai/models'"
             target="_blank"
             icon="i-lucide-external-link"
-          >
-            Source: Artificial Analysis
-          </UButton>
+          />
         </template>
       </UDashboardNavbar>
     </template>
@@ -125,25 +247,64 @@ useSeoMeta({
       <div class="p-6 space-y-6">
         <!-- Header Info -->
         <div class="bg-gradient-to-r from-primary/10 to-transparent rounded-lg p-4 border border-primary/20">
-          <div class="flex items-start gap-3">
-            <div class="p-2 rounded-lg bg-primary/20">
-              <UIcon name="i-lucide-brain" class="w-5 h-5 text-primary" />
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex items-start gap-3">
+              <div class="p-2 rounded-lg bg-primary/20">
+                <UIcon name="i-lucide-brain" class="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h2 class="font-semibold text-lg">
+                  Intelligence Index vs. Cost per Task
+                </h2>
+                <p class="text-sm text-muted-foreground mt-1">
+                  Live data from Artificial Analysis. Models ranked by
+                  <span class="font-semibold text-primary">Intelligence / Cost</span> ratio
+                  (higher is better value).
+                </p>
+                <p v-if="metaData?.updatedAt" class="text-xs text-muted-foreground mt-1">
+                  Last updated: {{ formatDate(metaData.updatedAt) }} • 
+                  {{ metaData.totalModels }} models available
+                </p>
+              </div>
             </div>
-            <div>
-              <h2 class="font-semibold text-lg">
-                Intelligence Index vs. Cost per Task
-              </h2>
-              <p class="text-sm text-muted-foreground mt-1">
-                Data from Artificial Analysis Intelligence Index v4.3. Models ranked by
-                <span class="font-semibold text-primary">Intelligence / Cost</span> ratio
-                (higher is better value). Updated December 2025.
-              </p>
-            </div>
+            <UBadge v-if="metaData?.source" variant="subtle" color="primary" size="sm">
+              {{ metaData.source }}
+            </UBadge>
           </div>
         </div>
 
+        <!-- Error Message -->
+        <UAlert v-if="lastError" color="error" variant="soft" title="Error">
+          {{ lastError }}
+          <template #footer>
+            <UButton size="xs" variant="outline" color="error" @click="lastError = null">
+              Dismiss
+            </UButton>
+          </template>
+        </UAlert>
+
+        <!-- No Data Message -->
+        <UCard v-if="modelsData.length === 0 && !lastError" class="text-center py-12">
+          <div class="flex flex-col items-center gap-4">
+            <UIcon name="i-lucide-database" class="w-12 h-12 text-muted-foreground" />
+            <div>
+              <p class="font-semibold text-lg">No Data Available</p>
+              <p class="text-sm text-muted-foreground mt-1">
+                Click "Update Data" to fetch the latest models from Artificial Analysis.
+              </p>
+            </div>
+            <UButton
+              :loading="isRefreshing"
+              icon="i-lucide-refresh-cw"
+              @click="refreshModels"
+            >
+              Update Data
+            </UButton>
+          </div>
+        </UCard>
+
         <!-- Filters -->
-        <div class="flex flex-wrap items-center gap-4">
+        <div v-if="modelsData.length > 0" class="flex flex-wrap items-center gap-4">
           <!-- Category Filter -->
           <div class="flex items-center gap-2">
             <span class="text-sm text-muted-foreground">Category:</span>
@@ -170,7 +331,8 @@ useSeoMeta({
               :options="[
                 { value: 'value', label: 'Best Value (Int/Cost)' },
                 { value: 'intelligence', label: 'Intelligence Index' },
-                { value: 'cost', label: 'Lowest Cost' }
+                { value: 'cost', label: 'Lowest Cost' },
+                { value: 'speed', label: 'Fastest Speed' }
               ]"
               size="xs"
               class="w-48"
@@ -186,7 +348,7 @@ useSeoMeta({
         </div>
 
         <!-- Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div v-if="modelsData.length > 0" class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <!-- Best Value Card -->
           <UCard class="bg-gradient-to-br from-green-500/10 to-green-500/5 border-green-500/20">
             <div class="flex items-center gap-3">
@@ -237,16 +399,15 @@ useSeoMeta({
         </div>
 
         <!-- Pareto Optimal Section -->
-        <div>
+        <div v-if="paretoOptimalModels.length > 0">
           <div class="flex items-center gap-2 mb-3">
             <UIcon name="i-lucide-star" class="w-5 h-5 text-primary" />
-            <h3 class="font-semibold text-lg">Pareto-Optimal Models</h3>
+            <h3 class="font-semibold text-lg">Top Models</h3>
             <UBadge variant="subtle" color="primary" size="sm">Best in Class</UBadge>
           </div>
           <div class="flex flex-wrap gap-2">
             <UCard v-for="model in paretoOptimalModels" :key="model.id" class="min-w-[200px] flex-1">
               <div class="flex items-center gap-2 mb-2">
-                <UIcon :name="providerLogos[model.providerLogo] || 'i-lucide-circle'" class="w-4 h-4" />
                 <span class="font-medium text-sm truncate">{{ model.name }}</span>
                 <UBadge :class="getCategoryColor(model.category)" size="xs">
                   {{ model.category }}
@@ -267,7 +428,7 @@ useSeoMeta({
         </div>
 
         <!-- Full Comparison Table -->
-        <div>
+        <div v-if="sortedModels.length > 0">
           <div class="flex items-center justify-between mb-4">
             <h3 class="font-semibold text-lg">Full Model Comparison</h3>
             <span class="text-sm text-muted-foreground">
@@ -284,7 +445,7 @@ useSeoMeta({
                   <th class="text-right py-3 px-4 font-medium text-muted-foreground">Intelligence</th>
                   <th class="text-right py-3 px-4 font-medium text-muted-foreground">Cost/Task</th>
                   <th class="text-right py-3 px-4 font-medium text-muted-foreground">Value Ratio</th>
-                  <th class="text-right py-3 px-4 font-medium text-muted-foreground">Context</th>
+                  <th class="text-right py-3 px-4 font-medium text-muted-foreground">Speed</th>
                   <th class="text-center py-3 px-4 font-medium text-muted-foreground">Open</th>
                 </tr>
               </thead>
@@ -316,7 +477,7 @@ useSeoMeta({
                       <div class="w-16 h-1.5 bg-muted rounded-full overflow-hidden">
                         <div
                           class="h-full bg-primary rounded-full"
-                          :style="{ width: `${(model.intelligenceIndex / 70) * 100}%` }"
+                          :style="{ width: `${Math.min((model.intelligenceIndex / 70) * 100, 100)}%` }"
                         />
                       </div>
                     </div>
@@ -326,22 +487,25 @@ useSeoMeta({
                   </td>
                   <td class="py-4 px-4 text-right">
                     <div class="flex items-center justify-end gap-2">
-                      <URating
-                        :model-value="model.costPerTask === 0 ? 5 : getValueRating(model.intelligenceIndex / model.costPerTask).stars"
-                        :max="5"
-                        size="xs"
-                        readonly
-                      />
                       <span v-if="model.costPerTask === 0" class="text-sm font-semibold text-green-500">
                         Free
                       </span>
-                      <span v-else class="text-sm font-semibold text-primary">
-                        {{ (model.intelligenceIndex / model.costPerTask).toFixed(0) }}x
-                      </span>
+                      <template v-else>
+                        <UStepper 
+                          :model-value="getValueRating(model.intelligenceIndex / model.costPerTask).stars"
+                          :max="5"
+                          size="xs"
+                          readonly
+                        />
+                        <span class="text-sm font-semibold text-primary">
+                          {{ (model.intelligenceIndex / model.costPerTask).toFixed(0) }}x
+                        </span>
+                      </template>
                     </div>
                   </td>
                   <td class="py-4 px-4 text-right text-sm">
-                    {{ model.contextWindow }}
+                    <span v-if="model.speed">{{ model.speed }} t/s</span>
+                    <span v-else class="text-muted-foreground">—</span>
                   </td>
                   <td class="py-4 px-4 text-center">
                     <UIcon
@@ -362,26 +526,24 @@ useSeoMeta({
         </div>
 
         <!-- Methodology Note -->
-        <UCard class="bg-muted/50">
+        <UCard v-if="modelsData.length > 0" class="bg-muted/50">
           <div class="flex items-start gap-3">
             <UIcon name="i-lucide-info" class="w-5 h-5 text-muted-foreground mt-0.5" />
             <div class="text-sm text-muted-foreground">
               <p class="font-medium text-foreground mb-1">Methodology</p>
               <p>
-                Intelligence Index is a weighted composite score from Artificial Analysis Intelligence Index v4.3,
-                incorporating 10 evaluations: AA-Briefcase, GDPval-AA v2, AutomationBench-AA, Terminal-Bench 4.0, SciCode,
-                Humanity's Last Exam, GDP.pdf, CritPt, AA-Omniscience, and AA-LCR v1.1.
+                Intelligence Index is a weighted composite score from Artificial Analysis,
+                incorporating multiple benchmark evaluations.
               </p>
               <p class="mt-2">
-                Cost per task is calculated from input, cache hit, cache write, reasoning, and answer token prices,
-                divided by task count, and weighted by the Intelligence Index evaluation weights.
+                Cost per task is calculated from input and output token pricing.
               </p>
               <p class="mt-2 text-xs">
-                Note: Pricing and model availability change rapidly. This data represents a snapshot from December 2025.
-                For live data, visit
-                <a href="https://artificialanalysis.ai/models" target="_blank" class="text-primary hover:underline">
-                  artificialanalysis.ai/models
+                Data provided by
+                <a href="https://artificialanalysis.ai/" target="_blank" class="text-primary hover:underline">
+                  Artificial Analysis
                 </a>.
+                Pricing and model availability change rapidly.
               </p>
             </div>
           </div>
