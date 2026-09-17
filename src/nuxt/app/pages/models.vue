@@ -285,7 +285,7 @@ const categoryStats = computed(() => ({
 const modelsWithCostCount = computed(() => {
   return modelsData.value.filter(m => {
     const cost = parseFloat(String(m.costPerTask)) || 0
-    return cost > 0
+    return cost >= 0.001
   }).length
 })
 
@@ -293,7 +293,7 @@ const modelsWithCostCount = computed(() => {
 const modelsWithoutCostCount = computed(() => {
   return modelsData.value.filter(m => {
     const cost = parseFloat(String(m.costPerTask)) || 0
-    return cost === 0
+    return cost < 0.001
   }).length
 })
 
