@@ -11,9 +11,9 @@ export default defineEventHandler(async (event) => {
     )
     const dbCount = parseInt(dbCountResult[0]?.count || '0')
     
-    // Get count with prices
+    // Get count with prices (cost >= 0.001 means scraped)
     const withPricesResult = await query<{ count: string }>(
-      'SELECT COUNT(*) as count FROM models WHERE cost_per_task > 0'
+      'SELECT COUNT(*) as count FROM models WHERE cost_per_task >= 0.001'
     )
     const withPricesCount = parseInt(withPricesResult[0]?.count || '0')
     

@@ -173,7 +173,8 @@ export default defineEventHandler(async (event) => {
     for (const model of modelsWithoutCost) {
       const costPerTask = await scrapeModelCostPerTask(model.slug)
       
-      if (costPerTask !== null) {
+      // Only save if we got a valid price (> 0)
+      if (costPerTask !== null && costPerTask > 0) {
         await query(
           'UPDATE models SET cost_per_task = $1, updated_at = CURRENT_TIMESTAMP WHERE slug = $2',
           [costPerTask, model.slug]
@@ -181,7 +182,12 @@ export default defineEventHandler(async (event) => {
         pricesAdded++
         console.log(`[${pricesAdded}/${total}] ${model.slug}: $${costPerTask}/task ✓`)
       } else {
-        console.log(`[${pricesAdded}/${total}] ${model.slug}: FAILED`)
+        // Mark as scraped with a small price so we don't retry
+        await query(
+          'UPDATE models SET cost_per_task = 0.001, updated_at = CURRENT_TIMESTAMP WHERE slug = $1',
+          [model.slug]
+        )
+        console.log(`[${pricesAdded}/${total}] ${model.slug}: skipped (no price found)`)
       }
       
       // Rate limit
