@@ -494,27 +494,27 @@ useSeoMeta({
               <thead>
                 <tr class="border-b border-border">
                   <th class="text-left py-3 px-4 font-medium text-muted-foreground">Model</th>
-                  <th class="text-center py-3 px-4 font-medium text-muted-foreground cursor-pointer hover:bg-muted/50" @click="handleSort('value')">
+                  <th class="text-center py-3 px-4 font-medium text-muted-foreground cursor-pointer hover:bg-muted/50 select-none" @click="handleSort('value')">
                     <span class="flex items-center justify-center gap-1">
                       Value
                       <UIcon v-if="sortBy === 'value'" :name="sortDirection === 'desc' ? 'i-lucide-arrow-down' : 'i-lucide-arrow-up'" class="w-4 h-4" />
                     </span>
                   </th>
                   <th class="text-center py-3 px-4 font-medium text-muted-foreground">Category</th>
-                  <th class="text-right py-3 px-4 font-medium text-muted-foreground cursor-pointer hover:bg-muted/50" @click="handleSort('intelligence')">
+                  <th class="text-right py-3 px-4 font-medium text-muted-foreground cursor-pointer hover:bg-muted/50 select-none" @click="handleSort('intelligence')">
                     <span class="flex items-center justify-end gap-1">
                       Intelligence
                       <UIcon v-if="sortBy === 'intelligence'" :name="sortDirection === 'desc' ? 'i-lucide-arrow-down' : 'i-lucide-arrow-up'" class="w-4 h-4" />
                     </span>
                   </th>
-                  <th class="text-right py-3 px-4 font-medium text-muted-foreground cursor-pointer hover:bg-muted/50" @click="handleSort('cost')">
+                  <th class="text-right py-3 px-4 font-medium text-muted-foreground cursor-pointer hover:bg-muted/50 select-none" @click="handleSort('cost')">
                     <span class="flex items-center justify-end gap-1">
                       Cost/Task
                       <UIcon v-if="sortBy === 'cost'" :name="sortDirection === 'desc' ? 'i-lucide-arrow-down' : 'i-lucide-arrow-up'" class="w-4 h-4" />
                     </span>
                   </th>
                   <th class="text-right py-3 px-4 font-medium text-muted-foreground">Ratio</th>
-                  <th class="text-right py-3 px-4 font-medium text-muted-foreground cursor-pointer hover:bg-muted/50" @click="handleSort('speed')">
+                  <th class="text-right py-3 px-4 font-medium text-muted-foreground cursor-pointer hover:bg-muted/50 select-none" @click="handleSort('speed')">
                     <span class="flex items-center justify-end gap-1">
                       Speed
                       <UIcon v-if="sortBy === 'speed'" :name="sortDirection === 'desc' ? 'i-lucide-arrow-down' : 'i-lucide-arrow-up'" class="w-4 h-4" />
