@@ -1,0 +1,7438 @@
+{
+  "source": "artificialanalysis.ai",
+  "updatedAt": "2026-09-17T18:36:27.772Z",
+  "totalModels": 408,
+  "models": [
+    {
+      "id": "3e87c73e-a257-495e-9730-367a66229811",
+      "name": "Claude Fable 5.1 (Adaptive Reasoning, Max Effort, Default Fallback)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 53,
+      "costPerTask": 0.02,
+      "inputPricePerM": 10,
+      "outputPricePerM": 50,
+      "category": "budget",
+      "strengths": [
+        "Coding",
+        "Long horizon"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 71,
+      "latency": 151.53
+    },
+    {
+      "id": "9b166bf3-42db-4f63-8338-1c4a1244ffe8",
+      "name": "Claude Fable 5.1 (Adaptive Reasoning, Xhigh Effort, Default Fallback)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 53,
+      "costPerTask": 0.02,
+      "inputPricePerM": 10,
+      "outputPricePerM": 50,
+      "category": "budget",
+      "strengths": [
+        "Coding",
+        "Long horizon"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 65,
+      "latency": 46.08
+    },
+    {
+      "id": "2f339a97-9a0d-499a-9cb5-e0db665bfa25",
+      "name": "GPT-6 Astra (max)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 53,
+      "costPerTask": 0.02,
+      "inputPricePerM": 10,
+      "outputPricePerM": 50,
+      "category": "budget",
+      "strengths": [
+        "Coding",
+        "Long horizon"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 56,
+      "latency": 222.13
+    },
+    {
+      "id": "1f541ef3-913f-4eb2-9d07-0e93c7a9a5e3",
+      "name": "GPT-6 Astra (xhigh)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 53,
+      "costPerTask": 0.02,
+      "inputPricePerM": 10,
+      "outputPricePerM": 50,
+      "category": "budget",
+      "strengths": [
+        "Coding",
+        "Long horizon"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 57,
+      "latency": 94.83
+    },
+    {
+      "id": "9d7d72cd-d95d-45a0-b109-4ad292c9aabd",
+      "name": "Claude Fable 5.1 (Adaptive Reasoning, High Effort, Default Fallback)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 51,
+      "costPerTask": 0.02,
+      "inputPricePerM": 10,
+      "outputPricePerM": 50,
+      "category": "budget",
+      "strengths": [
+        "Coding",
+        "Long horizon"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 58,
+      "latency": 10.79
+    },
+    {
+      "id": "e05a4828-0536-4876-870d-a235023f992b",
+      "name": "GPT-6 Astra (high)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 51,
+      "costPerTask": 0.02,
+      "inputPricePerM": 10,
+      "outputPricePerM": 50,
+      "category": "budget",
+      "strengths": [
+        "Coding",
+        "Long horizon"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 54,
+      "latency": 33.44
+    },
+    {
+      "id": "b8fc61f7-5e9a-49e6-8547-6ac56db24627",
+      "name": "Claude Opus 5 (Adaptive Reasoning, Max Effort)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 51,
+      "costPerTask": 0.01,
+      "inputPricePerM": 5,
+      "outputPricePerM": 25,
+      "category": "budget",
+      "strengths": [
+        "Coding",
+        "Long horizon"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 57,
+      "latency": 39.48
+    },
+    {
+      "id": "cd55210d-358e-4df1-ba9c-9acb5f186cc9",
+      "name": "Claude Fable 5 (Adaptive Reasoning, Max Effort, Opus 4.8 Fallback)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 50,
+      "costPerTask": 0.02,
+      "inputPricePerM": 10,
+      "outputPricePerM": 50,
+      "category": "budget",
+      "strengths": [
+        "Coding",
+        "Long horizon"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 69,
+      "latency": 55.84
+    },
+    {
+      "id": "e97a4ef5-e817-480e-9595-12f81dc4974f",
+      "name": "GPT-6 Astra (medium)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 50,
+      "costPerTask": 0.02,
+      "inputPricePerM": 10,
+      "outputPricePerM": 50,
+      "category": "budget",
+      "strengths": [
+        "Coding",
+        "Long horizon"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 50,
+      "latency": 5.81
+    },
+    {
+      "id": "1305c921-7aaa-4d6d-99b5-99b3acf15e19",
+      "name": "Claude Opus 5 (Adaptive Reasoning, Xhigh Effort)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 50,
+      "costPerTask": 0.01,
+      "inputPricePerM": 5,
+      "outputPricePerM": 25,
+      "category": "budget",
+      "strengths": [
+        "Coding",
+        "Long horizon"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 57,
+      "latency": 22.08
+    },
+    {
+      "id": "3b7de71c-e034-4591-8ca6-6b6be2fa471f",
+      "name": "Claude Fable 5.1 (Adaptive Reasoning, Medium Effort, Default Fallback)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 49,
+      "costPerTask": 0.02,
+      "inputPricePerM": 10,
+      "outputPricePerM": 50,
+      "category": "budget",
+      "strengths": [
+        "Coding",
+        "Long horizon"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 56,
+      "latency": 6.69
+    },
+    {
+      "id": "712be54a-77ae-41b2-9a58-21181479d6ee",
+      "name": "Claude Opus 5 (Adaptive Reasoning, High Effort)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 48,
+      "costPerTask": 0.01,
+      "inputPricePerM": 5,
+      "outputPricePerM": 25,
+      "category": "budget",
+      "strengths": [
+        "Coding",
+        "Long horizon"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 55,
+      "latency": 12.42
+    },
+    {
+      "id": "9999672c-b687-4026-9c15-5cef02ff53bb",
+      "name": "Muse Spark 1.3 (max)",
+      "provider": "Meta",
+      "providerLogo": "meta",
+      "intelligenceIndex": 48,
+      "costPerTask": 0.002,
+      "inputPricePerM": 1.25,
+      "outputPricePerM": 4.25,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 251,
+      "latency": 24.03
+    },
+    {
+      "id": "d93edfe8-bf35-49ad-b56e-b18116142a1c",
+      "name": "GPT-5.6 Sol (max)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 47,
+      "costPerTask": 0.008,
+      "inputPricePerM": 4,
+      "outputPricePerM": 20,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 75,
+      "latency": 71.21
+    },
+    {
+      "id": "05776db7-f5c0-40f7-b824-079160f8cfa8",
+      "name": "Claude Fable 5.1 (Adaptive Reasoning, Low Effort, Default Fallback)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 47,
+      "costPerTask": 0.02,
+      "inputPricePerM": 10,
+      "outputPricePerM": 50,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 55,
+      "latency": 6.24
+    },
+    {
+      "id": "a3f8100d-e38f-408b-b0fa-0085dae18dc1",
+      "name": "GPT-6 Astra (low)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 46,
+      "costPerTask": 0.02,
+      "inputPricePerM": 10,
+      "outputPricePerM": 50,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 53,
+      "latency": 2.08
+    },
+    {
+      "id": "b112af07-3bd5-4647-b09f-b23204361bb2",
+      "name": "Qwen3.8 Max (0902)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 45,
+      "costPerTask": 0.003,
+      "inputPricePerM": 2,
+      "outputPricePerM": 6,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 40,
+      "latency": 1.77
+    },
+    {
+      "id": "d5170215-69be-4129-849b-26d8d8825bfc",
+      "name": "Muse Spark 1.3 (xhigh)",
+      "provider": "Meta",
+      "providerLogo": "meta",
+      "intelligenceIndex": 45,
+      "costPerTask": 0.002,
+      "inputPricePerM": 1.25,
+      "outputPricePerM": 4.25,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 314,
+      "latency": 25.81
+    },
+    {
+      "id": "ff51be8f-e362-4a7e-9043-687ba15de207",
+      "name": "Claude Opus 5 (Adaptive Reasoning, Medium Effort)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 45,
+      "costPerTask": 0.01,
+      "inputPricePerM": 5,
+      "outputPricePerM": 25,
+      "category": "budget",
+      "strengths": [
+        "Coding",
+        "Long horizon"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 56,
+      "latency": 8.58
+    },
+    {
+      "id": "cd684ea4-b475-4269-b001-d469d06d8a7a",
+      "name": "GLM-5.3 (max)",
+      "provider": "Z AI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 45,
+      "costPerTask": 0.002,
+      "inputPricePerM": 1.4,
+      "outputPricePerM": 4.4,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 53,
+      "latency": 2.91
+    },
+    {
+      "id": "c8adc5cf-fd5a-407b-af51-dc3bede3e49c",
+      "name": "Grok 4.6 (high)",
+      "provider": "SpaceXAI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 44,
+      "costPerTask": 0.003,
+      "inputPricePerM": 2,
+      "outputPricePerM": 6,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 59,
+      "latency": 35.06
+    },
+    {
+      "id": "d6f43d0a-e8c4-447c-9ff7-5cf0a9d59aa3",
+      "name": "Grok 4.6 (xhigh)",
+      "provider": "SpaceXAI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 44,
+      "costPerTask": 0.003,
+      "inputPricePerM": 2,
+      "outputPricePerM": 6,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 61,
+      "latency": 34.82
+    },
+    {
+      "id": "d998db47-9b67-4727-a2bb-2e1261020ac0",
+      "name": "GPT-5.6 Sol (xhigh)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 44,
+      "costPerTask": 0.008,
+      "inputPricePerM": 4,
+      "outputPricePerM": 20,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 69,
+      "latency": 28.71
+    },
+    {
+      "id": "f7d2fc3e-1f7b-405f-818c-07952a4af78f",
+      "name": "Kimi K3 (max)",
+      "provider": "Kimi",
+      "providerLogo": "generic",
+      "intelligenceIndex": 44,
+      "costPerTask": 0.006,
+      "inputPricePerM": 3,
+      "outputPricePerM": 15,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 37,
+      "latency": 4.41
+    },
+    {
+      "id": "26614164-6840-4e17-a65a-2deb2fe7e87b",
+      "name": "Grok 4.6 (medium)",
+      "provider": "SpaceXAI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 43,
+      "costPerTask": 0.003,
+      "inputPricePerM": 2,
+      "outputPricePerM": 6,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 60,
+      "latency": 24.96
+    },
+    {
+      "id": "8afc250d-b538-45a2-812a-4605f4ffd87e",
+      "name": "GPT-5.6 Sol (high)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 43,
+      "costPerTask": 0.008,
+      "inputPricePerM": 4,
+      "outputPricePerM": 20,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 69,
+      "latency": 12.23
+    },
+    {
+      "id": "bcf8db0a-3bb6-4d82-9516-0f57370c85a6",
+      "name": "GPT-5.6 Terra (max)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 42,
+      "costPerTask": 0.005,
+      "inputPricePerM": 2,
+      "outputPricePerM": 12,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 102,
+      "latency": 174.14
+    },
+    {
+      "id": "992b7b84-5069-4c6a-9295-834252553d50",
+      "name": "Claude Opus 4.8 (Adaptive Reasoning, Max Effort)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 42,
+      "costPerTask": 0.01,
+      "inputPricePerM": 5,
+      "outputPricePerM": 25,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "19496b81-9f41-4214-a77a-1df803b3c5ae",
+      "name": "GLM 5.3 Flash",
+      "provider": "Z AI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 42,
+      "costPerTask": 0,
+      "inputPricePerM": 0.15,
+      "outputPricePerM": 0.5,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 109,
+      "latency": 2.08
+    },
+    {
+      "id": "8a999846-4c1d-4ce7-a8b7-1310a7166fd7",
+      "name": "Gemini 3.8 Flash (high)",
+      "provider": "Google",
+      "providerLogo": "google",
+      "intelligenceIndex": 41,
+      "costPerTask": 0.002,
+      "inputPricePerM": 0.75,
+      "outputPricePerM": 3.75,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 306,
+      "latency": 12.17
+    },
+    {
+      "id": "e9a09db3-8fd6-41dd-ba2f-20e0a2bff7f2",
+      "name": "Claude Opus 4.7 (Adaptive Reasoning, Max Effort)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 41,
+      "costPerTask": 0.01,
+      "inputPricePerM": 5,
+      "outputPricePerM": 25,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "5e5b4ce7-bc54-47b2-b911-21b9cad8394c",
+      "name": "Qwen3.8 Max",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 40,
+      "costPerTask": 0.003,
+      "inputPricePerM": 2,
+      "outputPricePerM": 6,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 41,
+      "latency": 1.79
+    },
+    {
+      "id": "8df710d3-9dae-4498-9b4e-9818238e6f31",
+      "name": "Qwen3.8 2.4T A95B",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 40,
+      "costPerTask": 0.003,
+      "inputPricePerM": 2,
+      "outputPricePerM": 6,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 39,
+      "latency": 1.9
+    },
+    {
+      "id": "744fa3c1-42a7-4995-b138-fb6be11f463c",
+      "name": "Gemini 3.8 Flash (medium)",
+      "provider": "Google",
+      "providerLogo": "google",
+      "intelligenceIndex": 40,
+      "costPerTask": 0.002,
+      "inputPricePerM": 0.75,
+      "outputPricePerM": 3.75,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "9ac3908c-9eb2-44db-8c01-3ec7da6fc2ae",
+      "name": "Qwen3.8-Flash-Next",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 40,
+      "costPerTask": 0,
+      "inputPricePerM": 0.15,
+      "outputPricePerM": 0.47,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 58,
+      "latency": 1.37
+    },
+    {
+      "id": "04ee6719-0327-463b-a1a1-70a6a78254f9",
+      "name": "Muse Spark 1.2 (xhigh)",
+      "provider": "Meta",
+      "providerLogo": "meta",
+      "intelligenceIndex": 40,
+      "costPerTask": 0.002,
+      "inputPricePerM": 1.25,
+      "outputPricePerM": 4.25,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 290,
+      "latency": 11.13
+    },
+    {
+      "id": "20928ba9-3a3f-415f-9519-b84ff64ecf34",
+      "name": "Claude Opus 5 (Adaptive Reasoning, Low Effort)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 40,
+      "costPerTask": 0.01,
+      "inputPricePerM": 5,
+      "outputPricePerM": 25,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 56,
+      "latency": 2.24
+    },
+    {
+      "id": "eb0d4272-7204-42b9-b875-8866fed58548",
+      "name": "Gemini 3.7 Flash (medium)",
+      "provider": "Google",
+      "providerLogo": "google",
+      "intelligenceIndex": 40,
+      "costPerTask": 0.002,
+      "inputPricePerM": 0.75,
+      "outputPricePerM": 3.75,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 333,
+      "latency": 4.35
+    },
+    {
+      "id": "dbe7c625-3100-4463-b479-a228c41f75dd",
+      "name": "DeepSeek V4.1 Flash (Reasoning, Max Effort)",
+      "provider": "DeepSeek",
+      "providerLogo": "deepseek",
+      "intelligenceIndex": 40,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.3,
+      "outputPricePerM": 1.2,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 223,
+      "latency": 0.93
+    },
+    {
+      "id": "6f174934-5b7d-4333-86cb-f5ebf4a862e3",
+      "name": "GPT-5.6 Sol (medium)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 40,
+      "costPerTask": 0.008,
+      "inputPricePerM": 4,
+      "outputPricePerM": 20,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 70,
+      "latency": 7.32
+    },
+    {
+      "id": "b2331108-72ed-415a-82d1-188633875bbc",
+      "name": "Gemini 3.7 Flash (high)",
+      "provider": "Google",
+      "providerLogo": "google",
+      "intelligenceIndex": 39,
+      "costPerTask": 0.002,
+      "inputPricePerM": 0.75,
+      "outputPricePerM": 3.75,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 329,
+      "latency": 8.58
+    },
+    {
+      "id": "794f69b5-cede-482b-b1cc-d769478497cd",
+      "name": "Grok 4.5 (high)",
+      "provider": "SpaceXAI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 39,
+      "costPerTask": 0.003,
+      "inputPricePerM": 2,
+      "outputPricePerM": 6,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 64,
+      "latency": 12.32
+    },
+    {
+      "id": "a89c4b28-2d8c-456e-88ea-255fb51fd2b6",
+      "name": "GPT-5.4 (xhigh)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 39,
+      "costPerTask": 0.006,
+      "inputPricePerM": 2.5,
+      "outputPricePerM": 15,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "1f054429-397e-4fdb-9e71-67bc92c1735e",
+      "name": "GPT-5.5 (xhigh)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 39,
+      "costPerTask": 0.011,
+      "inputPricePerM": 5,
+      "outputPricePerM": 30,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "23c86e4a-c769-43c0-a056-79e3cd15834f",
+      "name": "Claude Sonnet 5 (Adaptive Reasoning, Max Effort)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 38,
+      "costPerTask": 0.004,
+      "inputPricePerM": 2,
+      "outputPricePerM": 10,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 78,
+      "latency": 119.66
+    },
+    {
+      "id": "9e30696f-16fa-4b4f-ba53-161895a85fed",
+      "name": "GPT-5.6 Terra (xhigh)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 38,
+      "costPerTask": 0.005,
+      "inputPricePerM": 2,
+      "outputPricePerM": 12,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 85,
+      "latency": 10.4
+    },
+    {
+      "id": "426d24c8-49ae-482a-b4a8-20f1c53f21c1",
+      "name": "GPT-5.6 Luna (max)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 38,
+      "costPerTask": 0,
+      "inputPricePerM": 0.2,
+      "outputPricePerM": 1.2,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 124,
+      "latency": 135.51
+    },
+    {
+      "id": "b13c1257-d746-4027-8fc8-4892dc14701c",
+      "name": "GPT-5.5 (high)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 37,
+      "costPerTask": 0.011,
+      "inputPricePerM": 5,
+      "outputPricePerM": 30,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "ddfdaf64-3f8e-40a6-a492-608ee83a1351",
+      "name": "Gemini 3.7 Flash (low)",
+      "provider": "Google",
+      "providerLogo": "google",
+      "intelligenceIndex": 37,
+      "costPerTask": 0.002,
+      "inputPricePerM": 0.75,
+      "outputPricePerM": 3.75,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 325,
+      "latency": 0.77
+    },
+    {
+      "id": "83173329-c09a-41f1-a028-a282a5f908d7",
+      "name": "DeepSeek V4 Pro 0813 (Reasoning, Max Effort)",
+      "provider": "DeepSeek",
+      "providerLogo": "deepseek",
+      "intelligenceIndex": 36,
+      "costPerTask": 0.002,
+      "inputPricePerM": 1.32,
+      "outputPricePerM": 3.96,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 80,
+      "latency": 1.16
+    },
+    {
+      "id": "6ace0ead-584f-4ce6-a9b7-6c3f9cc91c3c",
+      "name": "Agnes 3.0 Flash",
+      "provider": "Sapiens AI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 36,
+      "costPerTask": 0,
+      "inputPricePerM": 0.05,
+      "outputPricePerM": 0.15,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "c07e65e6-32fc-451e-938d-7477a1c3ffcc",
+      "name": "Grok 4.6 (low)",
+      "provider": "SpaceXAI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 35,
+      "costPerTask": 0.003,
+      "inputPricePerM": 2,
+      "outputPricePerM": 6,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 53,
+      "latency": 3.37
+    },
+    {
+      "id": "f3a0e101-086f-44b3-a1b2-d23498f9716b",
+      "name": "Agnes 2.5 Pro Beta",
+      "provider": "Sapiens AI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 35,
+      "costPerTask": 0,
+      "inputPricePerM": 0.1,
+      "outputPricePerM": 0.3,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "7707a46f-895f-4247-b7a8-ddab87c9a11d",
+      "name": "DeepSeek V4 Flash Vision (Reasoning, Max Effort)",
+      "provider": "DeepSeek",
+      "providerLogo": "deepseek",
+      "intelligenceIndex": 35,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.44,
+      "outputPricePerM": 1.32,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 224,
+      "latency": 0.95
+    },
+    {
+      "id": "87110ff0-1f79-41b4-9976-eda250597317",
+      "name": "GPT-5.6 Luna (xhigh)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 35,
+      "costPerTask": 0,
+      "inputPricePerM": 0.2,
+      "outputPricePerM": 1.2,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 120,
+      "latency": 43.95
+    },
+    {
+      "id": "99f376bf-cbcb-4124-bf3e-6b0a4e6e9bea",
+      "name": "Claude Sonnet 5 (Adaptive Reasoning, Xhigh Effort)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 35,
+      "costPerTask": 0.004,
+      "inputPricePerM": 2,
+      "outputPricePerM": 10,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 77,
+      "latency": 24.26
+    },
+    {
+      "id": "fe4c0848-e284-4e52-a79d-cdc28392f1a9",
+      "name": "DeepSeek V4 Flash 0731 (Reasoning, Max Effort)",
+      "provider": "DeepSeek",
+      "providerLogo": "deepseek",
+      "intelligenceIndex": 35,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.44,
+      "outputPricePerM": 1.32,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 232,
+      "latency": 0.88
+    },
+    {
+      "id": "81972fba-1219-477e-bbfb-18c656a63ff7",
+      "name": "GPT-5.6 Terra (high)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 35,
+      "costPerTask": 0.005,
+      "inputPricePerM": 2,
+      "outputPricePerM": 12,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 90,
+      "latency": 3.63
+    },
+    {
+      "id": "78332c88-fe60-42c8-af9d-3617e44cf1f5",
+      "name": "Gemini 3.6 Flash (high)",
+      "provider": "Google",
+      "providerLogo": "google",
+      "intelligenceIndex": 34,
+      "costPerTask": 0.002,
+      "inputPricePerM": 0.75,
+      "outputPricePerM": 3.75,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 190,
+      "latency": 16.73
+    },
+    {
+      "id": "d61493e2-43ff-460c-9054-eaf6ba317360",
+      "name": "Muse Spark 1.1 (xhigh)",
+      "provider": "Meta",
+      "providerLogo": "meta",
+      "intelligenceIndex": 34,
+      "costPerTask": 0.002,
+      "inputPricePerM": 1.25,
+      "outputPricePerM": 4.25,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "6b79f899-e3c0-45f6-923c-243faccdb2fc",
+      "name": "GPT-5.5 (medium)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 34,
+      "costPerTask": 0.011,
+      "inputPricePerM": 5,
+      "outputPricePerM": 30,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "f7a4ea75-e548-4069-80d4-9be8bc7c009b",
+      "name": "GLM-5.2 (max)",
+      "provider": "Z AI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 34,
+      "costPerTask": 0.002,
+      "inputPricePerM": 1.4,
+      "outputPricePerM": 4.4,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 73,
+      "latency": 8.53
+    },
+    {
+      "id": "b01dee41-c62b-48ed-8d16-984adc405e5c",
+      "name": "Qwen3.8 27B (xhigh)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 34,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.5,
+      "outputPricePerM": 3,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 42,
+      "latency": 1.23
+    },
+    {
+      "id": "0904b596-8932-43bd-9b21-324f128e1723",
+      "name": "GPT-5.6 Sol (low)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 34,
+      "costPerTask": 0.008,
+      "inputPricePerM": 4,
+      "outputPricePerM": 20,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 64,
+      "latency": 2.59
+    },
+    {
+      "id": "f6db039b-0f3b-485c-9d7f-982988e44f26",
+      "name": "Gemini 3.8 Flash (low)",
+      "provider": "Google",
+      "providerLogo": "google",
+      "intelligenceIndex": 34,
+      "costPerTask": 0.002,
+      "inputPricePerM": 0.75,
+      "outputPricePerM": 3.75,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "5016ea75-7b0e-4737-a7e6-1062c6d90fd4",
+      "name": "Gemini 3.5 Flash (medium)",
+      "provider": "Google",
+      "providerLogo": "google",
+      "intelligenceIndex": 34,
+      "costPerTask": 0.003,
+      "inputPricePerM": 1.5,
+      "outputPricePerM": 9,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 251,
+      "latency": 13.45
+    },
+    {
+      "id": "0097ebf5-124f-42f6-9463-33b00e711f03",
+      "name": "Gemini 3.5 Flash (high)",
+      "provider": "Google",
+      "providerLogo": "google",
+      "intelligenceIndex": 33,
+      "costPerTask": 0.003,
+      "inputPricePerM": 1.5,
+      "outputPricePerM": 9,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "59b5b14b-5365-4ee7-824a-18a8e6309644",
+      "name": "GPT-5.3 Codex (xhigh)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 33,
+      "costPerTask": 0.005,
+      "inputPricePerM": 1.75,
+      "outputPricePerM": 14,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 143,
+      "latency": 40.52
+    },
+    {
+      "id": "aa55297e-8fbf-4372-b4ab-9b068dc6396c",
+      "name": "GPT-5.6 Luna (high)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 32,
+      "costPerTask": 0,
+      "inputPricePerM": 0.2,
+      "outputPricePerM": 1.2,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 117,
+      "latency": 9.8
+    },
+    {
+      "id": "ba0224cf-0351-4f56-8508-b3f1a740ae4a",
+      "name": "Claude Sonnet 5 (Adaptive Reasoning, High Effort)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 32,
+      "costPerTask": 0.004,
+      "inputPricePerM": 2,
+      "outputPricePerM": 10,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 72,
+      "latency": 5.44
+    },
+    {
+      "id": "53c98840-47af-49aa-94e6-469fb17e9a1b",
+      "name": "Claude Opus 4.6 (Adaptive Reasoning, Max Effort)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 32,
+      "costPerTask": 0.01,
+      "inputPricePerM": 5,
+      "outputPricePerM": 25,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "2fa8e143-77a8-4d05-bfa8-d3b54634c00f",
+      "name": "Claude Opus 4.7 (Non-reasoning, High Effort)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 31,
+      "costPerTask": 0.01,
+      "inputPricePerM": 5,
+      "outputPricePerM": 25,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "bf220674-68bd-43cc-a1b8-ce5ed4d2f18d",
+      "name": "DeepSeek V4 Pro 0424 (Reasoning, Max Effort)",
+      "provider": "DeepSeek",
+      "providerLogo": "deepseek",
+      "intelligenceIndex": 31,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.435,
+      "outputPricePerM": 0.87,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 91,
+      "latency": 1.09
+    },
+    {
+      "id": "c77cfe51-f4a0-4692-9dee-5061ef667f23",
+      "name": "GPT-5.5 (low)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 31,
+      "costPerTask": 0.011,
+      "inputPricePerM": 5,
+      "outputPricePerM": 30,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "512d17ef-13d2-4f65-bf9b-154b0dec7e8d",
+      "name": "Kimi K3 (low)",
+      "provider": "Kimi",
+      "providerLogo": "generic",
+      "intelligenceIndex": 31,
+      "costPerTask": 0.006,
+      "inputPricePerM": 3,
+      "outputPricePerM": 15,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 37,
+      "latency": 3.53
+    },
+    {
+      "id": "df8d14e0-3997-4e4d-b4ad-9c047acc9c69",
+      "name": "Claude Sonnet 4.6 (Adaptive Reasoning, Max Effort)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 31,
+      "costPerTask": 0.006,
+      "inputPricePerM": 3,
+      "outputPricePerM": 15,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "498862c3-f9ac-49d2-852f-16a02bb0c38f",
+      "name": "GPT-5.2 (xhigh)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 30,
+      "costPerTask": 0.005,
+      "inputPricePerM": 1.75,
+      "outputPricePerM": 14,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "26e0f83a-ca98-4f34-94ac-7c5e251ee410",
+      "name": "GPT-5.6 Terra (medium)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 30,
+      "costPerTask": 0.005,
+      "inputPricePerM": 2,
+      "outputPricePerM": 12,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 83,
+      "latency": 2.06
+    },
+    {
+      "id": "08242385-ee91-4de6-be7f-271a6d9780ce",
+      "name": "Apodex 1.1",
+      "provider": "Apodex",
+      "providerLogo": "generic",
+      "intelligenceIndex": 30,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.3,
+      "outputPricePerM": 3,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "bbd93ebe-80da-4594-bb19-61e69d0331df",
+      "name": "Gemini 3.1 Pro Preview",
+      "provider": "Google",
+      "providerLogo": "google",
+      "intelligenceIndex": 30,
+      "costPerTask": 0.005,
+      "inputPricePerM": 2,
+      "outputPricePerM": 12,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 132,
+      "latency": 21.96
+    },
+    {
+      "id": "5da3c0e2-65d2-4bff-a410-cb2132ddafb6",
+      "name": "DeepSeek V4 Pro 0424 (Reasoning, High Effort)",
+      "provider": "DeepSeek",
+      "providerLogo": "deepseek",
+      "intelligenceIndex": 30,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.435,
+      "outputPricePerM": 0.87,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 77,
+      "latency": 1.06
+    },
+    {
+      "id": "69534bed-2ffd-4235-832b-e20a810333ab",
+      "name": "Qwen3.7 Max",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 30,
+      "costPerTask": 0.004,
+      "inputPricePerM": 2.5,
+      "outputPricePerM": 7.5,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "277f939a-985b-4b37-859d-b3eabc7c0b26",
+      "name": "MiniMax-M3",
+      "provider": "MiniMax",
+      "providerLogo": "generic",
+      "intelligenceIndex": 30,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.3,
+      "outputPricePerM": 1.2,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 121,
+      "latency": 1
+    },
+    {
+      "id": "2660d74f-ce79-48a8-8b53-6e668e2071a2",
+      "name": "Claude Opus 4.5 (Reasoning)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 29,
+      "costPerTask": 0.01,
+      "inputPricePerM": 5,
+      "outputPricePerM": 25,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "d58b9ada-fd9d-4fff-a086-242034657963",
+      "name": "Claude Sonnet 5 (Non-reasoning, High Effort)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 29,
+      "costPerTask": 0.004,
+      "inputPricePerM": 2,
+      "outputPricePerM": 10,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 67,
+      "latency": 0.77
+    },
+    {
+      "id": "019e86f6-e66b-42d8-8a50-235a06b53003",
+      "name": "GPT-5.2 Codex (xhigh)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 29,
+      "costPerTask": 0.005,
+      "inputPricePerM": 1.75,
+      "outputPricePerM": 14,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "effcd151-7c31-4437-af3d-e88daeae9385",
+      "name": "Claude Sonnet 5 (Adaptive Reasoning, Medium Effort)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 28,
+      "costPerTask": 0.004,
+      "inputPricePerM": 2,
+      "outputPricePerM": 10,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 70,
+      "latency": 1.68
+    },
+    {
+      "id": "6000692c-f9a6-47f8-a5c0-e0874ac488bb",
+      "name": "Qwen3.6 Max Preview",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 28,
+      "costPerTask": 0.003,
+      "inputPricePerM": 1.3,
+      "outputPricePerM": 7.8,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "7c4d1e30-6ecb-46cf-880c-41446d7b51f1",
+      "name": "GPT-5.6 Sol (Non-reasoning)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 28,
+      "costPerTask": 0.008,
+      "inputPricePerM": 4,
+      "outputPricePerM": 20,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 63,
+      "latency": 1.2
+    },
+    {
+      "id": "1b64aa81-c223-4b8f-909b-82185a234765",
+      "name": "Solar Pro 4",
+      "provider": "Upstage",
+      "providerLogo": "generic",
+      "intelligenceIndex": 28,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.3,
+      "outputPricePerM": 1.2,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 61,
+      "latency": 1.21
+    },
+    {
+      "id": "d1122eff-ee85-4fdc-8a9f-23bee6590667",
+      "name": "Gemini 3 Pro Preview (high)",
+      "provider": "Google",
+      "providerLogo": "google",
+      "intelligenceIndex": 28,
+      "costPerTask": 0.005,
+      "inputPricePerM": 2,
+      "outputPricePerM": 12,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "cc4a20cd-09fe-4962-a430-119c815e85fa",
+      "name": "GPT-5.6 Terra (low)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 28,
+      "costPerTask": 0.005,
+      "inputPricePerM": 2,
+      "outputPricePerM": 12,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 82,
+      "latency": 1.91
+    },
+    {
+      "id": "40663ad2-b218-471e-bdd4-a1e0c2360e2b",
+      "name": "GLM-5 (Reasoning)",
+      "provider": "Z AI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 28,
+      "costPerTask": 0.002,
+      "inputPricePerM": 1,
+      "outputPricePerM": 3.2,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "6657d7de-a2a9-40bc-a32f-86e80ad63698",
+      "name": "Qwen3.8 27B (medium)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 28,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.5,
+      "outputPricePerM": 3,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 52,
+      "latency": 1.22
+    },
+    {
+      "id": "8decf027-5114-4721-9ee1-81c0552980a0",
+      "name": "Agnes 2.5 Pro Alpha",
+      "provider": "Sapiens AI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 28,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.45,
+      "outputPricePerM": 0.9,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 186,
+      "latency": 2.8
+    },
+    {
+      "id": "538e945c-6c27-4fd3-995d-ded80a36cd10",
+      "name": "GPT-5.4 (low)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 28,
+      "costPerTask": 0.006,
+      "inputPricePerM": 2.5,
+      "outputPricePerM": 15,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "0de67206-4d36-4d10-b8f6-cf37fa747a03",
+      "name": "Kimi K2.6",
+      "provider": "Kimi",
+      "providerLogo": "generic",
+      "intelligenceIndex": 28,
+      "costPerTask": 0.002,
+      "inputPricePerM": 0.95,
+      "outputPricePerM": 4,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "0b7efa66-2115-49e0-a1b7-a2ba225fe9f6",
+      "name": "Grok Build 0.1 0616",
+      "provider": "SpaceXAI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 27,
+      "costPerTask": 0.001,
+      "inputPricePerM": 1,
+      "outputPricePerM": 2,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "f9739750-6d42-450f-ba1e-2f76c869b4fe",
+      "name": "Quasar 438B (max, based on GLM-5.2)",
+      "provider": "Multiverse Computing",
+      "providerLogo": "generic",
+      "intelligenceIndex": 27,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.6,
+      "outputPricePerM": 1.8,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 163,
+      "latency": 0.67
+    },
+    {
+      "id": "f371ad68-6947-4767-a78f-1f6c81f96b93",
+      "name": "Qwen3.6 Plus",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 27,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.5,
+      "outputPricePerM": 3,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "c4169d75-9d24-4794-a9c3-69e1fe364de5",
+      "name": "GPT-5.5 Instant (June 2026)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 27,
+      "costPerTask": 0.011,
+      "inputPricePerM": 5,
+      "outputPricePerM": 30,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 146,
+      "latency": 0.9
+    },
+    {
+      "id": "84e3f11e-d659-4941-8988-1dbfabbaf538",
+      "name": "GPT-5.2 (medium)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 27,
+      "costPerTask": 0.005,
+      "inputPricePerM": 1.75,
+      "outputPricePerM": 14,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "7e30585f-fad7-40df-a8cb-03c1d96df38a",
+      "name": "Qwen3.8 27B (low)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 27,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.5,
+      "outputPricePerM": 3,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 47,
+      "latency": 1.24
+    },
+    {
+      "id": "5aa1c578-af76-4b91-8699-cdd43582b3af",
+      "name": "GLM-5.1 (Reasoning)",
+      "provider": "Z AI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 26,
+      "costPerTask": 0.002,
+      "inputPricePerM": 1.2,
+      "outputPricePerM": 4.4,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "00f1248e-78e3-4230-8dc8-5e13ba8645e2",
+      "name": "MiMo-V2.5-Pro",
+      "provider": "Xiaomi",
+      "providerLogo": "generic",
+      "intelligenceIndex": 26,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.435,
+      "outputPricePerM": 0.87,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 53,
+      "latency": 4.7
+    },
+    {
+      "id": "4386585e-71b4-4a0c-8a63-afb333419cd6",
+      "name": "Claude Opus 4.6 (Non-reasoning, High Effort)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 26,
+      "costPerTask": 0.01,
+      "inputPricePerM": 5,
+      "outputPricePerM": 25,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "7c73c3be-7f51-4d14-bec8-d5789488df25",
+      "name": "Gemini 3 Flash Preview (Reasoning)",
+      "provider": "Google",
+      "providerLogo": "google",
+      "intelligenceIndex": 26,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.5,
+      "outputPricePerM": 3,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "8d0cb231-7303-452c-9923-a9620b948475",
+      "name": "Kimi K2.7 Code",
+      "provider": "Kimi",
+      "providerLogo": "generic",
+      "intelligenceIndex": 26,
+      "costPerTask": 0.002,
+      "inputPricePerM": 0.95,
+      "outputPricePerM": 4,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 57,
+      "latency": 1.16
+    },
+    {
+      "id": "7261504e-503c-4a66-a9d3-a3272cdf9ad6",
+      "name": "Inkling Small",
+      "provider": "Thinking Machines",
+      "providerLogo": "generic",
+      "intelligenceIndex": 26,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.3,
+      "outputPricePerM": 1.2,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 178,
+      "latency": 1.76
+    },
+    {
+      "id": "a87fce42-eea3-4e45-a96d-fe057814f371",
+      "name": "Qwen3.7 Plus",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 26,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.4,
+      "outputPricePerM": 1.6,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 67,
+      "latency": 1.6
+    },
+    {
+      "id": "b23e6c69-96e5-44c9-8f58-4b42e0c399d5",
+      "name": "Hy3",
+      "provider": "Tencent",
+      "providerLogo": "generic",
+      "intelligenceIndex": 26,
+      "costPerTask": 0,
+      "inputPricePerM": 0.14,
+      "outputPricePerM": 0.58,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 87,
+      "latency": 1.66
+    },
+    {
+      "id": "c72cb85a-18a4-4235-b455-77dff2f16c50",
+      "name": "Grok 4.20 0309 v2 (Reasoning)",
+      "provider": "SpaceXAI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 26,
+      "costPerTask": 0.002,
+      "inputPricePerM": 1.25,
+      "outputPricePerM": 2.5,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "0de09623-2b1a-4c8d-86ef-7f5245d4e24b",
+      "name": "Inkling (xhigh)",
+      "provider": "Thinking Machines",
+      "providerLogo": "generic",
+      "intelligenceIndex": 26,
+      "costPerTask": 0.002,
+      "inputPricePerM": 1,
+      "outputPricePerM": 4.05,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 69,
+      "latency": 2.6
+    },
+    {
+      "id": "58b812bf-8498-46db-b834-f43ccc614b61",
+      "name": "GPT-5.6 Luna (medium)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 26,
+      "costPerTask": 0,
+      "inputPricePerM": 0.2,
+      "outputPricePerM": 1.2,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 112,
+      "latency": 2.59
+    },
+    {
+      "id": "948892b5-db03-4118-a4a8-ccd51ed871ea",
+      "name": "Grok 4.3 (high)",
+      "provider": "SpaceXAI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 25,
+      "costPerTask": 0.002,
+      "inputPricePerM": 1.25,
+      "outputPricePerM": 2.5,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "04787c2b-0751-4269-8029-075b727d7aed",
+      "name": "Grok 4.20 0309 (Reasoning)",
+      "provider": "SpaceXAI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 25,
+      "costPerTask": 0.003,
+      "inputPricePerM": 2,
+      "outputPricePerM": 6,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "5d11e7a1-4f70-4e5a-9364-e193761d6757",
+      "name": "GPT-5 Codex (high)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 25,
+      "costPerTask": 0.003,
+      "inputPricePerM": 1.25,
+      "outputPricePerM": 10,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "89a2c945-1fab-4ee4-9f45-83a9f46cb221",
+      "name": "DeepSeek V4 Flash 0420 (Reasoning, High Effort)",
+      "provider": "DeepSeek",
+      "providerLogo": "deepseek",
+      "intelligenceIndex": 25,
+      "costPerTask": 0,
+      "inputPricePerM": 0.13,
+      "outputPricePerM": 0.28,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "5e8b0d98-a3b4-42b5-93d8-ecb748788754",
+      "name": "Grok 4.3 (medium)",
+      "provider": "SpaceXAI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 25,
+      "costPerTask": 0.002,
+      "inputPricePerM": 1.25,
+      "outputPricePerM": 2.5,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 133,
+      "latency": 23.44
+    },
+    {
+      "id": "142b93bf-09c4-42dc-9c3a-50b1a222cbd4",
+      "name": "Claude Sonnet 5 (Adaptive Reasoning, Low Effort)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 25,
+      "costPerTask": 0.004,
+      "inputPricePerM": 2,
+      "outputPricePerM": 10,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 69,
+      "latency": 1.29
+    },
+    {
+      "id": "4dc12a38-b18f-4c43-8e1b-678f8434b5b1",
+      "name": "GPT-5.1 (high)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 25,
+      "costPerTask": 0.003,
+      "inputPricePerM": 1.25,
+      "outputPricePerM": 10,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "2e40e695-3cec-43da-83f9-615af30b8e91",
+      "name": "Claude Sonnet 4.6 (Non-reasoning, High Effort)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 25,
+      "costPerTask": 0.006,
+      "inputPricePerM": 3,
+      "outputPricePerM": 15,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "d8ddb241-b3e4-4c25-a6a3-72eb1b30c541",
+      "name": "DeepSeek V4 Flash 0420 (Reasoning, Max Effort)",
+      "provider": "DeepSeek",
+      "providerLogo": "deepseek",
+      "intelligenceIndex": 25,
+      "costPerTask": 0,
+      "inputPricePerM": 0.13,
+      "outputPricePerM": 0.28,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "ba242e40-83b7-4cd3-a0e0-b56237984914",
+      "name": "GPT-5.4 mini (xhigh)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 25,
+      "costPerTask": 0.002,
+      "inputPricePerM": 0.75,
+      "outputPricePerM": 4.5,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "fe2c2289-d261-4433-8681-46448372c1f6",
+      "name": "Grok 4.3 (low)",
+      "provider": "SpaceXAI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 24,
+      "costPerTask": 0.002,
+      "inputPricePerM": 1.25,
+      "outputPricePerM": 2.5,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 118,
+      "latency": 6.95
+    },
+    {
+      "id": "92f245a7-43b4-4ffd-8bfb-866746bf824d",
+      "name": "GLM-5.1 (Non-reasoning)",
+      "provider": "Z AI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 24,
+      "costPerTask": 0.002,
+      "inputPricePerM": 1.38,
+      "outputPricePerM": 4.4,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "033ade17-d9ec-44e0-b792-b5f1fcd5ab4c",
+      "name": "Gemini 3.5 Flash (minimal)",
+      "provider": "Google",
+      "providerLogo": "google",
+      "intelligenceIndex": 24,
+      "costPerTask": 0.003,
+      "inputPricePerM": 1.5,
+      "outputPricePerM": 9,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 258,
+      "latency": 0.72
+    },
+    {
+      "id": "04d023f3-025c-4d78-9571-53edda3eaf2a",
+      "name": "GPT-5.1 Codex (high)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 24,
+      "costPerTask": 0.003,
+      "inputPricePerM": 1.25,
+      "outputPricePerM": 10,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "4077490a-bbfb-404e-979a-a97a20e3b5de",
+      "name": "Claude Opus 4.5 (Non-reasoning)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 24,
+      "costPerTask": 0.01,
+      "inputPricePerM": 5,
+      "outputPricePerM": 25,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "0fc6308e-fbd2-42d3-a216-06da3c43e34e",
+      "name": "Kimi K2.6 (Non-reasoning)",
+      "provider": "Kimi",
+      "providerLogo": "generic",
+      "intelligenceIndex": 24,
+      "costPerTask": 0.002,
+      "inputPricePerM": 0.95,
+      "outputPricePerM": 4,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "a550ffca-f89e-4381-ade6-a85dc6a1fb4c",
+      "name": "Kimi K2.5 (Reasoning)",
+      "provider": "Kimi",
+      "providerLogo": "generic",
+      "intelligenceIndex": 24,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.6,
+      "outputPricePerM": 2.75,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "5b52def2-ac9b-4465-ad80-91ea8079e253",
+      "name": "Nemotron 3 Ultra 550B A55B (Reasoning)",
+      "provider": "NVIDIA",
+      "providerLogo": "generic",
+      "intelligenceIndex": 23,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.6,
+      "outputPricePerM": 2.4,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 164,
+      "latency": 1.22
+    },
+    {
+      "id": "f2e21112-192e-4aed-ae82-68ca3b38e667",
+      "name": "Claude Sonnet 4.6 (Non-reasoning, Low Effort)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 23,
+      "costPerTask": 0.006,
+      "inputPricePerM": 3,
+      "outputPricePerM": 15,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 58,
+      "latency": 1.07
+    },
+    {
+      "id": "4bbceacb-cf47-464b-b60f-e1d1fe016d67",
+      "name": "MiniMax-M2.7",
+      "provider": "MiniMax",
+      "providerLogo": "generic",
+      "intelligenceIndex": 23,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.3,
+      "outputPricePerM": 1.2,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "6f1a7562-6e96-46ac-af4f-6ba5a7a3da96",
+      "name": "GPT-5.5 (Non-reasoning)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 23,
+      "costPerTask": 0.011,
+      "inputPricePerM": 5,
+      "outputPricePerM": 30,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "48e50f00-1fd1-4acc-b337-61078aa341e6",
+      "name": "GPT-5 (high)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 23,
+      "costPerTask": 0.003,
+      "inputPricePerM": 1.25,
+      "outputPricePerM": 10,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "169e47f5-3d4d-4ad4-8f8b-ab46f0c73f67",
+      "name": "Qwen3.5 27B (Reasoning)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 23,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.3,
+      "outputPricePerM": 2.4,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "5e965af0-ca5c-4f47-9ba9-06000508b84a",
+      "name": "GPT-5 (medium)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 23,
+      "costPerTask": 0.003,
+      "inputPricePerM": 1.25,
+      "outputPricePerM": 10,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "ccbfa8c3-a762-480b-aade-34fb9697f98c",
+      "name": "Claude 4.1 Opus (Reasoning)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 23,
+      "costPerTask": 0.03,
+      "inputPricePerM": 15,
+      "outputPricePerM": 75,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "12adec16-19fe-4d92-aeff-5ef3eb7e780a",
+      "name": "MiniMax-M2.5",
+      "provider": "MiniMax",
+      "providerLogo": "generic",
+      "intelligenceIndex": 23,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.3,
+      "outputPricePerM": 1.2,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "8ca48626-ff5e-48b3-8401-38081376d706",
+      "name": "Hy3-preview (Reasoning)",
+      "provider": "Tencent",
+      "providerLogo": "generic",
+      "intelligenceIndex": 23,
+      "costPerTask": 0,
+      "inputPricePerM": 0.063,
+      "outputPricePerM": 0.21,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "e34ffffb-d8e1-4f5c-a2c7-3ca19c235eeb",
+      "name": "GPT-5.5 Instant (May 2026)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 23,
+      "costPerTask": 0.011,
+      "inputPricePerM": 5,
+      "outputPricePerM": 30,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "093b9df2-ebee-4309-943f-5a7e88360adf",
+      "name": "Gemini 3.5 Flash-Lite",
+      "provider": "Google",
+      "providerLogo": "google",
+      "intelligenceIndex": 23,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.3,
+      "outputPricePerM": 2.5,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 360,
+      "latency": 7.24
+    },
+    {
+      "id": "5ea94a4a-55ac-4ea1-8898-2b3971e94af6",
+      "name": "Grok 4",
+      "provider": "SpaceXAI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 23,
+      "costPerTask": 0.006,
+      "inputPricePerM": 3,
+      "outputPricePerM": 15,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "e8aa417f-18fe-46b0-ba62-ef99785a9585",
+      "name": "GLM-5.2 (Non-reasoning)",
+      "provider": "Z AI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 22,
+      "costPerTask": 0.002,
+      "inputPricePerM": 1.4,
+      "outputPricePerM": 4.4,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 125,
+      "latency": 1.06
+    },
+    {
+      "id": "353c92f3-2148-4c2d-9231-aa7e1322a1fd",
+      "name": "Qwen3.8 27B (Non-reasoning)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 22,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.5,
+      "outputPricePerM": 3,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 48,
+      "latency": 1.31
+    },
+    {
+      "id": "b2f3191f-77d6-4155-8be6-330f0baa1ae5",
+      "name": "Gemini 3 Pro Preview (low)",
+      "provider": "Google",
+      "providerLogo": "google",
+      "intelligenceIndex": 22,
+      "costPerTask": 0.005,
+      "inputPricePerM": 2,
+      "outputPricePerM": 12,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "22d09131-343b-4adf-8760-533e20a2155f",
+      "name": "MiMo-V2.5",
+      "provider": "Xiaomi",
+      "providerLogo": "generic",
+      "intelligenceIndex": 22,
+      "costPerTask": 0,
+      "inputPricePerM": 0.14,
+      "outputPricePerM": 0.28,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 47,
+      "latency": 6.68
+    },
+    {
+      "id": "6fc35842-0165-44cf-8570-c484a92b3d8c",
+      "name": "GLM-4.7 (Reasoning)",
+      "provider": "Z AI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 22,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.6,
+      "outputPricePerM": 2.2,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "bddebfd3-0a8d-47f5-b722-bc4c2ca5a5dc",
+      "name": "Kimi K2 Thinking",
+      "provider": "Kimi",
+      "providerLogo": "generic",
+      "intelligenceIndex": 22,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.6,
+      "outputPricePerM": 2.5,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "8c29d66d-bf98-4ea3-8572-5409353ecc66",
+      "name": "Qwen3.6 27B (Reasoning)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 22,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.6,
+      "outputPricePerM": 3.6,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 60,
+      "latency": 1.38
+    },
+    {
+      "id": "ca04852c-eaae-4881-a208-f9b2ca3b7cd6",
+      "name": "o3-pro",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 22,
+      "costPerTask": 0.035,
+      "inputPricePerM": 20,
+      "outputPricePerM": 80,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "f164b41f-44c5-4675-bca3-fea1db4bd9ae",
+      "name": "GLM-5 (Non-reasoning)",
+      "provider": "Z AI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 22,
+      "costPerTask": 0.002,
+      "inputPricePerM": 1,
+      "outputPricePerM": 3.2,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "fc4223e8-4586-4ca1-97ca-bb55ff586947",
+      "name": "KAT Coder Pro V2",
+      "provider": "KwaiKAT",
+      "providerLogo": "generic",
+      "intelligenceIndex": 22,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.3,
+      "outputPricePerM": 1.2,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "050c61cd-cddc-463a-a30a-a82aaa37be59",
+      "name": "GPT-5.6 Luna (low)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 22,
+      "costPerTask": 0,
+      "inputPricePerM": 0.2,
+      "outputPricePerM": 1.2,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 114,
+      "latency": 1.81
+    },
+    {
+      "id": "d621247c-d47e-458c-82cb-a166bc3b37e5",
+      "name": "DeepSeek V3.2 (Reasoning)",
+      "provider": "DeepSeek",
+      "providerLogo": "deepseek",
+      "intelligenceIndex": 22,
+      "costPerTask": 0,
+      "inputPricePerM": 0.28,
+      "outputPricePerM": 0.42,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "30ef2a79-e800-4165-9f13-2a338f120db7",
+      "name": "Qwen3.5 397B A17B (Non-reasoning)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 21,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.6,
+      "outputPricePerM": 3.6,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 84,
+      "latency": 1.67
+    },
+    {
+      "id": "d4fc3f33-f2b0-4da1-88ee-f1f82bd4de31",
+      "name": "GPT-5.4 nano (xhigh)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 21,
+      "costPerTask": 0,
+      "inputPricePerM": 0.2,
+      "outputPricePerM": 1.25,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "9b97a35e-6ac7-44d9-91c6-422fa678963e",
+      "name": "GPT-5.6 Terra (Non-reasoning)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 21,
+      "costPerTask": 0.005,
+      "inputPricePerM": 2,
+      "outputPricePerM": 12,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 84,
+      "latency": 0.89
+    },
+    {
+      "id": "90e078f2-051b-4c63-8919-76618971cb3f",
+      "name": "Claude 4.5 Sonnet (Reasoning)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 21,
+      "costPerTask": 0.006,
+      "inputPricePerM": 3,
+      "outputPricePerM": 15,
+      "category": "budget",
+      "strengths": [
+        "Coding",
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "272ff333-442f-4169-a804-ac9177bc99d7",
+      "name": "MiniMax-M2.1",
+      "provider": "MiniMax",
+      "providerLogo": "generic",
+      "intelligenceIndex": 21,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.3,
+      "outputPricePerM": 1.2,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "6e2a2572-ed8d-4616-8d7d-68d125fc8ee7",
+      "name": "DeepSeek V4 Pro 0424 (Non-reasoning)",
+      "provider": "DeepSeek",
+      "providerLogo": "deepseek",
+      "intelligenceIndex": 21,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.435,
+      "outputPricePerM": 0.87,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 89,
+      "latency": 1.11
+    },
+    {
+      "id": "be185709-ddb4-4268-9597-856464359b25",
+      "name": "MiMo-V2-Flash (Reasoning)",
+      "provider": "Xiaomi",
+      "providerLogo": "generic",
+      "intelligenceIndex": 21,
+      "costPerTask": 0,
+      "inputPricePerM": 0.1,
+      "outputPricePerM": 0.3,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "7f3c9423-3ee3-4369-a6d9-3f2a40aff00e",
+      "name": "GPT-5 (low)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 21,
+      "costPerTask": 0.003,
+      "inputPricePerM": 1.25,
+      "outputPricePerM": 10,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "8a4a5ead-7789-4389-8400-30e9d20370b7",
+      "name": "Claude 4 Opus (Reasoning)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 21,
+      "costPerTask": 0.03,
+      "inputPricePerM": 15,
+      "outputPricePerM": 75,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "e33dc369-ae81-40e0-8c4e-28b002d02197",
+      "name": "Ling 3.0 Flash",
+      "provider": "InclusionAI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 21,
+      "costPerTask": 0,
+      "inputPricePerM": 0.075,
+      "outputPricePerM": 0.22,
+      "category": "budget",
+      "strengths": [
+        "Coding"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 342,
+      "latency": 1.65
+    },
+    {
+      "id": "c3274a19-6d3c-4d01-ab9b-5055a0a40429",
+      "name": "GPT-5 mini (medium)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 21,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.25,
+      "outputPricePerM": 2,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "0179b427-93dc-415c-bb4c-f980ddf8d088",
+      "name": "Qwen3.5 Omni Plus",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 20,
+      "costPerTask": 0.002,
+      "inputPricePerM": 0.4,
+      "outputPricePerM": 4.8,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 95,
+      "latency": 1.19
+    },
+    {
+      "id": "fd4454ff-e703-46c0-a7f5-fa69af09486d",
+      "name": "GPT-5.1 Codex mini (high)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 20,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.25,
+      "outputPricePerM": 2,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "16c5b637-8bce-4252-81f2-1b87a36a4e4c",
+      "name": "o3",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 20,
+      "costPerTask": 0.004,
+      "inputPricePerM": 2,
+      "outputPricePerM": 8,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 123,
+      "latency": 6.85
+    },
+    {
+      "id": "8869f28a-a6ff-487f-8d32-93fe335fdda5",
+      "name": "GPT-5.4 nano (medium)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 20,
+      "costPerTask": 0,
+      "inputPricePerM": 0.2,
+      "outputPricePerM": 1.25,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "3b156101-b0d7-4438-b350-2d1f1168f40a",
+      "name": "Qwen3.6 27B (Non-reasoning)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 20,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.6,
+      "outputPricePerM": 3.6,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 58,
+      "latency": 1.38
+    },
+    {
+      "id": "392063ba-c3b5-47e8-ba67-a7b0b34f6824",
+      "name": "GPT-5.4 mini (medium)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 20,
+      "costPerTask": 0.002,
+      "inputPricePerM": 0.75,
+      "outputPricePerM": 4.5,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "5c3bdc0d-abab-4526-8079-34de4089bb4a",
+      "name": "LongCat 2.0",
+      "provider": "LongCat",
+      "providerLogo": "generic",
+      "intelligenceIndex": 20,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.3,
+      "outputPricePerM": 1.2,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "6c7b322e-2f35-48ff-9171-fb621a726fc0",
+      "name": "Step 3.7 Flash",
+      "provider": "StepFun",
+      "providerLogo": "generic",
+      "intelligenceIndex": 20,
+      "costPerTask": 0,
+      "inputPricePerM": 0.2,
+      "outputPricePerM": 1.15,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 138,
+      "latency": 1.43
+    },
+    {
+      "id": "ba04694d-326a-4a6a-8f1b-46316f872a7f",
+      "name": "Kimi K2.5 (Non-reasoning)",
+      "provider": "Kimi",
+      "providerLogo": "generic",
+      "intelligenceIndex": 19,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.6,
+      "outputPricePerM": 3,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "509e94e3-f1cb-43fb-98ff-e0e9872cfd1f",
+      "name": "Qwen3.5 27B (Non-reasoning)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 19,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.3,
+      "outputPricePerM": 2.4,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "91cb6144-4937-4e4e-aeda-b4341d355c10",
+      "name": "Claude 4.5 Sonnet (Non-reasoning)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 19,
+      "costPerTask": 0.006,
+      "inputPricePerM": 3,
+      "outputPricePerM": 15,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "46d8315e-1630-463f-ab62-84185fa0faab",
+      "name": "Qwen3.5 35B A3B (Reasoning)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 19,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.25,
+      "outputPricePerM": 2,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "0e66bae9-41f1-42fc-9276-ce8cb6f72919",
+      "name": "Qwen3.5 397B A17B (Reasoning)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 19,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.6,
+      "outputPricePerM": 3.6,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 82,
+      "latency": 1.64
+    },
+    {
+      "id": "ad173c8d-f14f-4230-90e9-60979b7720e7",
+      "name": "DeepSeek V4 Flash 0420 (Non-reasoning)",
+      "provider": "DeepSeek",
+      "providerLogo": "deepseek",
+      "intelligenceIndex": 19,
+      "costPerTask": 0,
+      "inputPricePerM": 0.094,
+      "outputPricePerM": 0.195,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "8665ca00-c687-44c7-875c-22618cb31c4f",
+      "name": "Qwen3.6 35B A3B (Reasoning)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 19,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.375,
+      "outputPricePerM": 2.25,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 119,
+      "latency": 1.12
+    },
+    {
+      "id": "f74ea286-cd29-4eb4-af14-1389b19c21e5",
+      "name": "MiniMax-M2",
+      "provider": "MiniMax",
+      "providerLogo": "generic",
+      "intelligenceIndex": 19,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.3,
+      "outputPricePerM": 1.2,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "f2f60e3a-e5f5-4471-acd2-9f2f29c76007",
+      "name": "Claude 4.1 Opus (Non-reasoning)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 19,
+      "costPerTask": 0.03,
+      "inputPricePerM": 15,
+      "outputPricePerM": 75,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "6a5d56e1-bb68-4205-8d9b-26b97888bc84",
+      "name": "GLM-4.6 (Reasoning)",
+      "provider": "Z AI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 19,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.55,
+      "outputPricePerM": 2.2,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "4764d31d-f4af-4297-8bd1-e993f26bcb64",
+      "name": "MiMo-V2.5-Pro (Non-reasoning)",
+      "provider": "Xiaomi",
+      "providerLogo": "generic",
+      "intelligenceIndex": 18,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.435,
+      "outputPricePerM": 0.87,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 48,
+      "latency": 4.23
+    },
+    {
+      "id": "493f6a1e-7717-4e98-9d6f-548b92c4702d",
+      "name": "GPT-5.4 (Non-reasoning)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 18,
+      "costPerTask": 0.006,
+      "inputPricePerM": 2.5,
+      "outputPricePerM": 15,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "583f98fb-c4b8-4df3-8d40-60ac0ed69882",
+      "name": "Muse Glimmer (high)",
+      "provider": "Meta",
+      "providerLogo": "meta",
+      "intelligenceIndex": 18,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.35,
+      "outputPricePerM": 1.5,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 104,
+      "latency": 0.34
+    },
+    {
+      "id": "573bbd93-114c-4b71-9ede-a73a7d4bdf84",
+      "name": "Grok 4 Fast (Reasoning)",
+      "provider": "SpaceXAI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 18,
+      "costPerTask": 0,
+      "inputPricePerM": 0.2,
+      "outputPricePerM": 0.5,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "783a0ea2-1eef-422a-8c3d-f6d40d943f54",
+      "name": "Gemini 3 Flash Preview (Non-reasoning)",
+      "provider": "Google",
+      "providerLogo": "google",
+      "intelligenceIndex": 18,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.5,
+      "outputPricePerM": 3,
+      "category": "budget",
+      "strengths": [
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "021b1b31-d2fc-4653-ab74-c10bd2f41c8e",
+      "name": "Qwen3.5 122B A10B (Non-reasoning)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 18,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.4,
+      "outputPricePerM": 3.2,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 145,
+      "latency": 1.04
+    },
+    {
+      "id": "a6340098-d7ae-462d-b372-0a0a67fc44b4",
+      "name": "Claude 4.5 Haiku (Reasoning)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 18,
+      "costPerTask": 0.002,
+      "inputPricePerM": 1,
+      "outputPricePerM": 5,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 115,
+      "latency": 11.46
+    },
+    {
+      "id": "29855680-7469-43eb-8b88-cd3fb1d99da3",
+      "name": "GPT-5 mini (high)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 17,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.25,
+      "outputPricePerM": 2,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "81b6ddfc-111e-4422-bd44-42ee6165b699",
+      "name": "GLM-4.7 (Non-reasoning)",
+      "provider": "Z AI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 17,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.6,
+      "outputPricePerM": 2.2,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "eb4ba465-3fcd-4065-9fe2-e8225e7b2c6c",
+      "name": "Ring-2.6-1T",
+      "provider": "InclusionAI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 17,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.3,
+      "outputPricePerM": 2.5,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 131,
+      "latency": 2.06
+    },
+    {
+      "id": "b58b8272-cd3f-44b9-9b68-612f40779ce2",
+      "name": "Hy3-preview (Non-reasoning)",
+      "provider": "Tencent",
+      "providerLogo": "generic",
+      "intelligenceIndex": 17,
+      "costPerTask": 0,
+      "inputPricePerM": 0.063,
+      "outputPricePerM": 0.21,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "2e46d2fd-eb2b-42b9-9fe4-be50630fe870",
+      "name": "Ling-2.6-1T",
+      "provider": "InclusionAI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 17,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.3,
+      "outputPricePerM": 2.5,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "6dd8ba55-5680-44a9-b309-82928165d5f0",
+      "name": "GPT-5.2 (Non-reasoning)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 17,
+      "costPerTask": 0.005,
+      "inputPricePerM": 1.75,
+      "outputPricePerM": 14,
+      "category": "budget",
+      "strengths": [
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "1aa3694e-b656-4dbe-8f84-0c65d8897abb",
+      "name": "Step 3.5 Flash 2603",
+      "provider": "StepFun",
+      "providerLogo": "generic",
+      "intelligenceIndex": 17,
+      "costPerTask": 0,
+      "inputPricePerM": 0.1,
+      "outputPricePerM": 0.3,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "6e1b44ff-c227-496b-aef4-19b70cd18c76",
+      "name": "Gemma 4 26B A4B (Reasoning)",
+      "provider": "Google",
+      "providerLogo": "google",
+      "intelligenceIndex": 17,
+      "costPerTask": 0,
+      "inputPricePerM": 0.115,
+      "outputPricePerM": 0.37,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "27202e5f-c82d-4710-92e9-4317877d4883",
+      "name": "Gemini 2.5 Pro",
+      "provider": "Google",
+      "providerLogo": "google",
+      "intelligenceIndex": 17,
+      "costPerTask": 0.003,
+      "inputPricePerM": 1.25,
+      "outputPricePerM": 10,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "84b49308-6b93-47aa-a4f6-776ee1a1e8cd",
+      "name": "o4-mini (high)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 17,
+      "costPerTask": 0.002,
+      "inputPricePerM": 1.1,
+      "outputPricePerM": 4.4,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "c8158c23-6fff-4c31-911d-954c32d80c28",
+      "name": "Step 3.5 Flash",
+      "provider": "StepFun",
+      "providerLogo": "generic",
+      "intelligenceIndex": 17,
+      "costPerTask": 0,
+      "inputPricePerM": 0.1,
+      "outputPricePerM": 0.3,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "504412c2-2ada-499b-aebf-7e0a35c9d286",
+      "name": "Claude 4 Opus (Non-reasoning)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 17,
+      "costPerTask": 0.03,
+      "inputPricePerM": 15,
+      "outputPricePerM": 75,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "af134350-8ba3-4629-b56b-00bd6dcf60c4",
+      "name": "DeepSeek V3.2 Exp (Reasoning)",
+      "provider": "DeepSeek",
+      "providerLogo": "deepseek",
+      "intelligenceIndex": 17,
+      "costPerTask": 0,
+      "inputPricePerM": 0.28,
+      "outputPricePerM": 0.42,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "cbac8c35-e069-4c73-823e-0953e6ed0e85",
+      "name": "Qwen3 Max Thinking (Preview)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 16,
+      "costPerTask": 0.002,
+      "inputPricePerM": 1.2,
+      "outputPricePerM": 6,
+      "category": "budget",
+      "strengths": [
+        "Math"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "2236df45-0699-40d1-b5cc-69ee345d2257",
+      "name": "Qwen3.5 122B A10B (Reasoning)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 16,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.4,
+      "outputPricePerM": 3.2,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 134,
+      "latency": 1
+    },
+    {
+      "id": "dc64f856-3ded-497d-9527-d41d31267ed5",
+      "name": "GPT-5.6 Luna (Non-reasoning)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 16,
+      "costPerTask": 0,
+      "inputPricePerM": 0.2,
+      "outputPricePerM": 1.2,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 120,
+      "latency": 0.81
+    },
+    {
+      "id": "6d9a176d-feb8-4dac-8872-afe32b31897f",
+      "name": "DeepSeek V3.2 (Non-reasoning)",
+      "provider": "DeepSeek",
+      "providerLogo": "deepseek",
+      "intelligenceIndex": 16,
+      "costPerTask": 0,
+      "inputPricePerM": 0.28,
+      "outputPricePerM": 0.42,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "598190f8-dc9c-4fea-a7ea-4b81c402ab18",
+      "name": "Gemini 3.1 Flash-Lite",
+      "provider": "Google",
+      "providerLogo": "google",
+      "intelligenceIndex": 16,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.25,
+      "outputPricePerM": 1.5,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "7ae943a9-9310-4472-a834-c61f0ab68485",
+      "name": "Qwen3 Max",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 16,
+      "costPerTask": 0.002,
+      "inputPricePerM": 1.2,
+      "outputPricePerM": 6,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "c2b1e769-7aee-4669-8076-73918bdebf6c",
+      "name": "Claude 4.5 Haiku (Non-reasoning)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 15,
+      "costPerTask": 0.002,
+      "inputPricePerM": 1,
+      "outputPricePerM": 5,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 101,
+      "latency": 0.51
+    },
+    {
+      "id": "0a7dda4d-cc9c-4a90-abc1-abb5772c901b",
+      "name": "DeepSeek V3.1 Terminus (Reasoning)",
+      "provider": "DeepSeek",
+      "providerLogo": "deepseek",
+      "intelligenceIndex": 15,
+      "costPerTask": 0.002,
+      "inputPricePerM": 1.635,
+      "outputPricePerM": 2.75,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "66445f84-b2e3-4202-afdc-92ba0f0e5f36",
+      "name": "Kimi K2 0905",
+      "provider": "Kimi",
+      "providerLogo": "generic",
+      "intelligenceIndex": 15,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.6,
+      "outputPricePerM": 2.5,
+      "category": "budget",
+      "strengths": [
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "d925845d-39ad-4de3-8495-f176b79828c0",
+      "name": "Claude 3.7 Sonnet (Non-reasoning)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 15,
+      "costPerTask": 0.006,
+      "inputPricePerM": 3,
+      "outputPricePerM": 15,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "66938aab-78fa-49d7-8461-b48b6833e837",
+      "name": "Qwen3.6 35B A3B (Non-reasoning)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 15,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.375,
+      "outputPricePerM": 2.25,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 127,
+      "latency": 1.28
+    },
+    {
+      "id": "5ad2f60f-ee05-49fd-85a0-cef69aa7cb7b",
+      "name": "o1",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 15,
+      "costPerTask": 0.026,
+      "inputPricePerM": 15,
+      "outputPricePerM": 60,
+      "category": "budget",
+      "strengths": [
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "eebfef01-709e-4ffe-b72f-0db75ef2434b",
+      "name": "Qwen3.5 35B A3B (Non-reasoning)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 15,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.25,
+      "outputPricePerM": 2,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 164,
+      "latency": 1.14
+    },
+    {
+      "id": "946e7aab-db1c-4c3f-b0b3-7720d0cff187",
+      "name": "GLM-4.6 (Non-reasoning)",
+      "provider": "Z AI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 15,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.575,
+      "outputPricePerM": 2.2,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "dd059b25-d82a-4ead-82a4-4adceaaec48b",
+      "name": "Mistral Medium 3.5",
+      "provider": "Mistral",
+      "providerLogo": "generic",
+      "intelligenceIndex": 15,
+      "costPerTask": 0.003,
+      "inputPricePerM": 1.5,
+      "outputPricePerM": 7.5,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 156,
+      "latency": 0.71
+    },
+    {
+      "id": "2c4394a2-b443-470a-908e-5c4a271b780c",
+      "name": "GLM-4.7-Flash (Reasoning)",
+      "provider": "Z AI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 15,
+      "costPerTask": 0,
+      "inputPricePerM": 0.07,
+      "outputPricePerM": 0.4,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "1071dea1-43e7-4fe9-b936-3034bb622b2e",
+      "name": "Granite 4.2 30B",
+      "provider": "IBM",
+      "providerLogo": "ibm",
+      "intelligenceIndex": 15,
+      "costPerTask": 0,
+      "inputPricePerM": 0.16,
+      "outputPricePerM": 0.65,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 76,
+      "latency": 0.35
+    },
+    {
+      "id": "ff9bc5e5-a02f-4270-983e-4b3f834f3363",
+      "name": "Grok 3 mini Reasoning (high)",
+      "provider": "SpaceXAI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 15,
+      "costPerTask": 0,
+      "inputPricePerM": 0.3,
+      "outputPricePerM": 0.5,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "523125f4-a1da-4990-9abd-dd08a069100e",
+      "name": "Grok 4.20 0309 (Non-reasoning)",
+      "provider": "SpaceXAI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 15,
+      "costPerTask": 0.003,
+      "inputPricePerM": 2,
+      "outputPricePerM": 6,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "90c2a9cf-ad7e-4332-9be2-2fd1309833e2",
+      "name": "Grok 4.3 (Non-reasoning)",
+      "provider": "SpaceXAI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 15,
+      "costPerTask": 0.002,
+      "inputPricePerM": 1.25,
+      "outputPricePerM": 2.5,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 122,
+      "latency": 0.6
+    },
+    {
+      "id": "073b5329-c4b3-4f1f-8f97-4753aadf4398",
+      "name": "Gemini 2.5 Pro Preview (May' 25)",
+      "provider": "Google",
+      "providerLogo": "google",
+      "intelligenceIndex": 15,
+      "costPerTask": 0.003,
+      "inputPricePerM": 1.25,
+      "outputPricePerM": 10,
+      "category": "budget",
+      "strengths": [
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "64312f37-3701-4243-a4c9-7c07a58cd6b9",
+      "name": "Grok 4.20 0309 v2 (Non-reasoning)",
+      "provider": "SpaceXAI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 14,
+      "costPerTask": 0.002,
+      "inputPricePerM": 1.25,
+      "outputPricePerM": 2.5,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "feb02d3b-ff8d-4ed4-b165-13f8d4a7192c",
+      "name": "Gemma 4 12B (Reasoning)",
+      "provider": "Google",
+      "providerLogo": "google",
+      "intelligenceIndex": 14,
+      "costPerTask": 0,
+      "inputPricePerM": 0.1,
+      "outputPricePerM": 0.3,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 130,
+      "latency": 1.4
+    },
+    {
+      "id": "0d94dc87-12c8-4d4a-8d99-804ce3f17bc2",
+      "name": "Nova 2.0 Pro Preview (medium)",
+      "provider": "Amazon",
+      "providerLogo": "generic",
+      "intelligenceIndex": 14,
+      "costPerTask": 0.003,
+      "inputPricePerM": 1.25,
+      "outputPricePerM": 10,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 129,
+      "latency": 16.06
+    },
+    {
+      "id": "dfb9292d-bc7c-4425-a260-4256217e709f",
+      "name": "DeepSeek V3.1 Terminus (Non-reasoning)",
+      "provider": "DeepSeek",
+      "providerLogo": "deepseek",
+      "intelligenceIndex": 14,
+      "costPerTask": 0,
+      "inputPricePerM": 0.27,
+      "outputPricePerM": 1,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "d0aa27aa-4705-4184-9a1d-483b78c9331c",
+      "name": "Gemma 4 31B (Non-reasoning)",
+      "provider": "Google",
+      "providerLogo": "google",
+      "intelligenceIndex": 14,
+      "costPerTask": 0,
+      "inputPricePerM": 0.14,
+      "outputPricePerM": 0.4,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 46,
+      "latency": 0.99
+    },
+    {
+      "id": "07c35e00-2b12-44c8-91cc-408629cd569e",
+      "name": "DeepSeek V3.2 Exp (Non-reasoning)",
+      "provider": "DeepSeek",
+      "providerLogo": "deepseek",
+      "intelligenceIndex": 14,
+      "costPerTask": 0,
+      "inputPricePerM": 0.28,
+      "outputPricePerM": 0.42,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "fb65266f-5a7d-403c-85d5-ccdf0d1ca838",
+      "name": "DeepSeek V3.1 (Non-reasoning)",
+      "provider": "DeepSeek",
+      "providerLogo": "deepseek",
+      "intelligenceIndex": 14,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.57,
+      "outputPricePerM": 1.68,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "2d28a13a-096e-475a-beb8-26bbd1c7d51c",
+      "name": "Qwen3.5 9B (Reasoning)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 14,
+      "costPerTask": 0,
+      "inputPricePerM": 0.135,
+      "outputPricePerM": 0.2,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 72,
+      "latency": 0.72
+    },
+    {
+      "id": "018c60e8-e908-431a-ba57-c840b1df3987",
+      "name": "Nova 2.0 Omni (medium)",
+      "provider": "Amazon",
+      "providerLogo": "generic",
+      "intelligenceIndex": 14,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.3,
+      "outputPricePerM": 2.5,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "29976311-665a-4b2f-ac72-557c33e0758e",
+      "name": "Nemotron 3.5 Lightning",
+      "provider": "NVIDIA",
+      "providerLogo": "generic",
+      "intelligenceIndex": 14,
+      "costPerTask": 0,
+      "inputPricePerM": 0.06,
+      "outputPricePerM": 0.2,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 271,
+      "latency": 0.46
+    },
+    {
+      "id": "63872e9c-3377-4a6b-b477-7bba244c38e9",
+      "name": "Nemotron 3 Super 120B A12B (Reasoning)",
+      "provider": "NVIDIA",
+      "providerLogo": "generic",
+      "intelligenceIndex": 14,
+      "costPerTask": 0,
+      "inputPricePerM": 0.193,
+      "outputPricePerM": 0.65,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 134,
+      "latency": 2.1
+    },
+    {
+      "id": "198b717f-42c8-4ab7-a699-ae9373d669d3",
+      "name": "DeepSeek V3.1 (Reasoning)",
+      "provider": "DeepSeek",
+      "providerLogo": "deepseek",
+      "intelligenceIndex": 14,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.59,
+      "outputPricePerM": 1.69,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "a803d3d0-d22e-49a0-ac2c-b9c6f1141065",
+      "name": "Qwen3 VL 235B A22B (Reasoning)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 13,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.4,
+      "outputPricePerM": 4,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "61bd9367-e520-4ec8-989e-5fbf50e61610",
+      "name": "Nova 2.0 Lite (high)",
+      "provider": "Amazon",
+      "providerLogo": "generic",
+      "intelligenceIndex": 13,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.3,
+      "outputPricePerM": 2.5,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 186,
+      "latency": 15.25
+    },
+    {
+      "id": "d0b3d47e-aec6-425e-9de7-168dcc6d1e28",
+      "name": "GPT-5.1 (Non-reasoning)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 13,
+      "costPerTask": 0.003,
+      "inputPricePerM": 1.25,
+      "outputPricePerM": 10,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "20da3b31-fc0a-4359-abec-d59367bf1d9f",
+      "name": "Qwen3.5 9B (Non-reasoning)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 13,
+      "costPerTask": 0,
+      "inputPricePerM": 0.17,
+      "outputPricePerM": 0.25,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 86,
+      "latency": 0.42
+    },
+    {
+      "id": "70882ec6-914c-41f0-9754-5e8f75005f77",
+      "name": "Gemma 4 26B A4B (Non-reasoning)",
+      "provider": "Google",
+      "providerLogo": "google",
+      "intelligenceIndex": 13,
+      "costPerTask": 0,
+      "inputPricePerM": 0.13,
+      "outputPricePerM": 0.4,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 78,
+      "latency": 0.76
+    },
+    {
+      "id": "651ef7ae-9a8f-477e-9c8e-460aa156ba02",
+      "name": "Qwen3.5 4B (Reasoning)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 13,
+      "costPerTask": 0,
+      "inputPricePerM": 0.03,
+      "outputPricePerM": 0.15,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 23,
+      "latency": 0.5
+    },
+    {
+      "id": "a83f84b3-473a-4276-9ae1-8909da723159",
+      "name": "DeepSeek R1 0528 (May '25)",
+      "provider": "DeepSeek",
+      "providerLogo": "deepseek",
+      "intelligenceIndex": 13,
+      "costPerTask": 0.002,
+      "inputPricePerM": 1.35,
+      "outputPricePerM": 3,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "219ed587-60c5-4a48-9517-8480e08d0ca1",
+      "name": "Gemini 2.5 Flash (Reasoning)",
+      "provider": "Google",
+      "providerLogo": "google",
+      "intelligenceIndex": 13,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.3,
+      "outputPricePerM": 2.5,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "e18e5e6a-5a31-4c0b-b80b-ac401392f446",
+      "name": "GPT-5 nano (high)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 13,
+      "costPerTask": 0,
+      "inputPricePerM": 0.05,
+      "outputPricePerM": 0.4,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "f4274721-ef28-4121-aa88-8e97267a5a82",
+      "name": "Nova 2.0 Pro Preview (low)",
+      "provider": "Amazon",
+      "providerLogo": "generic",
+      "intelligenceIndex": 13,
+      "costPerTask": 0.003,
+      "inputPricePerM": 1.25,
+      "outputPricePerM": 10,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 138,
+      "latency": 2.93
+    },
+    {
+      "id": "441734a9-8901-4850-9bae-b474c370291f",
+      "name": "Kimi K2",
+      "provider": "Kimi",
+      "providerLogo": "generic",
+      "intelligenceIndex": 13,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.57,
+      "outputPricePerM": 2.3,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "f6ccbe1d-bd7e-484b-9795-18cc9f91552d",
+      "name": "Qwen3 235B A22B 2507 (Reasoning)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 13,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.23,
+      "outputPricePerM": 2.3,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "3b608b70-6434-4baa-99ad-45d499703c67",
+      "name": "GPT-4.1",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 13,
+      "costPerTask": 0.004,
+      "inputPricePerM": 2,
+      "outputPricePerM": 8,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "5b2beb12-81a9-47a1-8a2a-d0a727185b50",
+      "name": "Qwen3 Max (Preview)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 13,
+      "costPerTask": 0.002,
+      "inputPricePerM": 1.2,
+      "outputPricePerM": 6,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "fbdf8da1-b341-448c-b3cb-8aff1d8f70b9",
+      "name": "Nova 2.0 Lite (medium)",
+      "provider": "Amazon",
+      "providerLogo": "generic",
+      "intelligenceIndex": 13,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.3,
+      "outputPricePerM": 2.5,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 182,
+      "latency": 13.21
+    },
+    {
+      "id": "8eb02396-f231-4189-ae15-05f7facebd9b",
+      "name": "GPT-5 nano (medium)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 13,
+      "costPerTask": 0,
+      "inputPricePerM": 0.05,
+      "outputPricePerM": 0.4,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "6f3534b1-1168-472e-b3e3-23ab521504f5",
+      "name": "Qwen3.5 Omni Flash",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 13,
+      "costPerTask": 0,
+      "inputPricePerM": 0.1,
+      "outputPricePerM": 0.8,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 264,
+      "latency": 0.92
+    },
+    {
+      "id": "2dad8957-4c16-4e74-bf2d-8b21514e0ae9",
+      "name": "o3-mini",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 13,
+      "costPerTask": 0.002,
+      "inputPricePerM": 1.1,
+      "outputPricePerM": 4.4,
+      "category": "budget",
+      "strengths": [
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "e8d4100e-165b-4c5d-ac11-ac553590a334",
+      "name": "o1-pro",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 12,
+      "costPerTask": 0.263,
+      "inputPricePerM": 150,
+      "outputPricePerM": 600,
+      "category": "high",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "f0083258-8646-45b8-8082-7aaf6c2ea82a",
+      "name": "gpt-oss-120b (high)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 12,
+      "costPerTask": 0,
+      "inputPricePerM": 0.15,
+      "outputPricePerM": 0.595,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 166,
+      "latency": 0.55
+    },
+    {
+      "id": "2443ac9e-a3db-423d-accb-8963f6fb0a53",
+      "name": "Grok 3",
+      "provider": "SpaceXAI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 12,
+      "costPerTask": 0.008,
+      "inputPricePerM": 4,
+      "outputPricePerM": 20,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "5c6533f3-75a2-4109-b9a9-3623afc6b86a",
+      "name": "Seed-OSS-36B-Instruct",
+      "provider": "ByteDance Seed",
+      "providerLogo": "generic",
+      "intelligenceIndex": 12,
+      "costPerTask": 0,
+      "inputPricePerM": 0.21,
+      "outputPricePerM": 0.57,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "3373245b-e6dc-4b66-a7b0-3f06f9b7bd46",
+      "name": "Qwen3 235B A22B 2507 Instruct",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 12,
+      "costPerTask": 0,
+      "inputPricePerM": 0.23,
+      "outputPricePerM": 0.92,
+      "category": "budget",
+      "strengths": [
+        "Math"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "093883ed-f5fc-443b-8e18-afbfb166699e",
+      "name": "Qwen3 Coder 480B A35B Instruct",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 12,
+      "costPerTask": 0.003,
+      "inputPricePerM": 1.5,
+      "outputPricePerM": 7.5,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "d370fcbf-c4a1-41a2-abc4-d204fcc3fcbf",
+      "name": "Qwen3 VL 32B (Reasoning)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 12,
+      "costPerTask": 0,
+      "inputPricePerM": 0.16,
+      "outputPricePerM": 0.64,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "adfae555-f489-4f3e-9064-c6b7fcdd0783",
+      "name": "Granite 4.2 8B",
+      "provider": "IBM",
+      "providerLogo": "ibm",
+      "intelligenceIndex": 12,
+      "costPerTask": 0,
+      "inputPricePerM": 0.06,
+      "outputPricePerM": 0.25,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 76,
+      "latency": 0.29
+    },
+    {
+      "id": "6fd796d3-f346-4f66-97df-5da81714fc73",
+      "name": "Nova 2.0 Lite (low)",
+      "provider": "Amazon",
+      "providerLogo": "generic",
+      "intelligenceIndex": 12,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.3,
+      "outputPricePerM": 2.5,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 193,
+      "latency": 4.41
+    },
+    {
+      "id": "9ca246a7-cf13-42c9-9182-5b5ad6b79026",
+      "name": "MiniMax M1 80k",
+      "provider": "MiniMax",
+      "providerLogo": "generic",
+      "intelligenceIndex": 12,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.55,
+      "outputPricePerM": 2.2,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "c298d1a8-606c-4971-8613-ccdaaf941043",
+      "name": "GPT-5.4 nano (Non-Reasoning)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 12,
+      "costPerTask": 0,
+      "inputPricePerM": 0.2,
+      "outputPricePerM": 1.25,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "016d330a-2141-4afa-b2fc-62b314423dc1",
+      "name": "Mercury 2",
+      "provider": "Inception",
+      "providerLogo": "generic",
+      "intelligenceIndex": 12,
+      "costPerTask": 0,
+      "inputPricePerM": 0.25,
+      "outputPricePerM": 0.75,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 690,
+      "latency": 6.69
+    },
+    {
+      "id": "3fd96175-4ef1-434c-8795-f873aec2abc1",
+      "name": "Mistral Small 4 (Reasoning)",
+      "provider": "Mistral",
+      "providerLogo": "generic",
+      "intelligenceIndex": 12,
+      "costPerTask": 0,
+      "inputPricePerM": 0.15,
+      "outputPricePerM": 0.6,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 171,
+      "latency": 0.55
+    },
+    {
+      "id": "c3738fb0-3408-4430-a699-760ae4b70c93",
+      "name": "GPT-5 (minimal)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 11,
+      "costPerTask": 0.003,
+      "inputPricePerM": 1.25,
+      "outputPricePerM": 10,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "0e34f05c-387e-4968-be15-ccec4a55d8c1",
+      "name": "DeepSeek R1 (Jan '25)",
+      "provider": "DeepSeek",
+      "providerLogo": "deepseek",
+      "intelligenceIndex": 11,
+      "costPerTask": 0.003,
+      "inputPricePerM": 2,
+      "outputPricePerM": 4,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "078f4dc8-5350-40a2-a5ea-e8359f795b70",
+      "name": "o1-preview",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 11,
+      "costPerTask": 0.029,
+      "inputPricePerM": 16.5,
+      "outputPricePerM": 66,
+      "category": "budget",
+      "strengths": [
+        "Math"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "d2d7dd95-770f-4cb0-9bbc-d275ac19c265",
+      "name": "GLM-4.6V (Reasoning)",
+      "provider": "Z AI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 11,
+      "costPerTask": 0,
+      "inputPricePerM": 0.3,
+      "outputPricePerM": 0.9,
+      "category": "budget",
+      "strengths": [
+        "Math"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "c8a79180-7d16-4474-8701-9a77c0baa56a",
+      "name": "Qwen3 Next 80B A3B (Reasoning)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 11,
+      "costPerTask": 0,
+      "inputPricePerM": 0.15,
+      "outputPricePerM": 1.2,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 206,
+      "latency": 1.17
+    },
+    {
+      "id": "ae447455-940d-4d30-9139-a664fa896eaf",
+      "name": "GPT-5.4 mini (Non-Reasoning)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 11,
+      "costPerTask": 0.002,
+      "inputPricePerM": 0.75,
+      "outputPricePerM": 4.5,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "b36ff8f3-0323-49d1-a063-ab09704fdb0c",
+      "name": "Nova 2.0 Omni (low)",
+      "provider": "Amazon",
+      "providerLogo": "generic",
+      "intelligenceIndex": 11,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.3,
+      "outputPricePerM": 2.5,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "5d303dc9-c027-401f-9803-4e9aa3331007",
+      "name": "GLM-4.5-Air",
+      "provider": "Z AI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 11,
+      "costPerTask": 0,
+      "inputPricePerM": 0.17,
+      "outputPricePerM": 0.98,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "2dbb6dc7-8c40-4b6d-af9c-cf805f83b79a",
+      "name": "Grok 4 Fast (Non-reasoning)",
+      "provider": "SpaceXAI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 11,
+      "costPerTask": 0,
+      "inputPricePerM": 0.2,
+      "outputPricePerM": 0.5,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "076f2674-bc4b-4925-be59-50832eb8c090",
+      "name": "o3-mini (high)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 11,
+      "costPerTask": 0.002,
+      "inputPricePerM": 1.1,
+      "outputPricePerM": 4.4,
+      "category": "budget",
+      "strengths": [
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "b6d2e43d-3082-43f5-9318-0f4dbcb54163",
+      "name": "Trinity Large Thinking",
+      "provider": "Arcee AI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 11,
+      "costPerTask": 0,
+      "inputPricePerM": 0.25,
+      "outputPricePerM": 0.9,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 344,
+      "latency": 1.1
+    },
+    {
+      "id": "30c9ba61-d0a1-4794-938e-35865f379d15",
+      "name": "Qwen3.5 4B (Non-reasoning)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 11,
+      "costPerTask": 0,
+      "inputPricePerM": 0.03,
+      "outputPricePerM": 0.15,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 14,
+      "latency": 0.59
+    },
+    {
+      "id": "c8673741-5e1a-46a1-9e4f-710a5c920982",
+      "name": "GLM-4.7-Flash (Non-reasoning)",
+      "provider": "Z AI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 11,
+      "costPerTask": 0,
+      "inputPricePerM": 0.07,
+      "outputPricePerM": 0.4,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "84922739-425f-46e1-87ac-bb4268dcacbb",
+      "name": "Gemini 2.5 Flash-Lite Preview (Sep '25) (Reasoning)",
+      "provider": "Google",
+      "providerLogo": "google",
+      "intelligenceIndex": 10,
+      "costPerTask": 0,
+      "inputPricePerM": 0.1,
+      "outputPricePerM": 0.4,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "8c748e53-61ae-48b8-af8d-eb8298b1e9db",
+      "name": "Nemotron 3 Nano Omni 30B A3B Reasoning",
+      "provider": "NVIDIA",
+      "providerLogo": "generic",
+      "intelligenceIndex": 10,
+      "costPerTask": 0,
+      "inputPricePerM": 0.09,
+      "outputPricePerM": 0.36,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "c99f3bde-7c08-4de8-bd5c-8ee9123ebffa",
+      "name": "gpt-oss-120b (low)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 10,
+      "costPerTask": 0,
+      "inputPricePerM": 0.15,
+      "outputPricePerM": 0.545,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 162,
+      "latency": 0.59
+    },
+    {
+      "id": "9f7c7566-a704-49a2-a383-cb3181da33a4",
+      "name": "GPT-4.1 mini",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 10,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.4,
+      "outputPricePerM": 1.6,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "fc92f822-04b7-420d-9c07-a21af5e9aac7",
+      "name": "Qwen3 Coder Next",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 10,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.35,
+      "outputPricePerM": 1.2,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 107,
+      "latency": 0.83
+    },
+    {
+      "id": "a20ae33a-46e1-41e6-81a0-fe8b00d2e538",
+      "name": "Nova 2.0 Pro Preview (Non-reasoning)",
+      "provider": "Amazon",
+      "providerLogo": "generic",
+      "intelligenceIndex": 10,
+      "costPerTask": 0.003,
+      "inputPricePerM": 1.25,
+      "outputPricePerM": 10,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 143,
+      "latency": 0.7
+    },
+    {
+      "id": "16149b9c-a1e9-4669-a5cb-ff3c00d78f89",
+      "name": "gpt-oss-20b (low)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 10,
+      "costPerTask": 0,
+      "inputPricePerM": 0.07,
+      "outputPricePerM": 0.2,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 225,
+      "latency": 0.48
+    },
+    {
+      "id": "d58cf573-1bd3-4d1f-9182-5482a460f570",
+      "name": "Qwen3 VL 235B A22B Instruct",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 10,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.4,
+      "outputPricePerM": 1.6,
+      "category": "budget",
+      "strengths": [
+        "Math"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "bc26bfdb-4923-4442-a6ca-e77392923581",
+      "name": "GPT-5 mini (minimal)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 10,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.25,
+      "outputPricePerM": 2,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "6afbfb62-27e4-435e-9c85-d9fe1b92519e",
+      "name": "Gemini 2.5 Flash (Non-reasoning)",
+      "provider": "Google",
+      "providerLogo": "google",
+      "intelligenceIndex": 10,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.3,
+      "outputPricePerM": 2.5,
+      "category": "budget",
+      "strengths": [
+        "Math"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "5e0164b3-d902-4bcb-a1b2-83b4f4cd6143",
+      "name": "Qwen3 30B A3B 2507 (Reasoning)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 10,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.2,
+      "outputPricePerM": 2.4,
+      "category": "budget",
+      "strengths": [
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "75e1c197-f239-4361-a9d6-66dccfead236",
+      "name": "DeepSeek V3 0324",
+      "provider": "DeepSeek",
+      "providerLogo": "deepseek",
+      "intelligenceIndex": 10,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.845,
+      "outputPricePerM": 1.175,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "4928e950-7f37-4475-b0dc-c5bad781a321",
+      "name": "Mistral Large 3",
+      "provider": "Mistral",
+      "providerLogo": "generic",
+      "intelligenceIndex": 10,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.5,
+      "outputPricePerM": 1.5,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 77,
+      "latency": 0.8
+    },
+    {
+      "id": "2698f6c6-e436-47ce-a583-dbc25596c571",
+      "name": "Qwen3 Next 80B A3B Instruct",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 10,
+      "costPerTask": 0,
+      "inputPricePerM": 0.15,
+      "outputPricePerM": 1.2,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 191,
+      "latency": 1.03
+    },
+    {
+      "id": "da9fe224-8af3-46d7-a8c4-6220779c3f35",
+      "name": "Qwen3 Coder 30B A3B Instruct",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 10,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.45,
+      "outputPricePerM": 2.25,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "05a32e26-e609-4377-951b-8fa23d329926",
+      "name": "Mistral Medium 3.1",
+      "provider": "Mistral",
+      "providerLogo": "generic",
+      "intelligenceIndex": 10,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.4,
+      "outputPricePerM": 2,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "bbe6d782-e630-48d5-b11c-3ce37f373f1e",
+      "name": "Qwen3 235B A22B (Reasoning)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 10,
+      "costPerTask": 0.003,
+      "inputPricePerM": 0.7,
+      "outputPricePerM": 8.4,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "ceb4d610-d0a4-48c1-bea0-80ed76f1e5ca",
+      "name": "QwQ 32B",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 10,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.66,
+      "outputPricePerM": 1,
+      "category": "budget",
+      "strengths": [
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "ce3d286e-093d-413d-a81a-0270309f039e",
+      "name": "Qwen3 VL 30B A3B (Reasoning)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 10,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.2,
+      "outputPricePerM": 2.4,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "025ec6b6-df4a-449f-9a03-24e4388d6863",
+      "name": "Gemma 4 12B (Non-reasoning)",
+      "provider": "Google",
+      "providerLogo": "google",
+      "intelligenceIndex": 9,
+      "costPerTask": 0,
+      "inputPricePerM": 0.1,
+      "outputPricePerM": 0.3,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 131,
+      "latency": 1.41
+    },
+    {
+      "id": "71f51ea9-94fe-4635-a80d-4cfffbb685f4",
+      "name": "Gemini 2.5 Flash-Lite Preview (Sep '25) (Non-reasoning)",
+      "provider": "Google",
+      "providerLogo": "google",
+      "intelligenceIndex": 9,
+      "costPerTask": 0,
+      "inputPricePerM": 0.1,
+      "outputPricePerM": 0.4,
+      "category": "budget",
+      "strengths": [
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "922c69c7-9037-43c6-8bcf-a1c555e7f3eb",
+      "name": "Llama 4 Maverick",
+      "provider": "Meta",
+      "providerLogo": "meta",
+      "intelligenceIndex": 9,
+      "costPerTask": 0,
+      "inputPricePerM": 0.26,
+      "outputPricePerM": 0.91,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 113,
+      "latency": 0.57
+    },
+    {
+      "id": "e58bbffd-fdc2-412a-b6d7-ca0e3f5d611a",
+      "name": "Nova Premier",
+      "provider": "Amazon",
+      "providerLogo": "generic",
+      "intelligenceIndex": 9,
+      "costPerTask": 0.005,
+      "inputPricePerM": 2.5,
+      "outputPricePerM": 12.5,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 70,
+      "latency": 0.98
+    },
+    {
+      "id": "0c64b008-20c3-408d-bd68-15136df8cd2c",
+      "name": "Granite 4.2 3B",
+      "provider": "IBM",
+      "providerLogo": "ibm",
+      "intelligenceIndex": 9,
+      "costPerTask": 0,
+      "inputPricePerM": 0.03,
+      "outputPricePerM": 0.12,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 221,
+      "latency": 0.2
+    },
+    {
+      "id": "59e22326-1bca-4432-a5fa-147fbe8854e7",
+      "name": "Mistral Medium 3",
+      "provider": "Mistral",
+      "providerLogo": "generic",
+      "intelligenceIndex": 9,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.4,
+      "outputPricePerM": 2,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "36f73aaf-d38a-4b56-a2b3-d04d17186910",
+      "name": "gpt-oss-20b (high)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 9,
+      "costPerTask": 0,
+      "inputPricePerM": 0.06,
+      "outputPricePerM": 0.19,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 205,
+      "latency": 0.42
+    },
+    {
+      "id": "e1cfa926-9e2b-4a0d-8c31-48366a5041c5",
+      "name": "Llama Nemotron Super 49B v1.5 (Reasoning)",
+      "provider": "NVIDIA",
+      "providerLogo": "generic",
+      "intelligenceIndex": 9,
+      "costPerTask": 0,
+      "inputPricePerM": 0.4,
+      "outputPricePerM": 0.4,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 36,
+      "latency": 7.61
+    },
+    {
+      "id": "12f6a061-0ab3-4c76-b225-49abee253651",
+      "name": "Mistral Small 4 (Non-reasoning)",
+      "provider": "Mistral",
+      "providerLogo": "generic",
+      "intelligenceIndex": 9,
+      "costPerTask": 0,
+      "inputPricePerM": 0.15,
+      "outputPricePerM": 0.6,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 155,
+      "latency": 0.56
+    },
+    {
+      "id": "d80eb0f1-f62e-4d31-99d2-7a925eb126b0",
+      "name": "Gemma 4 E4B (Reasoning)",
+      "provider": "Google",
+      "providerLogo": "google",
+      "intelligenceIndex": 9,
+      "costPerTask": 0,
+      "inputPricePerM": 0.02,
+      "outputPricePerM": 0.1,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 37,
+      "latency": 0.43
+    },
+    {
+      "id": "76dcf6ef-39ea-4be0-b693-b88da25b4caf",
+      "name": "NVIDIA Nemotron 3 Nano 30B A3B (Reasoning)",
+      "provider": "NVIDIA",
+      "providerLogo": "generic",
+      "intelligenceIndex": 9,
+      "costPerTask": 0,
+      "inputPricePerM": 0.05,
+      "outputPricePerM": 0.2,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 108,
+      "latency": 1.41
+    },
+    {
+      "id": "45790612-02e3-4c42-b5bd-cd7ed2ea1f2f",
+      "name": "Sarvam 105B (high)",
+      "provider": "Sarvam",
+      "providerLogo": "generic",
+      "intelligenceIndex": 9,
+      "costPerTask": 0,
+      "inputPricePerM": 0.042,
+      "outputPricePerM": 0.17,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "76bce7fb-3a3f-4b66-a78d-35ccf3edf5d2",
+      "name": "Nova 2.0 Lite (Non-reasoning)",
+      "provider": "Amazon",
+      "providerLogo": "generic",
+      "intelligenceIndex": 9,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.3,
+      "outputPricePerM": 2.5,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 221,
+      "latency": 0.82
+    },
+    {
+      "id": "7829427f-f0e3-4f6d-a228-5fbf70dacc02",
+      "name": "Claude 3 Opus",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 9,
+      "costPerTask": 0.03,
+      "inputPricePerM": 15,
+      "outputPricePerM": 75,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "70152cb0-fb36-4732-a925-89ef40994be1",
+      "name": "Magistral Small 1.2",
+      "provider": "Mistral",
+      "providerLogo": "generic",
+      "intelligenceIndex": 9,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.5,
+      "outputPricePerM": 1.5,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "f4e8194a-d0e6-48eb-92be-4307de5aeeec",
+      "name": "Gemini 2.5 Flash-Lite (Reasoning)",
+      "provider": "Google",
+      "providerLogo": "google",
+      "intelligenceIndex": 9,
+      "costPerTask": 0,
+      "inputPricePerM": 0.1,
+      "outputPricePerM": 0.4,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "43fc5506-c5ed-4dee-9b85-962bf7ae3986",
+      "name": "DeepSeek V3 (Dec '24)",
+      "provider": "DeepSeek",
+      "providerLogo": "deepseek",
+      "intelligenceIndex": 9,
+      "costPerTask": 0,
+      "inputPricePerM": 0.32,
+      "outputPricePerM": 0.89,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "c1045dc0-4fd3-4adb-9548-18763e0d051f",
+      "name": "GPT-4o (Nov '24)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 8,
+      "costPerTask": 0.004,
+      "inputPricePerM": 2.5,
+      "outputPricePerM": 10,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "6da314d3-a984-4734-8f31-47dd32fb4699",
+      "name": "Qwen3 VL 32B Instruct",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 8,
+      "costPerTask": 0,
+      "inputPricePerM": 0.16,
+      "outputPricePerM": 0.64,
+      "category": "budget",
+      "strengths": [
+        "Math"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "43098bd0-77ca-408b-b698-9d60b1d1c3b8",
+      "name": "GLM-4.6V (Non-reasoning)",
+      "provider": "Z AI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 8,
+      "costPerTask": 0,
+      "inputPricePerM": 0.3,
+      "outputPricePerM": 0.9,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "43573c57-2403-46fb-af4b-a93de9a0c3f5",
+      "name": "Qwen3 235B A22B (Non-reasoning)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 8,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.7,
+      "outputPricePerM": 2.8,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "dec8073c-57e2-41c0-b1aa-7a62960f103f",
+      "name": "Qwen3 VL 8B (Reasoning)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 8,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.18,
+      "outputPricePerM": 2.1,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "1f6478c9-3e22-4586-adbe-841782859677",
+      "name": "Nova 2.0 Omni (Non-reasoning)",
+      "provider": "Amazon",
+      "providerLogo": "generic",
+      "intelligenceIndex": 8,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.3,
+      "outputPricePerM": 2.5,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "51d0b717-953d-4b44-af61-406c6b7dff39",
+      "name": "Qwen3 VL 30B A3B Instruct",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 8,
+      "costPerTask": 0,
+      "inputPricePerM": 0.2,
+      "outputPricePerM": 0.8,
+      "category": "budget",
+      "strengths": [
+        "Math"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "4a845d7b-a52d-43bb-80b7-b58c7a0c155e",
+      "name": "DeepSeek R1 Distill Llama 70B",
+      "provider": "DeepSeek",
+      "providerLogo": "deepseek",
+      "intelligenceIndex": 8,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.7,
+      "outputPricePerM": 1.1,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "0a603978-03b9-4f47-a273-2f7fd969be85",
+      "name": "Claude 3.5 Sonnet (Oct '24)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 8,
+      "costPerTask": 0.006,
+      "inputPricePerM": 3,
+      "outputPricePerM": 15,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "72c358fd-7d45-4d68-89aa-699743710924",
+      "name": "GPT-4.1 nano",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 8,
+      "costPerTask": 0,
+      "inputPricePerM": 0.1,
+      "outputPricePerM": 0.4,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "b89c4faf-219e-4171-a1aa-e3bd2fd0a924",
+      "name": "Solar Pro 3",
+      "provider": "Upstage",
+      "providerLogo": "generic",
+      "intelligenceIndex": 8,
+      "costPerTask": 0,
+      "inputPricePerM": 0.15,
+      "outputPricePerM": 0.6,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 146,
+      "latency": 1.09
+    },
+    {
+      "id": "882a5da3-94ca-4602-8693-c45970df17e2",
+      "name": "Ling-flash-2.0",
+      "provider": "InclusionAI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 8,
+      "costPerTask": 0,
+      "inputPricePerM": 0.14,
+      "outputPricePerM": 0.57,
+      "category": "budget",
+      "strengths": [
+        "Math"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "b97ef678-2d31-4375-9416-67ea97f87204",
+      "name": "Qwen3 Omni 30B A3B (Reasoning)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 8,
+      "costPerTask": 0,
+      "inputPricePerM": 0.25,
+      "outputPricePerM": 0.97,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 108,
+      "latency": 0.91
+    },
+    {
+      "id": "8c1be908-67b6-4cf4-ba08-83ddbe44fde3",
+      "name": "GPT-4o (Aug '24)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 8,
+      "costPerTask": 0.004,
+      "inputPricePerM": 2.5,
+      "outputPricePerM": 10,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "b4f7d7a4-869a-4ee7-b17a-4046cd1e79fd",
+      "name": "Qwen2.5 Instruct 72B",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 8,
+      "costPerTask": 0,
+      "inputPricePerM": 0.475,
+      "outputPricePerM": 0.495,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "976cc8ad-7904-4056-83c5-960181f47d5f",
+      "name": "Llama 3.3 Instruct 70B",
+      "provider": "Meta",
+      "providerLogo": "meta",
+      "intelligenceIndex": 8,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.71,
+      "outputPricePerM": 0.72,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 96,
+      "latency": 0.62
+    },
+    {
+      "id": "3e6cf518-a1f4-42d3-8fcf-827c9bd8e6d5",
+      "name": "Qwen3 30B A3B (Reasoning)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 8,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.2,
+      "outputPricePerM": 2.4,
+      "category": "budget",
+      "strengths": [
+        "Math"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "3068def4-7270-4c06-a320-6f6a5623d564",
+      "name": "GLM-4.5V (Reasoning)",
+      "provider": "Z AI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 8,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.6,
+      "outputPricePerM": 1.8,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "7ec1065a-c90e-41e4-bd17-abb7042eed76",
+      "name": "Qwen3 30B A3B 2507 Instruct",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 8,
+      "costPerTask": 0,
+      "inputPricePerM": 0.2,
+      "outputPricePerM": 0.8,
+      "category": "budget",
+      "strengths": [
+        "Math"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "ae4fe623-80ab-4ea3-8921-70a18ea0fc7e",
+      "name": "ERNIE 4.5 300B A47B",
+      "provider": "Baidu",
+      "providerLogo": "generic",
+      "intelligenceIndex": 8,
+      "costPerTask": 0,
+      "inputPricePerM": 0.28,
+      "outputPricePerM": 1.1,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "82b207dd-d285-4a52-b2fc-2cbd27543899",
+      "name": "Hermes 4 - Llama-3.1 405B (Reasoning)",
+      "provider": "Nous Research",
+      "providerLogo": "generic",
+      "intelligenceIndex": 8,
+      "costPerTask": 0.002,
+      "inputPricePerM": 1,
+      "outputPricePerM": 3,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 45,
+      "latency": 0.78
+    },
+    {
+      "id": "6e6e02fd-9cbd-417f-9bfc-673df89c313d",
+      "name": "NVIDIA Nemotron Nano 12B v2 VL (Reasoning)",
+      "provider": "NVIDIA",
+      "providerLogo": "generic",
+      "intelligenceIndex": 8,
+      "costPerTask": 0,
+      "inputPricePerM": 0.2,
+      "outputPricePerM": 0.6,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 48,
+      "latency": 7.78
+    },
+    {
+      "id": "5303601c-8133-4f52-bc4e-5241ee6b3c10",
+      "name": "Gemma 4 E4B (Non-reasoning)",
+      "provider": "Google",
+      "providerLogo": "google",
+      "intelligenceIndex": 8,
+      "costPerTask": 0,
+      "inputPricePerM": 0.02,
+      "outputPricePerM": 0.1,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 39,
+      "latency": 0.36
+    },
+    {
+      "id": "f1d52583-9d20-4099-99ac-b5df9430c3b6",
+      "name": "NVIDIA Nemotron Nano 9B V2 (Reasoning)",
+      "provider": "NVIDIA",
+      "providerLogo": "generic",
+      "intelligenceIndex": 7,
+      "costPerTask": 0,
+      "inputPricePerM": 0.04,
+      "outputPricePerM": 0.16,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 88,
+      "latency": 6.94
+    },
+    {
+      "id": "d3968fd3-97d8-4693-8d26-19cefc6f5d5f",
+      "name": "Hermes 4 - Llama-3.1 405B (Non-reasoning)",
+      "provider": "Nous Research",
+      "providerLogo": "generic",
+      "intelligenceIndex": 7,
+      "costPerTask": 0.002,
+      "inputPricePerM": 1,
+      "outputPricePerM": 3,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 43,
+      "latency": 0.76
+    },
+    {
+      "id": "24ac5b00-5f03-4c47-8e37-522d1195383e",
+      "name": "Mistral Small 3.1",
+      "provider": "Mistral",
+      "providerLogo": "generic",
+      "intelligenceIndex": 7,
+      "costPerTask": 0,
+      "inputPricePerM": 0.1,
+      "outputPricePerM": 0.3,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "26c0b5df-efa7-470f-a65e-2d883329e493",
+      "name": "Llama Nemotron Super 49B v1.5 (Non-reasoning)",
+      "provider": "NVIDIA",
+      "providerLogo": "generic",
+      "intelligenceIndex": 7,
+      "costPerTask": 0,
+      "inputPricePerM": 0.4,
+      "outputPricePerM": 0.4,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 69,
+      "latency": 8.68
+    },
+    {
+      "id": "bf60740e-6aa5-422f-ba49-ef6e9d171205",
+      "name": "Qwen3 32B (Non-reasoning)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 7,
+      "costPerTask": 0,
+      "inputPricePerM": 0.16,
+      "outputPricePerM": 0.64,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "e98e911e-9fb2-4a9a-826e-3d681d0cdca8",
+      "name": "GPT-4o (May '24)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 7,
+      "costPerTask": 0.008,
+      "inputPricePerM": 5,
+      "outputPricePerM": 15,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "3cf875b8-b6b5-42c0-ad70-617d5be59d00",
+      "name": "Qwen3 VL 8B Instruct",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 7,
+      "costPerTask": 0,
+      "inputPricePerM": 0.18,
+      "outputPricePerM": 0.7,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "b00ecd62-a53f-4aed-b833-3e9d6b0170ba",
+      "name": "Qwen3 32B (Reasoning)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 7,
+      "costPerTask": 0,
+      "inputPricePerM": 0.16,
+      "outputPricePerM": 0.64,
+      "category": "budget",
+      "strengths": [
+        "Math"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "aca9c1ad-fc86-49f3-a312-b1e517ea100c",
+      "name": "Claude 3.5 Sonnet (June '24)",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 7,
+      "costPerTask": 0.006,
+      "inputPricePerM": 3,
+      "outputPricePerM": 15,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "47b7df55-5804-40de-ba11-317de786710a",
+      "name": "Ring-flash-2.0",
+      "provider": "InclusionAI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 7,
+      "costPerTask": 0,
+      "inputPricePerM": 0.14,
+      "outputPricePerM": 0.57,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "05e45a36-b5c6-47a1-8adb-9ddc19add5b3",
+      "name": "GPT-5 nano (minimal)",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 7,
+      "costPerTask": 0,
+      "inputPricePerM": 0.05,
+      "outputPricePerM": 0.4,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "76aa6af5-fdc6-4739-a300-983f14e74a67",
+      "name": "GPT-4 Turbo",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 7,
+      "costPerTask": 0.015,
+      "inputPricePerM": 10,
+      "outputPricePerM": 30,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "43da3718-3d6e-40dd-901a-05664179ff7f",
+      "name": "Mistral Small 3.2",
+      "provider": "Mistral",
+      "providerLogo": "generic",
+      "intelligenceIndex": 7,
+      "costPerTask": 0,
+      "inputPricePerM": 0.1,
+      "outputPricePerM": 0.3,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "546ec53f-273c-4af7-b13f-b88c41f45905",
+      "name": "Nova Pro",
+      "provider": "Amazon",
+      "providerLogo": "generic",
+      "intelligenceIndex": 7,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.8,
+      "outputPricePerM": 3.2,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "3bc32f13-5afa-4e28-bce1-10e57376686b",
+      "name": "Command A",
+      "provider": "Cohere",
+      "providerLogo": "cohere",
+      "intelligenceIndex": 7,
+      "costPerTask": 0.004,
+      "inputPricePerM": 2.5,
+      "outputPricePerM": 10,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 57,
+      "latency": 0.41
+    },
+    {
+      "id": "7393c56a-ec31-48e9-b804-c04f2d2cb641",
+      "name": "Llama 3.1 Nemotron Instruct 70B",
+      "provider": "NVIDIA",
+      "providerLogo": "generic",
+      "intelligenceIndex": 7,
+      "costPerTask": 0.001,
+      "inputPricePerM": 1.2,
+      "outputPricePerM": 1.2,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 45,
+      "latency": 7.42
+    },
+    {
+      "id": "739684ba-0f63-4e2a-b4ee-30741c9e9320",
+      "name": "Llama 3.1 Instruct 8B",
+      "provider": "Meta",
+      "providerLogo": "meta",
+      "intelligenceIndex": 7,
+      "costPerTask": 0,
+      "inputPricePerM": 0.02,
+      "outputPricePerM": 0.05,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "23b379f7-18df-492a-9fc1-a56c5a5b9cfc",
+      "name": "NVIDIA Nemotron 3 Nano 30B A3B (Non-reasoning)",
+      "provider": "NVIDIA",
+      "providerLogo": "generic",
+      "intelligenceIndex": 7,
+      "costPerTask": 0,
+      "inputPricePerM": 0.05,
+      "outputPricePerM": 0.2,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 147,
+      "latency": 0.44
+    },
+    {
+      "id": "2e8694f9-7782-47a6-a6ba-fdce89d939c8",
+      "name": "NVIDIA Nemotron Nano 9B V2 (Non-reasoning)",
+      "provider": "NVIDIA",
+      "providerLogo": "generic",
+      "intelligenceIndex": 7,
+      "costPerTask": 0,
+      "inputPricePerM": 0.05,
+      "outputPricePerM": 0.195,
+      "category": "budget",
+      "strengths": [
+        "Math",
+        "Live Code"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 153,
+      "latency": 1.45
+    },
+    {
+      "id": "1b05e346-e86a-4a20-8feb-7da8c65a99aa",
+      "name": "Mistral Large 2 (Jul '24)",
+      "provider": "Mistral",
+      "providerLogo": "generic",
+      "intelligenceIndex": 7,
+      "costPerTask": 0.003,
+      "inputPricePerM": 2,
+      "outputPricePerM": 6,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "ecc6524a-d521-458a-8327-5009e8ce6549",
+      "name": "Qwen3 14B (Non-reasoning)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 7,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.35,
+      "outputPricePerM": 1.4,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "6a7c0e25-1dcb-4b15-8495-a8536a9da051",
+      "name": "GPT-4",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 7,
+      "costPerTask": 0.038,
+      "inputPricePerM": 30,
+      "outputPricePerM": 60,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "0081ab31-d10a-44a0-a10d-eee5533fec65",
+      "name": "GLM-4.5V (Non-reasoning)",
+      "provider": "Z AI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 7,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.6,
+      "outputPricePerM": 1.8,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "e5dd499f-c330-45ec-9ff0-a99209c82af7",
+      "name": "Mistral Small 3",
+      "provider": "Mistral",
+      "providerLogo": "generic",
+      "intelligenceIndex": 7,
+      "costPerTask": 0,
+      "inputPricePerM": 0.1,
+      "outputPricePerM": 0.3,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "1d81aa1c-64c8-442a-9c41-81b37e407b91",
+      "name": "Gemini 2.5 Flash-Lite (Non-reasoning)",
+      "provider": "Google",
+      "providerLogo": "google",
+      "intelligenceIndex": 7,
+      "costPerTask": 0,
+      "inputPricePerM": 0.1,
+      "outputPricePerM": 0.4,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "5c3dd927-48a3-4f3c-8045-9b135f62dfbb",
+      "name": "Nova Lite",
+      "provider": "Amazon",
+      "providerLogo": "generic",
+      "intelligenceIndex": 7,
+      "costPerTask": 0,
+      "inputPricePerM": 0.06,
+      "outputPricePerM": 0.24,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "b5c1c91a-7474-4409-9a9c-9c2ac45d9eb6",
+      "name": "GPT-4o mini",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 7,
+      "costPerTask": 0,
+      "inputPricePerM": 0.15,
+      "outputPricePerM": 0.6,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "f3169f25-8c6f-48e4-ae87-0cf872dc0ec1",
+      "name": "Qwen3 30B A3B (Non-reasoning)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 7,
+      "costPerTask": 0,
+      "inputPricePerM": 0.2,
+      "outputPricePerM": 0.8,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "466aecdb-3d96-4191-bc52-b3366db38851",
+      "name": "Llama 3.1 Instruct 70B",
+      "provider": "Meta",
+      "providerLogo": "meta",
+      "intelligenceIndex": 7,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.56,
+      "outputPricePerM": 0.56,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "82ed9bd2-c97b-4c35-9312-94bb72001e36",
+      "name": "Granite 4.1 8B",
+      "provider": "IBM",
+      "providerLogo": "ibm",
+      "intelligenceIndex": 7,
+      "costPerTask": 0,
+      "inputPricePerM": 0.05,
+      "outputPricePerM": 0.1,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 133,
+      "latency": 0.49
+    },
+    {
+      "id": "764dd095-6ebd-4760-8eb3-cbc40964db2e",
+      "name": "Sarvam 30B (high)",
+      "provider": "Sarvam",
+      "providerLogo": "generic",
+      "intelligenceIndex": 7,
+      "costPerTask": 0,
+      "inputPricePerM": 0.026,
+      "outputPricePerM": 0.11,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "adf9a85e-abc3-4f28-937b-db6655cc5238",
+      "name": "Llama 4 Scout",
+      "provider": "Meta",
+      "providerLogo": "meta",
+      "intelligenceIndex": 7,
+      "costPerTask": 0,
+      "inputPricePerM": 0.19,
+      "outputPricePerM": 0.68,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 97,
+      "latency": 0.6
+    },
+    {
+      "id": "352f834f-a03c-4117-8a29-c3ccd8a568ce",
+      "name": "Qwen2.5 Turbo",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 6,
+      "costPerTask": 0,
+      "inputPricePerM": 0.05,
+      "outputPricePerM": 0.2,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "a971b0c0-4c0f-484a-b018-e36b5be3409e",
+      "name": "Reka Flash (Sep '24)",
+      "provider": "Reka AI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 6,
+      "costPerTask": 0,
+      "inputPricePerM": 0.2,
+      "outputPricePerM": 0.8,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "d97713f2-afa6-4f8d-b2f3-ac89a24c4d6c",
+      "name": "Solar Mini",
+      "provider": "Upstage",
+      "providerLogo": "generic",
+      "intelligenceIndex": 6,
+      "costPerTask": 0,
+      "inputPricePerM": 0.15,
+      "outputPricePerM": 0.15,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "4559e9f0-8aad-4681-89fb-68cb915e0f16",
+      "name": "Qwen3 14B (Reasoning)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 6,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.35,
+      "outputPricePerM": 4.2,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "8014c311-fa23-4a4b-8485-8a864db8a113",
+      "name": "Celeris-1",
+      "provider": "Celeris",
+      "providerLogo": "generic",
+      "intelligenceIndex": 6,
+      "costPerTask": 0,
+      "inputPricePerM": 0.2,
+      "outputPricePerM": 0.7,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 2017,
+      "latency": 0.5
+    },
+    {
+      "id": "5dba8d07-9992-483c-81db-dac97cb15ba8",
+      "name": "Granite 4.0 H Small",
+      "provider": "IBM",
+      "providerLogo": "ibm",
+      "intelligenceIndex": 6,
+      "costPerTask": 0,
+      "inputPricePerM": 0.06,
+      "outputPricePerM": 0.25,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 16,
+      "latency": 29.5
+    },
+    {
+      "id": "713fae11-c75c-4f10-ae2c-8e4074cd58af",
+      "name": "Ministral 3 14B",
+      "provider": "Mistral",
+      "providerLogo": "generic",
+      "intelligenceIndex": 6,
+      "costPerTask": 0,
+      "inputPricePerM": 0.2,
+      "outputPricePerM": 0.2,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 83,
+      "latency": 0.52
+    },
+    {
+      "id": "b4ddb4c8-1400-44ab-8c2b-e2472088e7ff",
+      "name": "Jamba 1.5 Large",
+      "provider": "AI21 Labs",
+      "providerLogo": "generic",
+      "intelligenceIndex": 6,
+      "costPerTask": 0.004,
+      "inputPricePerM": 2,
+      "outputPricePerM": 8,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "0b226b82-1462-4860-bf1a-f8aed7024791",
+      "name": "Qwen3 Omni 30B A3B Instruct",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 6,
+      "costPerTask": 0,
+      "inputPricePerM": 0.25,
+      "outputPricePerM": 0.97,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 107,
+      "latency": 0.97
+    },
+    {
+      "id": "1dcea4f7-7e8b-49f8-abe2-5860ff9f349e",
+      "name": "Hermes 3 - Llama-3.1 70B",
+      "provider": "Nous Research",
+      "providerLogo": "generic",
+      "intelligenceIndex": 6,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.7,
+      "outputPricePerM": 0.7,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "b2dd592a-fbc5-458a-b26d-f3964cbab82f",
+      "name": "Qwen3 8B (Non-reasoning)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 6,
+      "costPerTask": 0,
+      "inputPricePerM": 0.18,
+      "outputPricePerM": 0.7,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "ee708f92-374e-4123-b900-e22d7b2afc19",
+      "name": "Phi-4",
+      "provider": "Microsoft",
+      "providerLogo": "generic",
+      "intelligenceIndex": 6,
+      "costPerTask": 0,
+      "inputPricePerM": 0.125,
+      "outputPricePerM": 0.5,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 40,
+      "latency": 0.98
+    },
+    {
+      "id": "344c6718-c573-41d4-9556-10287a3fa1fc",
+      "name": "Nova Micro",
+      "provider": "Amazon",
+      "providerLogo": "generic",
+      "intelligenceIndex": 6,
+      "costPerTask": 0,
+      "inputPricePerM": 0.035,
+      "outputPricePerM": 0.14,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 284,
+      "latency": 0.58
+    },
+    {
+      "id": "7c045ca0-b331-488d-af31-df0fd331dfd1",
+      "name": "Mistral Small (Sep '24)",
+      "provider": "Mistral",
+      "providerLogo": "generic",
+      "intelligenceIndex": 6,
+      "costPerTask": 0,
+      "inputPricePerM": 0.2,
+      "outputPricePerM": 0.6,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "ab7f016c-a29b-4710-bdf6-6a5cd96aacca",
+      "name": "NVIDIA Nemotron Nano 12B v2 VL (Non-reasoning)",
+      "provider": "NVIDIA",
+      "providerLogo": "generic",
+      "intelligenceIndex": 6,
+      "costPerTask": 0,
+      "inputPricePerM": 0.2,
+      "outputPricePerM": 0.6,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 183,
+      "latency": 1.86
+    },
+    {
+      "id": "5e4e4590-a77e-4b66-95f8-f3960a1a7c68",
+      "name": "Mistral Large (Feb '24)",
+      "provider": "Mistral",
+      "providerLogo": "generic",
+      "intelligenceIndex": 6,
+      "costPerTask": 0.006,
+      "inputPricePerM": 4,
+      "outputPricePerM": 12,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "ffd65ef7-fbdb-4145-98ae-b5d01cda770b",
+      "name": "Llama 2 Chat 7B",
+      "provider": "Meta",
+      "providerLogo": "meta",
+      "intelligenceIndex": 6,
+      "costPerTask": 0,
+      "inputPricePerM": 0.05,
+      "outputPricePerM": 0.25,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "dbbcf240-a69e-4078-8f16-7c94c7a8c514",
+      "name": "Reka Flash 3",
+      "provider": "Reka AI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 6,
+      "costPerTask": 0,
+      "inputPricePerM": 0.2,
+      "outputPricePerM": 0.8,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 90,
+      "latency": 0.95
+    },
+    {
+      "id": "1fc54cef-d179-48b1-a27d-046874e9b208",
+      "name": "Claude 3 Haiku",
+      "provider": "Anthropic",
+      "providerLogo": "anthropic",
+      "intelligenceIndex": 6,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.25,
+      "outputPricePerM": 1.25,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "35d602fc-b8b8-4698-9f4d-f2ce11ca50e4",
+      "name": "Mistral Small (Feb '24)",
+      "provider": "Mistral",
+      "providerLogo": "generic",
+      "intelligenceIndex": 6,
+      "costPerTask": 0,
+      "inputPricePerM": 0.15,
+      "outputPricePerM": 0.6,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "1f05af98-1ec6-4506-a0b8-57a8c9b63878",
+      "name": "Mistral Medium",
+      "provider": "Mistral",
+      "providerLogo": "generic",
+      "intelligenceIndex": 6,
+      "costPerTask": 0.003,
+      "inputPricePerM": 1.5,
+      "outputPricePerM": 7.5,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "037dec2f-51e8-4127-a1f1-85155dae7a1d",
+      "name": "GPT-3.5 Turbo",
+      "provider": "OpenAI",
+      "providerLogo": "openai",
+      "intelligenceIndex": 6,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.5,
+      "outputPricePerM": 1.5,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "9741f3c2-cbb1-4a3f-99ee-7bd7384d9038",
+      "name": "Ministral 3 8B",
+      "provider": "Mistral",
+      "providerLogo": "generic",
+      "intelligenceIndex": 6,
+      "costPerTask": 0,
+      "inputPricePerM": 0.15,
+      "outputPricePerM": 0.15,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 90,
+      "latency": 0.55
+    },
+    {
+      "id": "aa83359a-d804-4f0b-b5bf-dc637711c26f",
+      "name": "Llama 3 Instruct 70B",
+      "provider": "Meta",
+      "providerLogo": "meta",
+      "intelligenceIndex": 6,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.65,
+      "outputPricePerM": 2.75,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "5fb47ff6-a30e-4c2c-96f2-55e95a13390f",
+      "name": "Llama 3.2 Instruct 11B (Vision)",
+      "provider": "Meta",
+      "providerLogo": "meta",
+      "intelligenceIndex": 5,
+      "costPerTask": 0,
+      "inputPricePerM": 0.345,
+      "outputPricePerM": 0.345,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 17,
+      "latency": 0.57
+    },
+    {
+      "id": "8f74a6ed-f82f-4a2f-a96b-4914993e47da",
+      "name": "Olmo 3 7B Instruct",
+      "provider": "Allen Institute for AI",
+      "providerLogo": "generic",
+      "intelligenceIndex": 5,
+      "costPerTask": 0,
+      "inputPricePerM": 0.1,
+      "outputPricePerM": 0.2,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "540ebc58-a2d8-4dc9-ba6b-973efa52fab1",
+      "name": "Jamba 1.5 Mini",
+      "provider": "AI21 Labs",
+      "providerLogo": "generic",
+      "intelligenceIndex": 5,
+      "costPerTask": 0,
+      "inputPricePerM": 0.2,
+      "outputPricePerM": 0.4,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "9dba61f5-78ee-4190-8d1d-8e7063ffd386",
+      "name": "Qwen3 8B (Reasoning)",
+      "provider": "Alibaba",
+      "providerLogo": "qwen",
+      "intelligenceIndex": 5,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.18,
+      "outputPricePerM": 2.1,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "3edcb2ed-6981-4f88-a556-563f7f8f00aa",
+      "name": "Mixtral 8x7B Instruct",
+      "provider": "Mistral",
+      "providerLogo": "generic",
+      "intelligenceIndex": 5,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.45,
+      "outputPricePerM": 0.7,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "49e70a38-4ac1-4659-b490-09b2c7ff21d6",
+      "name": "Apertus 70B Instruct",
+      "provider": "Swiss AI Initiative",
+      "providerLogo": "generic",
+      "intelligenceIndex": 5,
+      "costPerTask": 0.001,
+      "inputPricePerM": 0.82,
+      "outputPricePerM": 2.92,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "217b34ec-5920-4fc1-8886-6a70a324837d",
+      "name": "Mistral 7B Instruct",
+      "provider": "Mistral",
+      "providerLogo": "generic",
+      "intelligenceIndex": 5,
+      "costPerTask": 0,
+      "inputPricePerM": 0.25,
+      "outputPricePerM": 0.25,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "2cff73da-4855-403c-afc9-5540feadcc15",
+      "name": "Granite 3.3 8B (Non-reasoning)",
+      "provider": "IBM",
+      "providerLogo": "ibm",
+      "intelligenceIndex": 5,
+      "costPerTask": 0,
+      "inputPricePerM": 0.03,
+      "outputPricePerM": 0.25,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "66f4ce73-9a9b-4b49-9c6e-bedb9bfdc720",
+      "name": "Ministral 3 3B",
+      "provider": "Mistral",
+      "providerLogo": "generic",
+      "intelligenceIndex": 5,
+      "costPerTask": 0,
+      "inputPricePerM": 0.1,
+      "outputPricePerM": 0.1,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 209,
+      "latency": 0.46
+    },
+    {
+      "id": "891bcdf2-8dd2-4dc3-829b-d963fde25876",
+      "name": "Apertus 8B Instruct",
+      "provider": "Swiss AI Initiative",
+      "providerLogo": "generic",
+      "intelligenceIndex": 5,
+      "costPerTask": 0,
+      "inputPricePerM": 0.1,
+      "outputPricePerM": 0.2,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": false,
+      "speed": 0,
+      "latency": 0
+    },
+    {
+      "id": "82879bb8-89fb-4adc-b519-315b8ef30b77",
+      "name": "Llama 3 Instruct 8B",
+      "provider": "Meta",
+      "providerLogo": "meta",
+      "intelligenceIndex": 5,
+      "costPerTask": 0,
+      "inputPricePerM": 0.045,
+      "outputPricePerM": 0.145,
+      "category": "budget",
+      "strengths": [
+        "General"
+      ],
+      "contextWindow": "N/A",
+      "openWeights": true,
+      "speed": 0,
+      "latency": 0
+    }
+  ]
+}
