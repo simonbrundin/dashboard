@@ -1,4 +1,4 @@
-import { query } from '../utils/db'
+import { query } from '../../utils/db'
 import { chromium } from 'playwright'
 
 // === Scraper functions ===
