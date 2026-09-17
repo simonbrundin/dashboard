@@ -10,8 +10,32 @@ services:
       - "${DASHBOARD_PORT:-3000}:3000"
     environment:
       - NODE_ENV=development
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/dashboard
     volumes:
       - ../../..:/app
       - /app/node_modules
       - /app/.nuxt
     command: ["sh", "-c", "nub run dev --host 0.0.0.0"]
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: dashboard-postgres
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=dashboard
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../..:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:

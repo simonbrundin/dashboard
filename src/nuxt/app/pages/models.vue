@@ -46,8 +46,9 @@ async function refreshModels() {
     const result = await $fetch<{
       success: boolean
       totalModels: number
+      scraped: number
       updatedAt: string
-    }>('/api/models/refresh', {
+    }>('/api/models/scrape', {
       method: 'POST'
     })
     
@@ -55,8 +56,8 @@ async function refreshModels() {
       await fetchModels()
     }
   } catch (error: any) {
-    console.error('Failed to refresh models:', error)
-    lastError.value = error.data?.message || error.message || 'Failed to refresh models'
+    console.error('Failed to scrape models:', error)
+    lastError.value = error.data?.message || error.message || 'Failed to scrape models'
   } finally {
     isRefreshing.value = false
   }
@@ -241,7 +242,7 @@ useSeoMeta({
             icon="i-lucide-refresh-cw"
             @click="refreshModels"
           >
-            Update Data
+            Scrape Data
           </UButton>
           <UButton
             variant="ghost"
@@ -270,7 +271,7 @@ useSeoMeta({
                 <p class="text-sm text-muted-foreground mt-1">
                   Live data from Artificial Analysis.
                   <span class="font-semibold">$/task</span> = cost per Intelligence Index task.
-                  Click "Update Data" to refresh (first time scraping ~15 min).
+                  Click "Scrape Data" to fetch cost per task from AA (~15 min for all models).
                 </p>
                 <p v-if="metaData?.updatedAt" class="text-xs text-muted-foreground mt-1">
                   Last updated: {{ formatDate(metaData.updatedAt) }} • 
@@ -301,7 +302,7 @@ useSeoMeta({
             <div>
               <p class="font-semibold text-lg">No Data Available</p>
               <p class="text-sm text-muted-foreground mt-1">
-                Click "Update Data" to fetch the latest models from Artificial Analysis.
+                Click "Scrape Data" to fetch the latest models from Artificial Analysis.
               </p>
             </div>
             <UButton
