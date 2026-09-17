@@ -111,17 +111,23 @@ const sortedModels = computed(() => {
   switch (sortBy.value) {
     case 'value':
       return models.sort((a, b) => {
-        if (a.costPerTask === 0 && b.costPerTask === 0) return 0
-        if (a.costPerTask === 0) return -1 * dir
-        if (b.costPerTask === 0) return 1 * dir
-        const aRatio = a.intelligenceIndex / a.costPerTask
-        const bRatio = b.intelligenceIndex / b.costPerTask
+        const aCost = parseFloat(String(a.costPerTask)) || 0
+        const bCost = parseFloat(String(b.costPerTask)) || 0
+        if (aCost === 0 && bCost === 0) return 0
+        if (aCost === 0) return -1 * dir
+        if (bCost === 0) return 1 * dir
+        const aRatio = a.intelligenceIndex / aCost
+        const bRatio = b.intelligenceIndex / bCost
         return (bRatio - aRatio) * dir
       })
     case 'intelligence':
       return models.sort((a, b) => (b.intelligenceIndex - a.intelligenceIndex) * dir)
     case 'cost':
-      return models.sort((a, b) => (a.costPerTask - b.costPerTask) * dir)
+      return models.sort((a, b) => {
+        const aCost = parseFloat(String(a.costPerTask)) || 0
+        const bCost = parseFloat(String(b.costPerTask)) || 0
+        return (aCost - bCost) * dir
+      })
     case 'speed':
       return models.sort((a, b) => ((b.speed || 0) - (a.speed || 0)) * dir)
     default:
@@ -149,7 +155,10 @@ const categoryStats = computed(() => ({
 
 // Count of models with cost data
 const modelsWithCostCount = computed(() => {
-  return modelsData.value.filter(m => m.costPerTask > 0).length
+  return modelsData.value.filter(m => {
+    const cost = parseFloat(String(m.costPerTask)) || 0
+    return cost > 0
+  }).length
 })
 
 // Total models count (from metadata)
@@ -160,10 +169,15 @@ const totalModelsCount = computed(() => {
 // Best value models (top 3)
 const bestValueModels = computed(() => {
   return [...modelsData.value]
-    .filter(m => m.costPerTask > 0)
+    .filter(m => {
+      const cost = parseFloat(String(m.costPerTask)) || 0
+      return cost > 0
+    })
     .sort((a, b) => {
-      const aRatio = a.intelligenceIndex / a.costPerTask
-      const bRatio = b.intelligenceIndex / b.costPerTask
+      const aCost = parseFloat(String(a.costPerTask)) || 0
+      const bCost = parseFloat(String(b.costPerTask)) || 0
+      const aRatio = a.intelligenceIndex / aCost
+      const bRatio = b.intelligenceIndex / bCost
       return bRatio - aRatio
     })
     .slice(0, 3)
@@ -179,8 +193,15 @@ const topIntelligenceModels = computed(() => {
 // Lowest cost models
 const lowestCostModels = computed(() => {
   return [...modelsData.value]
-    .filter(m => m.costPerTask > 0)
-    .sort((a, b) => a.costPerTask - b.costPerTask)
+    .filter(m => {
+      const cost = parseFloat(String(m.costPerTask)) || 0
+      return cost > 0
+    })
+    .sort((a, b) => {
+      const aCost = parseFloat(String(a.costPerTask)) || 0
+      const bCost = parseFloat(String(b.costPerTask)) || 0
+      return aCost - bCost
+    })
     .slice(0, 1)
 })
 
@@ -189,10 +210,12 @@ const paretoOptimalModels = computed(() => {
   const pareto: ModelData[] = []
   
   for (const model of modelsData.value) {
+    const modelCost = parseFloat(String(model.costPerTask)) || 0
     const isDominated = modelsData.value.some(other => {
-      return other.costPerTask <= model.costPerTask &&
+      const otherCost = parseFloat(String(other.costPerTask)) || 0
+      return otherCost <= modelCost &&
              other.intelligenceIndex >= model.intelligenceIndex &&
-             (other.costPerTask < model.costPerTask || other.intelligenceIndex > model.intelligenceIndex)
+             (otherCost < modelCost || other.intelligenceIndex > model.intelligenceIndex)
     })
     if (!isDominated) {
       pareto.push(model)
@@ -224,13 +247,14 @@ function getValueRating(ratio: number | undefined): { stars: number; label: stri
   return { stars: 1, label: 'Basic' }
 }
 
-function formatCost(cost: number): string {
-  if (cost === 0) return 'Free'
-  if (cost < 0.01) return `$${cost.toFixed(3)}/task`
-  if (cost < 0.1) return `$${cost.toFixed(2)}/task`
-  if (cost < 1) return `$${cost.toFixed(2)}/task`
-  if (cost < 10) return `$${cost.toFixed(1)}/task`
-  return `$${cost.toFixed(0)}/task`
+function formatCost(cost: number | string): string {
+  const numCost = typeof cost === 'string' ? parseFloat(cost) : cost
+  if (isNaN(numCost) || numCost === 0) return 'Free'
+  if (numCost < 0.01) return `$${numCost.toFixed(3)}/task`
+  if (numCost < 0.1) return `$${numCost.toFixed(2)}/task`
+  if (numCost < 1) return `$${numCost.toFixed(2)}/task`
+  if (numCost < 10) return `$${numCost.toFixed(1)}/task`
+  return `$${numCost.toFixed(0)}/task`
 }
 
 function formatDate(dateStr: string): string {
@@ -435,7 +459,7 @@ useSeoMeta({
                   {{ bestValueModels[0].name }}
                 </a>
                 <p class="text-sm text-green-500">
-                  Ratio: {{ bestValueModels[0] ? (bestValueModels[0].intelligenceIndex / bestValueModels[0].costPerTask).toFixed(0) : 0 }}x
+                  Ratio: {{ bestValueModels[0] ? (bestValueModels[0].intelligenceIndex / (parseFloat(String(bestValueModels[0].costPerTask)) || 1)).toFixed(0) : 0 }}x
                 </p>
               </div>
             </div>
@@ -614,17 +638,17 @@ useSeoMeta({
                   </td>
                   <td class="py-4 px-4 text-right">
                     <div class="flex items-center justify-end gap-2">
-                      <span v-if="model.costPerTask === 0" class="text-sm font-semibold text-green-500">
+                      <span v-if="parseFloat(String(model.costPerTask)) === 0" class="text-sm font-semibold text-green-500">
                         Free
                       </span>
                       <template v-else>
                         <div class="flex items-center gap-1">
                           <span v-for="n in 5" :key="n" class="text-primary">
-                            {{ n <= Math.round(getValueRating(model.intelligenceIndex / model.costPerTask).stars) ? '★' : '☆' }}
+                            {{ n <= Math.round(getValueRating(model.intelligenceIndex / (parseFloat(String(model.costPerTask)) || 1)).stars) ? '★' : '☆' }}
                           </span>
                         </div>
                         <span class="text-sm font-semibold text-primary">
-                          {{ (model.intelligenceIndex / model.costPerTask).toFixed(0) }}x
+                          {{ (model.intelligenceIndex / (parseFloat(String(model.costPerTask)) || 1)).toFixed(0) }}x
                         </span>
                       </template>
                     </div>
