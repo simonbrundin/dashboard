@@ -230,7 +230,7 @@ useSeoMeta({
             v-if="modelsWithoutCost.length > 0"
             variant="outline"
             size="sm"
-            :loading="progress.show.value"
+            :loading="progress.show"
             icon="i-lucide-plus"
             @click="actions.fetchMorePrices"
           >
@@ -239,7 +239,7 @@ useSeoMeta({
           <UButton
             variant="outline"
             size="sm"
-            :loading="progress.show.value"
+            :loading="progress.show"
             icon="i-lucide-refresh-cw"
             @click="actions.refreshPrices"
           >
@@ -289,7 +289,7 @@ useSeoMeta({
         </div>
 
         <!-- Progress Bar -->
-        <div v-if="progress.show.value" class="bg-primary/10 rounded-lg p-4 border border-primary/20">
+        <div v-if="progress.show" class="bg-primary/10 rounded-lg p-4 border border-primary/20">
           <div class="flex items-center justify-between mb-2">
             <div class="flex items-center gap-2">
               <UIcon name="i-lucide-loader-2" class="w-4 h-4 animate-spin text-primary" />
@@ -329,7 +329,7 @@ useSeoMeta({
               </p>
             </div>
             <UButton
-              :loading="progress.show.value"
+              :loading="progress.show"
               icon="i-lucide-refresh-cw"
               @click="actions.fetchMorePrices"
             >
