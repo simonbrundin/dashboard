@@ -1,5 +1,6 @@
-import { writeFile } from 'fs/promises'
+import { writeFile, readFile } from 'fs/promises'
 import { join } from 'path'
+import { scrapeModelCostPerTask, getModelSlugsFromAPI } from '../utils/scraper'
 
 interface AAModel {
   id: string
@@ -28,16 +29,15 @@ interface AAAPIResponse {
   data: AAModel[]
 }
 
-function categorizeModel(intelligenceIndex: number, price: number): 'frontier' | 'high' | 'mid' | 'budget' {
-  if (intelligenceIndex >= 50 && price > 1) return 'frontier'
-  if (intelligenceIndex >= 40 && price > 0.2) return 'high'
-  if (intelligenceIndex >= 30 || price <= 0.5) return 'mid'
-  return 'budget'
+interface CachedData {
+  source: string
+  updatedAt: string
+  totalModels: number
+  costPerTaskCache: Record<string, number>
 }
 
 function determineCategoryFromPrice(pricePerMillion: number): 'frontier' | 'high' | 'mid' | 'budget' {
-  // Price is per million tokens
-  if (pricePerMillion === 0) return 'budget' // Free models
+  if (pricePerMillion === 0) return 'budget'
   if (pricePerMillion > 50) return 'frontier'
   if (pricePerMillion > 10) return 'high'
   if (pricePerMillion > 1) return 'mid'
@@ -47,22 +47,19 @@ function determineCategoryFromPrice(pricePerMillion: number): 'frontier' | 'high
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
   
-  // Get API key from environment or config
   const apiKey = process.env.ARTIFICIAL_ANALYSIS_API_KEY || config.artificialAnalysisApiKey
   
   if (!apiKey) {
     throw createError({
       statusCode: 500,
-      message: 'Artificial Analysis API key not configured. Set ARTIFICIAL_ANALYSIS_API_KEY in your .env file.'
+      message: 'Artificial Analysis API key not configured.'
     })
   }
 
   try {
-    // Fetch data from Artificial Analysis API
+    // Step 1: Fetch base data from API (fast)
     const response = await $fetch<AAAPIResponse>('https://artificialanalysis.ai/api/v2/data/llms/models', {
-      headers: {
-        'x-api-key': apiKey
-      }
+      headers: { 'x-api-key': apiKey }
     })
 
     if (response.status !== 200) {
@@ -72,28 +69,77 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    // Transform data to our format
+    // Step 2: Load existing cost/task cache if exists (for incremental updates)
+    const cachePath = join(process.cwd(), 'app', 'data', 'models-cache.json')
+    let costCache: Record<string, number> = {}
+    
+    try {
+      const cachedData = await readFile(cachePath, 'utf-8')
+      const parsed = JSON.parse(cachedData) as CachedData
+      costCache = parsed.costPerTaskCache || {}
+      console.log(`Loaded ${Object.keys(costCache).length} cached cost/task values`)
+    } catch {
+      console.log('No existing cache, starting fresh')
+    }
+
+    // Step 3: Scrape cost per task for models that don't have it cached
+    const modelsNeedingScrape = response.data
+      .filter(m => m.evaluations?.artificial_analysis_intelligence_index && m.pricing?.price_1m_blended_3_to_1)
+      .filter(m => !costCache[m.slug])
+      .map(m => m.slug)
+
+    console.log(`Need to scrape ${modelsNeedingScrape.length} models for cost/task`)
+
+    if (modelsNeedingScrape.length > 0) {
+      // Scrape in batches with progress
+      let scraped = 0
+      for (const slug of modelsNeedingScrape) {
+        scraped++
+        if (scraped % 10 === 0) {
+          console.log(`Scraping progress: ${scraped}/${modelsNeedingScrape.length}`)
+        }
+        
+        const cost = await scrapeModelCostPerTask(slug)
+        if (cost !== null) {
+          costCache[slug] = cost
+        }
+        
+        // Rate limit - be respectful to AA
+        await new Promise(resolve => setTimeout(resolve, 1200))
+      }
+      
+      // Save updated cache
+      const cacheData: CachedData = {
+        source: 'artificialanalysis.ai',
+        updatedAt: new Date().toISOString(),
+        totalModels: Object.keys(costCache).length,
+        costPerTaskCache: costCache
+      }
+      await writeFile(cachePath, JSON.stringify(cacheData, null, 2), 'utf-8')
+      console.log(`Saved cache with ${Object.keys(costCache).length} cost/task values`)
+    }
+
+    // Step 4: Transform data using scraped cost/task
     const models = response.data
       .filter(m => m.evaluations?.artificial_analysis_intelligence_index && m.pricing?.price_1m_blended_3_to_1)
       .map(m => {
         const intelligenceIndex = Math.round(m.evaluations.artificial_analysis_intelligence_index)
-        // Store the blended price per million tokens
-        // Note: "Cost per Intelligence Index Task" on AA is a weighted calculation 
-        // that includes token counts per benchmark task, not just the price
         const pricePerMillion = m.pricing.price_1m_blended_3_to_1
+        const costPerTask = costCache[m.slug] ?? pricePerMillion // Fall back to price/M if not scraped
         
         return {
           id: m.id,
           name: m.name,
+          slug: m.slug,
           provider: m.model_creator.name,
           providerLogo: getProviderLogo(m.model_creator.slug),
           intelligenceIndex,
-          costPerTask: pricePerMillion, // Price per million tokens
+          costPerTask, // Cost per Intelligence Index task (from scraping) or price/M (fallback)
           inputPricePerM: m.pricing.price_1m_input_tokens,
           outputPricePerM: m.pricing.price_1m_output_tokens,
           category: determineCategoryFromPrice(pricePerMillion),
           strengths: extractStrengths(m.evaluations),
-          contextWindow: 'N/A', // Not available in free API
+          contextWindow: 'N/A',
           openWeights: isOpenWeights(m.name),
           speed: Math.round(m.median_output_tokens_per_second),
           latency: Math.round(m.median_time_to_first_token_seconds * 100) / 100
@@ -101,7 +147,7 @@ export default defineEventHandler(async (event) => {
       })
       .sort((a, b) => b.intelligenceIndex - a.intelligenceIndex)
 
-    // Save to file
+    // Step 5: Save to file
     const dataPath = join(process.cwd(), 'app', 'data', 'models-live.json')
     const exportData = {
       source: 'artificialanalysis.ai',
@@ -115,13 +161,15 @@ export default defineEventHandler(async (event) => {
     return {
       success: true,
       totalModels: models.length,
+      cachedCostTasks: Object.keys(costCache).length,
+      scrapedNew: modelsNeedingScrape.length,
       updatedAt: exportData.updatedAt
     }
   } catch (error: any) {
     console.error('Failed to refresh models:', error)
     throw createError({
       statusCode: error.statusCode || 500,
-      message: error.message || 'Failed to refresh models from Artificial Analysis'
+      message: error.message || 'Failed to refresh models'
     })
   }
 })
@@ -167,4 +215,4 @@ function isOpenWeights(name: string): boolean {
   ]
   const lowerName = name.toLowerCase()
   return openWeightPatterns.some(pattern => lowerName.includes(pattern.toLowerCase()))
-}
+})
