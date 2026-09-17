@@ -37,18 +37,17 @@ async function fetchModels() {
   }
 }
 
-// Refresh data from Artificial Analysis
-async function refreshModels() {
+// Refresh prices from Artificial Analysis (updates all existing models)
+async function refreshPrices() {
   isRefreshing.value = true
   lastError.value = null
   
   try {
     const result = await $fetch<{
       success: boolean
-      totalModels: number
-      scraped: number
+      updated: number
       updatedAt: string
-    }>('/api/models/scrape', {
+    }>('/api/models/refresh-prices', {
       method: 'POST'
     })
     
@@ -56,25 +55,25 @@ async function refreshModels() {
       await fetchModels()
     }
   } catch (error: any) {
-    console.error('Failed to scrape models:', error)
-    lastError.value = error.data?.message || error.message || 'Failed to scrape models'
+    console.error('Failed to refresh prices:', error)
+    lastError.value = error.data?.message || error.message || 'Failed to refresh prices'
   } finally {
     isRefreshing.value = false
   }
 }
 
-// Add new models (scrape missing ones)
-async function addModels() {
+// Fetch more prices (only for models without prices)
+async function fetchMorePrices() {
   isRefreshing.value = true
   lastError.value = null
   
   try {
     const result = await $fetch<{
       success: boolean
-      totalModels: number
-      scraped: number
+      added: number
+      total: number
       updatedAt: string
-    }>('/api/models/scrape', {
+    }>('/api/models/fetch-more', {
       method: 'POST'
     })
     
@@ -82,8 +81,8 @@ async function addModels() {
       await fetchModels()
     }
   } catch (error: any) {
-    console.error('Failed to scrape models:', error)
-    lastError.value = error.data?.message || error.message || 'Failed to add models'
+    console.error('Failed to fetch more prices:', error)
+    lastError.value = error.data?.message || error.message || 'Failed to fetch more prices'
   } finally {
     isRefreshing.value = false
   }
@@ -161,9 +160,12 @@ const modelsWithCostCount = computed(() => {
   }).length
 })
 
-// Total models count (from metadata)
-const totalModelsCount = computed(() => {
-  return metaData.value?.totalModels || modelsData.value.length
+// Count of models without cost data
+const modelsWithoutCostCount = computed(() => {
+  return modelsData.value.filter(m => {
+    const cost = parseFloat(String(m.costPerTask)) || 0
+    return cost === 0
+  }).length
 })
 
 // Best value models (top 3)
@@ -296,22 +298,22 @@ useSeoMeta({
         </template>
         <template #trailing>
           <UButton
-            v-if="modelsWithCostCount < totalModelsCount && totalModelsCount > 0"
+            v-if="modelsWithoutCostCount > 0"
             variant="outline"
             size="sm"
             icon="i-lucide-plus"
-            @click="addModels"
+            @click="fetchMorePrices"
           >
-            Add {{ totalModelsCount - modelsWithCostCount }}
+            Fler ({{ modelsWithoutCostCount }})
           </UButton>
           <UButton
             variant="outline"
             size="sm"
             :loading="isRefreshing"
             icon="i-lucide-refresh-cw"
-            @click="refreshModels"
+            @click="refreshPrices"
           >
-            Refresh ({{ modelsWithCostCount }})
+            Uppdatera priser ({{ modelsWithCostCount }})
           </UButton>
           <UButton
             variant="ghost"
@@ -338,9 +340,9 @@ useSeoMeta({
                   Intelligence Index vs. Cost per Task
                 </h2>
                 <p class="text-sm text-muted-foreground mt-1">
-                  Showing <span class="font-semibold">{{ modelsWithCostCount }}</span> models with cost data.
-                  <span v-if="totalModelsCount - modelsWithCostCount > 0">
-                    Click "Add {{ totalModelsCount - modelsWithCostCount }}" to scrape cost for remaining models.
+                  <span class="font-semibold">{{ modelsWithCostCount }}</span> modeller med prisdata.
+                  <span v-if="modelsWithoutCostCount > 0">
+                    {{ modelsWithoutCostCount }} saknar pris - klicka "Fler" för att hämta.
                   </span>
                 </p>
                 <p v-if="metaData?.updatedAt" class="text-xs text-muted-foreground mt-1">
