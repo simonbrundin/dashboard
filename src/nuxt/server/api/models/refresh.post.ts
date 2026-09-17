@@ -35,10 +35,12 @@ function categorizeModel(intelligenceIndex: number, price: number): 'frontier' |
   return 'budget'
 }
 
-function determineCategoryFromPrice(price: number): 'frontier' | 'high' | 'mid' | 'budget' {
-  if (price > 1) return 'frontier'
-  if (price > 0.2) return 'high'
-  if (price > 0.05) return 'mid'
+function determineCategoryFromPrice(pricePerMillion: number): 'frontier' | 'high' | 'mid' | 'budget' {
+  // Price is per million tokens
+  if (pricePerMillion === 0) return 'budget' // Free models
+  if (pricePerMillion > 50) return 'frontier'
+  if (pricePerMillion > 10) return 'high'
+  if (pricePerMillion > 1) return 'mid'
   return 'budget'
 }
 
@@ -75,7 +77,8 @@ export default defineEventHandler(async (event) => {
       .filter(m => m.evaluations?.artificial_analysis_intelligence_index && m.pricing?.price_1m_blended_3_to_1)
       .map(m => {
         const intelligenceIndex = Math.round(m.evaluations.artificial_analysis_intelligence_index)
-        const costPerTask = m.pricing.price_1m_blended_3_to_1 / 1000 // Convert per million to per task
+        const pricePerMillion = m.pricing.price_1m_blended_3_to_1
+        const costPerTask = pricePerMillion === 0 ? 0 : pricePerMillion / 1000 // Convert per million to per 1K tokens
         
         return {
           id: m.id,
@@ -83,10 +86,10 @@ export default defineEventHandler(async (event) => {
           provider: m.model_creator.name,
           providerLogo: getProviderLogo(m.model_creator.slug),
           intelligenceIndex,
-          costPerTask: Math.round(costPerTask * 1000) / 1000, // Round to 3 decimals
+          costPerTask: Math.round(costPerTask * 10000) / 10000, // Round to 4 decimals
           inputPricePerM: m.pricing.price_1m_input_tokens,
           outputPricePerM: m.pricing.price_1m_output_tokens,
-          category: determineCategoryFromPrice(costPerTask),
+          category: determineCategoryFromPrice(pricePerMillion),
           strengths: extractStrengths(m.evaluations),
           contextWindow: 'N/A', // Not available in free API
           openWeights: isOpenWeights(m.name),
