@@ -160,12 +160,12 @@ export default defineEventHandler(async (event) => {
 
     console.log(`Added ${newModelsAdded} new models to database`)
 
-    // Step 3: Get models that need price scraping
+        // Step 3: Get models that need price scraping (limit to 20 for faster initial import)
     const modelsWithoutCost = await query<{ slug: string; name: string }>(
-      'SELECT slug, name FROM models WHERE cost_per_task = 0'
+      'SELECT slug, name FROM models WHERE cost_per_task = 0 LIMIT 20'
     )
 
-    console.log(`Fetching prices for ${modelsWithoutCost.length} models...`)
+    console.log(`Scraping prices for ${modelsWithoutCost.length} models...`)
 
     let pricesAdded = 0
     const total = modelsWithoutCost.length
@@ -191,6 +191,7 @@ export default defineEventHandler(async (event) => {
     // Get final counts
     const withCost = await query<{ count: string }>('SELECT COUNT(*) as count FROM models WHERE cost_per_task > 0')
     const totalModels = await query<{ count: string }>('SELECT COUNT(*) as count FROM models')
+    const stillNeedPrices = await query<{ count: string }>('SELECT COUNT(*) as count FROM models WHERE cost_per_task = 0')
 
     console.log(`Complete! ${pricesAdded} new prices scraped.`)
 
@@ -200,6 +201,9 @@ export default defineEventHandler(async (event) => {
       pricesAdded,
       totalModels: parseInt(totalModels[0]?.count || '0'),
       totalWithPrices: parseInt(withCost[0]?.count || '0'),
+      stillNeedPrices: parseInt(stillNeedPrices[0]?.count || '0'),
+      totalToScrape: parseInt(stillNeedPrices[0]?.count || '0') + pricesAdded,
+      scraped: pricesAdded,
       updatedAt: new Date().toISOString()
     }
 
