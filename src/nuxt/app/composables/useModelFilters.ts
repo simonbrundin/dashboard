@@ -10,20 +10,33 @@ export function useModelFilters(models: Ref<ModelData[]>) {
   const sortDirection = ref<'asc' | 'desc'>('desc')
   const showOnlyOpenWeights = ref(false)
   const showWithoutPrice = ref(false)
+  const minIntelligence = ref(0)
+
+  // Max intelligence index in current data (slider upper bound)
+  const maxIntelligence = computed(() =>
+    models.value.reduce((max, m) => Math.max(max, m.intelligenceIndex), 0)
+  )
+
+  // Global page filter: only models at or above the intelligence threshold
+  const modelsAboveThreshold = computed(() =>
+    minIntelligence.value > 0
+      ? models.value.filter((m) => m.intelligenceIndex >= minIntelligence.value)
+      : models.value
+  )
 
   // Category stats
   const categoryStats = computed(() => ({
-    all: models.value.length,
-    frontier: models.value.filter((m) => m.category === 'frontier').length,
-    high: models.value.filter((m) => m.category === 'high').length,
-    mid: models.value.filter((m) => m.category === 'mid').length,
-    budget: models.value.filter((m) => m.category === 'budget').length,
-    openWeights: models.value.filter((m) => m.openWeights).length
+    all: modelsAboveThreshold.value.length,
+    frontier: modelsAboveThreshold.value.filter((m) => m.category === 'frontier').length,
+    high: modelsAboveThreshold.value.filter((m) => m.category === 'high').length,
+    mid: modelsAboveThreshold.value.filter((m) => m.category === 'mid').length,
+    budget: modelsAboveThreshold.value.filter((m) => m.category === 'budget').length,
+    openWeights: modelsAboveThreshold.value.filter((m) => m.openWeights).length
   }))
 
   // Filtered models
   const filteredModels = computed(() => {
-    let result = models.value
+    let result = modelsAboveThreshold.value
 
     if (selectedCategory.value !== 'all') {
       result = result.filter((m) => m.category === selectedCategory.value)
@@ -97,7 +110,10 @@ export function useModelFilters(models: Ref<ModelData[]>) {
     sortDirection,
     showOnlyOpenWeights,
     showWithoutPrice,
+    minIntelligence,
     // Computed
+    maxIntelligence,
+    modelsAboveThreshold,
     categoryStats,
     filteredModels,
     sortedModels,

@@ -15,13 +15,16 @@ const {
   sortDirection,
   showOnlyOpenWeights,
   showWithoutPrice,
+  minIntelligence,
+  maxIntelligence,
+  modelsAboveThreshold,
   categoryStats,
   sortedModels,
   handleSort
 } = useModelFilters(modelsData)
 
-// Stats composable
-const { bestValueModels, topIntelligenceModels, lowestCostModels, paretoOptimalModels } = useModelStats(modelsData)
+// Stats composable (uses only models above the intelligence threshold)
+const { bestValueModels, topIntelligenceModels, lowestCostModels, paretoOptimalModels } = useModelStats(modelsAboveThreshold)
 
 // Local state
 const lastError = ref<string | null>(null)
@@ -151,9 +154,12 @@ useSeoMeta({
             :selected-category="selectedCategory"
             :sort-by="sortBy"
             :show-only-open-weights="showOnlyOpenWeights"
+            :min-intelligence="minIntelligence"
+            :max-intelligence="maxIntelligence"
             :category-stats="categoryStats"
             @update:selected-category="selectedCategory = $event"
             @update:sort-by="sortBy = $event"
+            @update:min-intelligence="minIntelligence = $event"
             @toggle-open-weights="showOnlyOpenWeights = !showOnlyOpenWeights"
           />
 

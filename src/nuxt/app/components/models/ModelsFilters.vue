@@ -6,6 +6,8 @@ const props = defineProps<{
   selectedCategory: Category
   sortBy: SortColumn
   showOnlyOpenWeights: boolean
+  minIntelligence: number
+  maxIntelligence: number
   categoryStats: {
     all: number
     frontier: number
@@ -19,6 +21,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   'update:selectedCategory': [value: Category]
   'update:sortBy': [value: SortColumn]
+  'update:minIntelligence': [value: number]
   'toggleOpenWeights': []
 }>()
 
@@ -64,6 +67,23 @@ const sortOptions = [
         class="w-48"
         @update:model-value="emit('update:sortBy', $event)"
       />
+    </div>
+
+    <!-- Min Intelligence Filter -->
+    <div class="flex items-center gap-3">
+      <span class="text-sm text-muted-foreground">Min Intelligence:</span>
+      <USlider
+        :model-value="minIntelligence"
+        :min="0"
+        :max="maxIntelligence"
+        :step="1"
+        tooltip
+        class="w-40"
+        @update:model-value="emit('update:minIntelligence', $event)"
+      />
+      <span class="text-sm font-semibold w-8 text-primary">
+        {{ minIntelligence === 0 ? 'Alla' : `≥ ${minIntelligence}` }}
+      </span>
     </div>
 
     <!-- Open Weights Toggle -->
