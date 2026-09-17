@@ -6,13 +6,14 @@ const selectedCategory = ref<'all' | 'frontier' | 'high' | 'mid' | 'budget'>('al
 const sortBy = ref<'value' | 'intelligence' | 'cost' | 'speed'>('value')
 const sortDirection = ref<'asc' | 'desc'>('desc')
 const showOnlyOpenWeights = ref(false)
+const showWithoutPrice = ref(false)
 const isRefreshing = ref(false)
 const lastError = ref<string | null>(null)
 
 // Composables
 const { modelsData, metaData, fetchModels, getStats, modelsWithCost, modelsWithoutCost, totalInDb } = useModels()
 const progress = useProgress()
-const actions = useModelActions(modelsData, fetchModels)
+const actions = useModelActions(modelsData, progress, fetchModels)
 
 // Computed
 const filteredModels = computed(() => {
@@ -24,6 +25,10 @@ const filteredModels = computed(() => {
 
   if (showOnlyOpenWeights.value) {
     models = models.filter((m) => m.openWeights)
+  }
+
+  if (!showWithoutPrice.value) {
+    models = models.filter((m) => m.costPerTask !== null && m.costPerTask !== undefined && m.costPerTask > 0)
   }
 
   return models
@@ -224,17 +229,17 @@ useSeoMeta({
             icon="i-lucide-download"
             @click="actions.importModels"
           >
-            Importera ({{ totalInDb }})
+            Lägg till modeller ({{ totalInDb }})
           </UButton>
           <UButton
             v-if="modelsWithoutCost.length > 0"
             variant="outline"
             size="sm"
             :loading="progress.show"
-            icon="i-lucide-plus"
+            icon="i-lucide-tag"
             @click="actions.fetchMorePrices"
           >
-            Fler ({{ modelsWithoutCost.length }})
+            Hämta priser ({{ modelsWithoutCost.length }} utan)
           </UButton>
           <UButton
             variant="outline"
@@ -251,6 +256,7 @@ useSeoMeta({
             :href="'https://artificialanalysis.ai/models'"
             target="_blank"
             icon="i-lucide-external-link"
+            custom
           />
         </template>
       </UDashboardNavbar>
@@ -289,7 +295,7 @@ useSeoMeta({
         </div>
 
         <!-- Progress Bar -->
-        <div v-if="progress.show" class="bg-primary/10 rounded-lg p-4 border border-primary/20">
+        <div v-if="progress.show.value" class="bg-primary/10 rounded-lg p-4 border border-primary/20">
           <div class="flex items-center justify-between mb-2">
             <div class="flex items-center gap-2">
               <UIcon name="i-lucide-loader-2" class="w-4 h-4 animate-spin text-primary" />
@@ -507,9 +513,19 @@ useSeoMeta({
         <div v-if="sortedModels.length > 0">
           <div class="flex items-center justify-between mb-4">
             <h3 class="font-semibold text-lg">Full Model Comparison</h3>
-            <span class="text-sm text-muted-foreground">
-              Showing {{ sortedModels.length }} models
-            </span>
+            <div class="flex items-center gap-4">
+              <label class="flex items-center gap-2 text-sm cursor-pointer">
+                <input
+                  v-model="showWithoutPrice"
+                  type="checkbox"
+                  class="w-4 h-4 rounded border-border text-primary focus:ring-primary"
+                />
+                <span class="text-muted-foreground">Visa utan pris ({{ modelsWithoutCost.length }})</span>
+              </label>
+              <span class="text-sm text-muted-foreground">
+                {{ sortedModels.length }} modeller
+              </span>
+            </div>
           </div>
 
           <div class="overflow-x-auto">

@@ -4,7 +4,7 @@ import { scrapeModelCostPerTask } from '../../utils/scraper'
 export default defineEventHandler(async () => {
   try {
     const models = await query<{ slug: string; name: string }>(
-      "SELECT slug, name FROM models WHERE cost_per_task IS NOT NULL AND cost_per_task::text != '' AND cost_per_task > 0"
+      "SELECT slug, name FROM models WHERE cost_per_task > 0"
     )
 
     console.log(`Refreshing prices for ${models.length} models...`)
