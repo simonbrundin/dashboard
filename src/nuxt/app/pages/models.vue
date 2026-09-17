@@ -188,7 +188,7 @@ useSeoMeta({
               </div>
             </div>
 
-            <ModelComparisonTable
+            <ModelsComparisonTable
               :models="sortedModels"
               :sort-by="sortBy"
               :sort-direction="sortDirection"
