@@ -195,6 +195,7 @@ export default defineEventHandler(async (event) => {
           latency: Math.round(m.median_time_to_first_token_seconds * 100) / 100
         }
       })
+      .filter(m => m.costPerTask > 0) // Only include models with cost data
       .sort((a, b) => b.intelligenceIndex - a.intelligenceIndex)
 
     // Step 5: Save to file
