@@ -27,8 +27,11 @@ local_resource(
 # pg-view - lightweight PostgreSQL web interface
 local_resource(
     "pgview",
-    serve_cmd = ["docker", "run", "--rm", "-p", "5050:3000", "-e", "PGVIEW_DEFAULT_CONNECTION=postgresql://postgres:postgres@host.docker.internal:5432/dashboard", "lcurrol/pg-view"],
+    cmd = ["docker", "run", "--rm", "-p", "5050:3000", "-e", "PGVIEW_DEFAULT_CONNECTION=postgresql://postgres:postgres@host.docker.internal:5432/dashboard", "lcurrol/pg-view"],
     labels = ["Database"],
     resource_deps = ["postgres"],
     auto_init = True,
 )
+
+# Link to pg-view in Tilt UI
+ui_resource("pgview", links=["http://localhost:5050"])
