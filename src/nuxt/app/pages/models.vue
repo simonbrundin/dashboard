@@ -572,12 +572,11 @@ useSeoMeta({
                         Free
                       </span>
                       <template v-else>
-                        <UStepper 
-                          :model-value="getValueRating(model.intelligenceIndex / model.costPerTask).stars"
-                          :max="5"
-                          size="xs"
-                          readonly
-                        />
+                        <div class="flex items-center gap-1">
+                          <span v-for="n in 5" :key="n" class="text-primary">
+                            {{ n <= Math.round(getValueRating(model.intelligenceIndex / model.costPerTask).stars) ? '★' : '☆' }}
+                          </span>
+                        </div>
                         <span class="text-sm font-semibold text-primary">
                           {{ (model.intelligenceIndex / model.costPerTask).toFixed(0) }}x
                         </span>
