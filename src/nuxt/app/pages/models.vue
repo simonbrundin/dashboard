@@ -180,6 +180,7 @@ function getValueRating(ratio: number | undefined): { stars: number; label: stri
 
 function formatCost(cost: number): string {
   if (cost === 0) return 'Free'
+  if (cost < 0.001) return `$${cost.toFixed(4)}`
   if (cost < 0.01) return `$${cost.toFixed(3)}`
   if (cost < 1) return `$${cost.toFixed(2)}`
   return `$${cost.toFixed(2)}`
