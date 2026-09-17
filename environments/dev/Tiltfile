@@ -1,25 +1,11 @@
 # ==================================================================
-# Dashboard Development Environment - Tiltfile
+# Dashboard Development Environment
 # ==================================================================
-#
-# Användning:
-#   tilt up
-#
-# Miljövariabler:
-#   DOCKER_GATEWAY_HOST - Host för att nå Docker-nätverk från container
-#
-# ==================================================================
-
-tilt_port = os.environ.get('TILT_PORT', '10350')
-
-print('==========================================')
-print('Dashboard Dev Environment')
-print('Tilt Port: ' + tilt_port)
-print('==========================================')
 
 local_resource(
-  'dashboard',
-  serve_cmd='nub run dev',
-  serve_dir='/home/simon/repos/dashboard/src/nuxt',
-  labels=['Frontend'],
+    "dev",
+    cmd = ["/home/linuxbrew/.linuxbrew/bin/nub", "run", "dev", "--port", "0"],
+    dir = "../../src/nuxt",
+    labels = ["Frontend"],
+    auto_init = False,
 )
