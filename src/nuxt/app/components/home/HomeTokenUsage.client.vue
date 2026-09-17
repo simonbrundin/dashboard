@@ -27,7 +27,6 @@ const fetchTokenUsage = async () => {
   } catch (e: unknown) {
     const err = e as { message?: string }
     error.value = err.message || 'Kunde inte hämta data'
-    console.error('Failed to fetch token usage:', e)
   } finally {
     isLoading.value = false
   }
