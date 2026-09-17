@@ -3,7 +3,7 @@
 #
 # Access the app at: http://localhost:40807
 # Models page: http://localhost:40807/models
-# Drizzle Studio: http://localhost:49830
+# pgAdmin: http://localhost:5050
 # ==================================================================
 
 # PostgreSQL database via docker compose up
@@ -24,12 +24,11 @@ local_resource(
     auto_init = True,
 )
 
-# Drizzle Studio - visual database viewer
+# pgAdmin - PostgreSQL management tool
 local_resource(
-    "drizzle-studio",
-    serve_cmd = ["/home/linuxbrew/.linuxbrew/bin/npx", "drizzle-kit", "studio", "--config", "src/nuxt/drizzle.config.ts", "--port", "49830", "--host", "0.0.0.0"],
-    serve_dir = "../..",
+    "pgadmin",
+    serve_cmd = ["docker", "run", "--rm", "-p", "5050:80", "-e", "PGADMIN_DEFAULT_EMAIL=admin@admin.com", "-e", "PGADMIN_DEFAULT_PASSWORD=admin", "-e", "PGADMIN_CONFIG_SERVER_MODE=False", "dpage/pgadmin4"],
     labels = ["Database"],
     resource_deps = ["postgres"],
-    auto_init = True,
+    auto_init = False,
 )
