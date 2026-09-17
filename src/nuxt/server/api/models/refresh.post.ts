@@ -1,6 +1,58 @@
 import { writeFile, readFile } from 'fs/promises'
 import { join } from 'path'
-import { scrapeModelCostPerTask, getModelSlugsFromAPI } from '../utils/scraper'
+import { chromium } from 'playwright'
+
+// === Scraper functions (inlined to avoid import issues) ===
+
+let browser: Awaited<ReturnType<typeof chromium.launch>> | null = null
+
+async function getBrowser() {
+  if (!browser) {
+    browser = await chromium.launch({ headless: true })
+  }
+  return browser
+}
+
+async function scrapeModelCostPerTask(modelSlug: string): Promise<number | null> {
+  const b = await getBrowser()
+  const page = await b.newPage()
+  
+  try {
+    await page.goto(`https://artificialanalysis.ai/models/${modelSlug}`, {
+      waitUntil: 'networkidle',
+      timeout: 60000
+    })
+    
+    await page.waitForTimeout(2000)
+    
+    const html = await page.content()
+    
+    const costMatch = html.match(/<span>\$([0-9.]+)<\/span>[\s\S]{0,500}?Cost per Intelligence Index task/i)
+    
+    if (costMatch && costMatch[1]) {
+      return parseFloat(costMatch[1])
+    }
+    
+    const taskIndex = html.indexOf('Cost per Intelligence Index task')
+    if (taskIndex > -1) {
+      const beforeText = html.substring(Math.max(0, taskIndex - 300), taskIndex)
+      const dollarMatch = beforeText.match(/\$([0-9.]+)/)
+      if (dollarMatch && dollarMatch[1]) {
+        return parseFloat(dollarMatch[1])
+      }
+    }
+    
+    return null
+    
+  } catch (error) {
+    console.error(`Error scraping ${modelSlug}:`, error)
+    return null
+  } finally {
+    await page.close()
+  }
+}
+
+// === Types ===
 
 interface AAModel {
   id: string
@@ -69,7 +121,7 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    // Step 2: Load existing cost/task cache if exists (for incremental updates)
+    // Step 2: Load existing cost/task cache if exists
     const cachePath = join(process.cwd(), 'app', 'data', 'models-cache.json')
     let costCache: Record<string, number> = {}
     
@@ -91,7 +143,6 @@ export default defineEventHandler(async (event) => {
     console.log(`Need to scrape ${modelsNeedingScrape.length} models for cost/task`)
 
     if (modelsNeedingScrape.length > 0) {
-      // Scrape in batches with progress
       let scraped = 0
       for (const slug of modelsNeedingScrape) {
         scraped++
@@ -104,7 +155,6 @@ export default defineEventHandler(async (event) => {
           costCache[slug] = cost
         }
         
-        // Rate limit - be respectful to AA
         await new Promise(resolve => setTimeout(resolve, 1200))
       }
       
@@ -125,7 +175,7 @@ export default defineEventHandler(async (event) => {
       .map(m => {
         const intelligenceIndex = Math.round(m.evaluations.artificial_analysis_intelligence_index)
         const pricePerMillion = m.pricing.price_1m_blended_3_to_1
-        const costPerTask = costCache[m.slug] ?? pricePerMillion // Fall back to price/M if not scraped
+        const costPerTask = costCache[m.slug] ?? pricePerMillion
         
         return {
           id: m.id,
@@ -134,7 +184,7 @@ export default defineEventHandler(async (event) => {
           provider: m.model_creator.name,
           providerLogo: getProviderLogo(m.model_creator.slug),
           intelligenceIndex,
-          costPerTask, // Cost per Intelligence Index task (from scraping) or price/M (fallback)
+          costPerTask,
           inputPricePerM: m.pricing.price_1m_input_tokens,
           outputPricePerM: m.pricing.price_1m_output_tokens,
           category: determineCategoryFromPrice(pricePerMillion),
@@ -215,4 +265,4 @@ function isOpenWeights(name: string): boolean {
   ]
   const lowerName = name.toLowerCase()
   return openWeightPatterns.some(pattern => lowerName.includes(pattern.toLowerCase()))
-})
+}
