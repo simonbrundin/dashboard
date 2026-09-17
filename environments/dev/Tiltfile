@@ -2,11 +2,12 @@
 # Dashboard Development Environment
 # ==================================================================
 
-# PostgreSQL database (runs schema.sql on startup via docker-compose)
-docker_compose(
+# PostgreSQL database via docker compose up
+local_resource(
     "postgres",
-    file = "environments/dev/docker-compose.yml",
-    service = "postgres",
+    cmd = ["docker", "compose", "-f", "environments/dev/docker-compose.yml", "up", "-d", "postgres"],
+    dir = "../..",
+    labels = ["Database"],
 )
 
 # Nuxt dev server (depends on postgres being ready)
