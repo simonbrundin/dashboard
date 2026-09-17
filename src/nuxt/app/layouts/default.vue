@@ -20,6 +20,13 @@ const links = [[{
   onSelect: () => {
     open.value = false
   }
+}, {
+  label: 'AI Models',
+  icon: 'i-lucide-brain',
+  to: '/models',
+  onSelect: () => {
+    open.value = false
+  }
 }]] satisfies NavigationMenuItem[][]
 
 const groups = computed(() => [{
