@@ -3,7 +3,7 @@
 #
 # Access the app at: http://localhost:40807
 # Models page: http://localhost:40807/models
-# pg-view: http://localhost:5050
+# Adminer (DB): http://localhost:5050
 # ==================================================================
 
 # PostgreSQL database via docker compose up
@@ -24,10 +24,10 @@ local_resource(
     auto_init = True,
 )
 
-# pg-view - lightweight PostgreSQL web interface
+# Adminer - lightweight database viewer (no login for local dev)
 local_resource(
-    "pgview",
-    cmd = ["docker", "run", "--rm", "-p", "5050:3000", "-e", "PGVIEW_DEFAULT_CONNECTION=postgresql://postgres:postgres@host.docker.internal:5432/dashboard", "lcurrol/pg-view"],
+    "adminer",
+    cmd = ["docker", "run", "--rm", "-p", "5050:8080", "adminer:latest"],
     labels = ["Database"],
     resource_deps = ["postgres"],
     auto_init = True,
