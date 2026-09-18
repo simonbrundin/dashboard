@@ -47,8 +47,7 @@ async function insertMissingModels(models: AAModel[], stream: ProgressStream): P
   })
 
   let added = 0
-  for (let i = 0; i < models.length; i++) {
-    const model = models[i]
+  for (const [index, model] of models.entries()) {
     const exists = await query<{ slug: string }>('SELECT slug FROM models WHERE slug = $1', [model.slug])
     if (exists.length === 0) {
       await query(INSERT_MODELS_COLUMNS, toModelRow(model))
@@ -57,7 +56,7 @@ async function insertMissingModels(models: AAModel[], stream: ProgressStream): P
     sendProgress(stream, {
       phase: 'adding_models',
       message: `Lägger till: ${model.name.substring(0, 30)}...`,
-      progress: i + 1,
+      progress: index + 1,
       total: models.length,
       modelsAdded: added
     })
@@ -77,20 +76,19 @@ async function scrapeMissingPrices(stream: ProgressStream): Promise<{ pricesAdde
   })
 
   let pricesAdded = 0
-  for (let i = 0; i < total; i++) {
-    const { slug } = modelsWithoutCost[i]
-    const cost = await scrapeModelCostPerTask(slug)
+  for (const [index, model] of modelsWithoutCost.entries()) {
+    const cost = await scrapeModelCostPerTask(model.slug)
     if (cost !== null && cost > 0) {
-      await query('UPDATE models SET cost_per_task = $1 WHERE slug = $2', [cost, slug])
+      await query('UPDATE models SET cost_per_task = $1 WHERE slug = $2', [cost, model.slug])
       pricesAdded++
-      console.log(`[${i + 1}/${total}] ${slug}: $${cost}/task ✓`)
+      console.log(`[${index + 1}/${total}] ${model.slug}: $${cost}/task ✓`)
     }
 
     const costMessage = cost === null ? 'ingen träff' : `$${cost.toFixed(2)}/task`
     sendProgress(stream, {
       phase: 'scraping_prices',
-      message: `Pris för ${slug}: ${costMessage}`,
-      progress: i + 1,
+      message: `Pris för ${model.slug}: ${costMessage}`,
+      progress: index + 1,
       total,
       pricesAdded
     })
@@ -117,18 +115,19 @@ export default defineEventHandler(async (event) => {
       progress: total,
       total,
       success: true,
-      newModelsAdded,
+      modelsAdded: newModelsAdded,
       pricesAdded
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Failed to fetch more:', error)
+    const errorMessage = error instanceof Error ? error.message : 'Misslyckades'
     sendProgress(stream, {
       phase: 'error',
-      message: error.message || 'Misslyckades',
+      message: errorMessage,
       progress: 0,
       total: 0,
       success: false,
-      error: error.message
+      error: errorMessage
     })
   } finally {
     event.node.res.end()

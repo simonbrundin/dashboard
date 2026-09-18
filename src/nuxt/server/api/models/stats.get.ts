@@ -40,10 +40,10 @@ export default defineEventHandler(async (event) => {
       needsImport: aaCount > dbCount,
       needsPrices: dbCount - withPricesCount
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     throw createError({
       statusCode: 500,
-      message: error.message || 'Failed to get stats'
+      message: error instanceof Error ? error.message : 'Failed to get stats'
     })
   }
 })

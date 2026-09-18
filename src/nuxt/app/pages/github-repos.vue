@@ -59,7 +59,7 @@ function getTopicColor(topic: string): 'primary' | 'success' | 'info' | 'warning
     'error'
   ]
   const index = topic.length % colors.length
-  return colors[index]
+  return colors[index] ?? 'primary'
 }
 
 function formatDate(dateString: string): string {

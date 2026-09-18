@@ -1,5 +1,6 @@
 export interface ModelData {
   id: string
+  slug?: string
   name: string
   provider: string
   providerLogo: string

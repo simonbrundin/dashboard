@@ -70,7 +70,7 @@ export default defineEventHandler(async () => {
       totalModels: models.length,
       models
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Failed to fetch models from database:', error)
     
     // Fallback to JSON file if database is not available

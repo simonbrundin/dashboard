@@ -33,6 +33,18 @@ const sortOptions = [
   { value: 'cost', label: 'Lowest Cost' },
   { value: 'speed', label: 'Fastest Speed' }
 ] as const
+
+function updateSort(value: unknown) {
+  if (sortOptions.some(option => option.value === value)) {
+    emit('update:sortBy', value as SortColumn)
+  }
+}
+
+function updateMinimumIntelligence(value: number | number[] | undefined) {
+  if (typeof value === 'number') {
+    emit('update:minIntelligence', value)
+  }
+}
 </script>
 
 <template>
@@ -65,7 +77,7 @@ const sortOptions = [
         :options="sortOptions"
         size="xs"
         class="w-48"
-        @update:model-value="emit('update:sortBy', $event)"
+        @update:model-value="updateSort"
       />
     </div>
 
@@ -79,7 +91,7 @@ const sortOptions = [
         :step="1"
         tooltip
         class="w-40"
-        @update:model-value="emit('update:minIntelligence', $event)"
+        @update:model-value="updateMinimumIntelligence"
       />
       <span class="text-sm font-semibold w-8 text-primary">
         {{ minIntelligence === 0 ? 'Alla' : `≥ ${minIntelligence}` }}

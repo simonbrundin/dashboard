@@ -31,16 +31,20 @@ export default defineEventHandler(async () => {
       if (imported % 50 === 0) console.log(`Imported ${imported}/${allModels.length}...`)
     }
 
-    const [{ count: total }] = await query<{ count: string }>('SELECT COUNT(*) FROM models')
+    const totalRows = await query<{ count: string }>('SELECT COUNT(*) FROM models')
+    const total = parseInt(totalRows[0]?.count ?? '0')
 
     return {
       success: true,
       imported,
-      total: parseInt(total),
+      total,
       updatedAt: new Date().toISOString()
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Failed to import:', error)
-    throw createError({ statusCode: 500, message: error.message || 'Failed to import' })
+    throw createError({
+      statusCode: 500,
+      message: error instanceof Error ? error.message : 'Failed to import'
+    })
   }
 })

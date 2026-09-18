@@ -1,13 +1,14 @@
-export type Category = 'frontier' | 'high' | 'mid' | 'budget'
+export type Category = 'all' | 'frontier' | 'high' | 'mid' | 'budget'
 
 export function getCategoryColor(category: string): string {
-  const colors: Record<Category, string> = {
+  const colors: Record<Exclude<Category, 'all'>, string> = {
     frontier: 'text-purple-500 bg-purple-500/10',
     high: 'text-blue-500 bg-blue-500/10',
     mid: 'text-green-500 bg-green-500/10',
     budget: 'text-amber-500 bg-amber-500/10'
   }
-  return colors[category as Category] || 'text-gray-500 bg-gray-500/10'
+  if (category === 'all') return 'text-gray-500 bg-gray-500/10'
+  return colors[category as Exclude<Category, 'all'>] || 'text-gray-500 bg-gray-500/10'
 }
 
 export interface ValueRating {

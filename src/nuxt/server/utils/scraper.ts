@@ -55,15 +55,14 @@ export async function scrapeModelCosts(
   const results = new Map<string, number | null>()
   const total = slugs.length
 
-  for (let i = 0; i < slugs.length; i++) {
-    const slug = slugs[i]
+  for (const [index, slug] of slugs.entries()) {
     const cost = await scrapeModelCostPerTask(slug)
     results.set(slug, cost)
 
-    onProgress?.(i + 1, total, slug, cost)
+    onProgress?.(index + 1, total, slug, cost)
 
     // Rate limit between requests
-    if (i < slugs.length - 1) {
+    if (index < slugs.length - 1) {
       await new Promise(resolve => setTimeout(resolve, delayMs))
     }
   }

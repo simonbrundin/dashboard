@@ -37,14 +37,10 @@ const sections = [{
   }]
 }]
 
-async function onChange() {
-  // Do something with data
-  console.log(state)
-}
 </script>
 
 <template>
-  <div v-for="(section, index) in sections" :key="index">
+  <div v-for="section in sections" :key="section.title">
     <UPageCard
       :title="section.title"
       :description="section.description"
@@ -63,7 +59,6 @@ async function onChange() {
       >
         <USwitch
           v-model="state[field.name]"
-          @update:model-value="onChange"
         />
       </UFormField>
     </UPageCard>

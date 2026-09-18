@@ -32,16 +32,18 @@ export function useModels() {
         models: ModelData[]
       }>('/api/models')
 
-      if (data.models?.length) {
-        modelsData.value = data.models
-        metaData.value = {
-          source: data.source || 'artificialanalysis.ai',
-          updatedAt: data.updatedAt,
-          totalModels: data.totalModels
-        }
+      if (!Array.isArray(data.models)) {
+        throw new Error('Invalid models response')
       }
-    } catch (e: any) {
-      error.value = e.message || 'Failed to load models'
+
+      modelsData.value = data.models
+      metaData.value = {
+        source: data.source || 'artificialanalysis.ai',
+        updatedAt: data.updatedAt,
+        totalModels: data.totalModels
+      }
+    } catch (e: unknown) {
+      error.value = e instanceof Error ? e.message : 'Failed to load models'
       console.error('Failed to fetch models:', e)
     } finally {
       isLoading.value = false

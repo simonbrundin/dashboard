@@ -1,12 +1,18 @@
-import { exec } from "node:child_process";
+import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
+const ALLOWED_COMMANDS = new Set(["kubectl"]);
 
 export default eventHandler(async (event) => {
 	const body = await readBody<{ cmd: string; args: string[] }>(event);
 
-	if (!body?.cmd || !body?.args) {
+	if (
+		!body
+		|| typeof body.cmd !== "string"
+		|| !Array.isArray(body.args)
+		|| body.args.some((arg) => typeof arg !== "string")
+	) {
 		throw createError({
 			statusCode: 400,
 			message: "Missing cmd or args",
@@ -14,10 +20,15 @@ export default eventHandler(async (event) => {
 	}
 
 	const { cmd, args } = body;
+	if (!ALLOWED_COMMANDS.has(cmd)) {
+		throw createError({
+			statusCode: 403,
+			message: `Command is not allowed: ${cmd}`,
+		});
+	}
 
 	try {
-		const command = `${cmd} ${args.join(" ")}`;
-		const { stdout, stderr } = await execAsync(command, {
+		const { stdout, stderr } = await execFileAsync(cmd, args, {
 			timeout: 30000,
 			maxBuffer: 10 * 1024 * 1024,
 		});

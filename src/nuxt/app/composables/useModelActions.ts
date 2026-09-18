@@ -1,3 +1,5 @@
+import type { ModelData } from '~/data/models'
+
 interface ProgressEvent {
   phase: string
   message: string
@@ -7,8 +9,13 @@ interface ProgressEvent {
   error?: string
 }
 
-function extractErrorMessage(e: any, fallback: string): string {
-  return e.data?.message || e.message || fallback
+function extractErrorMessage(error: unknown, fallback: string): string {
+  if (typeof error === 'object' && error !== null) {
+    const details = error as { data?: { message?: string }; message?: string }
+    return details.data?.message || details.message || fallback
+  }
+
+  return fallback
 }
 
 function parseSseLine(line: string): ProgressEvent | null {
@@ -77,7 +84,7 @@ export function useModelActions(
       if (result.success) {
         onSuccess?.()
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       error.value = extractErrorMessage(e, 'Import failed')
     }
   }
@@ -89,11 +96,14 @@ export function useModelActions(
 
     try {
       const response = await fetch('/api/models/fetch-more', { method: 'POST' })
+      if (!response.ok) {
+        throw new Error(`Failed to fetch model prices (${response.status})`)
+      }
 
       for await (const event of readSseEvents(response)) {
         if (handleProgressEvent(event)) return
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       error.value = extractErrorMessage(e, 'Misslyckades')
     } finally {
       progress.stop()
@@ -109,7 +119,7 @@ export function useModelActions(
       if (result.success) {
         onSuccess?.()
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       error.value = extractErrorMessage(e, 'Failed to refresh')
     } finally {
       progress.stop()

@@ -32,11 +32,11 @@ export default defineEventHandler(async () => {
       updated,
       updatedAt: new Date().toISOString()
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Failed to refresh prices:', error)
     throw createError({
       statusCode: 500,
-      message: error.message || 'Failed to refresh prices'
+      message: error instanceof Error ? error.message : 'Failed to refresh prices'
     })
   }
 })

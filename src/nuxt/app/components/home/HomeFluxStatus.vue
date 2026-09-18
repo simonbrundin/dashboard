@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { FluxStatus } from '~/types'
 
-const { data, refresh } = await useAsyncData<FluxStatus>('flux-status', () => $fetch('/api/flux-status'), {
+const { data, pending, refresh } = await useAsyncData<FluxStatus>('flux-status', () => $fetch('/api/flux-status'), {
   default: () => ({
     controllers: [],
     sources: [],
@@ -25,14 +25,21 @@ const refreshInterval = ref<ReturnType<typeof setInterval> | null>(null)
 const lastFetched = ref<Date>(new Date())
 const isRefreshing = ref(false)
 
+async function refreshStatus() {
+  isRefreshing.value = true
+
+  try {
+    await refresh()
+    lastFetched.value = new Date()
+  } catch (error) {
+    console.error('Failed to refresh Flux status:', error)
+  } finally {
+    isRefreshing.value = false
+  }
+}
+
 onMounted(() => {
-  refreshInterval.value = setInterval(() => {
-    isRefreshing.value = true
-    refresh().then(() => {
-      lastFetched.value = new Date()
-      isRefreshing.value = false
-    })
-  }, 30000)
+  refreshInterval.value = setInterval(refreshStatus, 30000)
 })
 
 onUnmounted(() => {
@@ -113,7 +120,7 @@ const hasIssues = computed(() => issues.value.length > 0)
 const hasErrors = computed(() => issues.value.some(i => i.status === 'NotReady'))
 
 const allHealthy = computed(() => {
-  if (!summary.value) return false
+  if (pending.value || !data.value || !summary.value) return false
   return (
     summary.value.controllersReady === summary.value.controllersTotal
     && summary.value.sourcesReady === summary.value.sourcesTotal
@@ -122,7 +129,7 @@ const allHealthy = computed(() => {
   )
 })
 
-const isLoading = computed(() => false) // Initial load is handled by useAsyncData
+const isLoading = pending
 const isMockData = computed(() => {
   if (!data.value) return false
   const mockPattern = ['source-controller', 'kustomize-controller', 'helm-controller', 'notification-controller']
@@ -212,7 +219,7 @@ onUnmounted(() => {
           size="sm"
           square
           :loading="isRefreshing"
-          @click="isRefreshing = true; refresh().then(() => { lastFetched = new Date(); isRefreshing = false })"
+          @click="refreshStatus"
         >
           <UIcon name="i-lucide-refresh-cw" class="size-4" />
         </UButton>

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { formatDate } from '~/utils/modelFormatters'
 import { useModelFilters } from '~/composables/useModelFilters'
 import { useModelStats } from '~/composables/useModelStats'
 
@@ -25,9 +24,6 @@ const {
 
 // Stats composable (uses only models above the intelligence threshold)
 const { bestValueModels, topIntelligenceModels, lowestCostModels, paretoOptimalModels } = useModelStats(modelsAboveThreshold)
-
-// Local state
-const lastError = ref<string | null>(null)
 
 // Fetch on mount
 onMounted(async () => {
@@ -132,10 +128,10 @@ useSeoMeta({
         />
 
         <!-- Error Message -->
-        <UAlert v-if="lastError" color="error" variant="soft" title="Error">
-          {{ lastError }}
+        <UAlert v-if="actions.error.value" color="error" variant="soft" title="Error">
+          {{ actions.error.value }}
           <template #footer>
-            <UButton size="xs" variant="outline" color="error" @click="lastError = null">
+            <UButton size="xs" variant="outline" color="error" @click="actions.error.value = null">
               Dismiss
             </UButton>
           </template>
@@ -143,7 +139,7 @@ useSeoMeta({
 
         <!-- No Data Message -->
         <ModelsNoData
-          v-if="modelsData.length === 0 && !lastError"
+          v-if="modelsData.length === 0 && !actions.error.value"
           :loading="progress.show.value"
           @fetch="actions.fetchMorePrices"
         />
