@@ -7,7 +7,7 @@ export function useModelFilters(models: Ref<ModelData[]>) {
   // State
   const selectedCategory = ref<Category>('all')
   const sortBy = ref<SortColumn>('value')
-  const sortDirection = ref<'asc' | 'desc'>('desc')
+  const sortDirection = ref<'asc' | 'desc'>('asc')
   const showOnlyOpenWeights = ref(false)
   const showWithoutPrice = ref(false)
   const minIntelligence = ref(0)

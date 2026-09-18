@@ -23,10 +23,12 @@ export const INSERT_MODELS_COLUMNS = `
     cost_per_task, input_price_per_m, output_price_per_m, category,
     strengths, context_window, open_weights, speed, latency)
   VALUES ($1, $2, $3, $4, $5, $6, NULL, $7, $8, $9, $10, $11, $12, $13, $14)
+  ON CONFLICT (id) DO NOTHING
 `
 
 export function requireApiKey(): string {
-  const apiKey = process.env.ARTIFICIAL_ANALYSIS_API_KEY
+  const config = useRuntimeConfig()
+  const apiKey = config.artificialAnalysisApiKey
   if (!apiKey) {
     throw createError({ statusCode: 500, message: 'API key not configured.' })
   }

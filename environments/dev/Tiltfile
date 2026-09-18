@@ -6,19 +6,39 @@
 # pg-view: http://localhost:5050 (auto-starts with postgres)
 # ==================================================================
 
-# PostgreSQL and pg-view setup
+# PostgreSQL setup
 local_resource(
-    "postgres-setup",
+    "postgres",
     cmd = ["sh", "-c", """
         docker network create dashboard-net 2>/dev/null || true
-        docker rm -f plan-dev-postgres pgview 2>/dev/null || true
+        docker rm -f plan-dev-postgres 2>/dev/null || true
         docker run -d --name plan-dev-postgres --network dashboard-net -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=dashboard -p 5432:5432 postgres:16-alpine
-        sleep 2
-        docker run -d --name pgview --network dashboard-net -p 5050:3000 -e DB_URL=postgresql://postgres:postgres@plan-dev-postgres:5432/dashboard lcurrol/pg-view
-        echo 'PostgreSQL and pg-view started successfully'
+        
+        # Wait for postgres to be ready
+        for i in $(seq 1 30); do
+            docker exec plan-dev-postgres pg_isready -U postgres && break
+            sleep 1
+        done
+        
+        # Run schema.sql
+        docker exec -i plan-dev-postgres psql -U postgres -d dashboard < /home/simon/repos/dashboard/environments/dev/schema.sql
+        echo 'PostgreSQL started with schema'
     """],
     labels = ["Database"],
     auto_init = True,
+)
+
+# pg-view setup
+local_resource(
+    "pgview",
+    cmd = ["sh", "-c", """
+        docker rm -f pgview 2>/dev/null || true
+        docker run -d --name pgview --network dashboard-net -p 5050:3000 -e DB_URL=postgresql://postgres:postgres@plan-dev-postgres:5432/dashboard lcurrol/pg-view
+        echo 'pg-view started successfully'
+    """],
+    labels = ["Database"],
+    auto_init = True,
+    resource_deps = ["postgres"],
 )
 
 # Nuxt dev server
@@ -28,5 +48,5 @@ local_resource(
     serve_dir = "../../src/nuxt",
     labels = ["Frontend"],
     resource_deps = ["postgres-setup"],
-    auto_init = True,
+    auto_init = False,
 )
