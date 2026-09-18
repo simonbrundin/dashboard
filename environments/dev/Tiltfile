@@ -47,6 +47,6 @@ local_resource(
     serve_cmd = ["/home/linuxbrew/.linuxbrew/bin/nub", "run", "dev", "--port", "0"],
     serve_dir = "../../src/nuxt",
     labels = ["Frontend"],
-    resource_deps = ["postgres-setup"],
+    resource_deps = ["postgres"],
     auto_init = False,
 )
