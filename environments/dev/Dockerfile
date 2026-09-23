@@ -1,18 +1,15 @@
 FROM node:22-alpine AS builder
 
-ENV PATH="/root/.nub/bin:${PATH}"
-
-RUN apk add --no-cache npm bash && \
-    npm install -g nub
+RUN apk add --no-cache npm bash
 
 WORKDIR /app
 
 COPY package*.json ./
-RUN /root/.nub/bin/nub install
+RUN npm install
 
 COPY . .
 
-RUN npx nuxt prepare && nub run build
+RUN npx nuxt prepare && npx nuxt build
 
 FROM node:22-alpine AS runner
 
