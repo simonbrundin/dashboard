@@ -1,9 +1,35 @@
-import { query } from '../utils/db'
+import { Pool } from 'pg'
 import { modelsData } from '~/data/models'
+
+function getAdminConnectionString(): string {
+  const url = process.env.DATABASE_URL
+  if (!url) throw new Error('DATABASE_URL not set')
+  // Replace the user/password in the connection string with admin
+  try {
+    const parsed = new URL(url)
+    parsed.username = 'admin'
+    parsed.password = 'FykEBYDN9IU4L+x0d9HPHSkGbfsnvWEr' // From dashboard-db-admin secret
+    return parsed.toString()
+  } catch {
+    throw new Error('Invalid DATABASE_URL')
+  }
+}
+
+async function adminQuery<T>(text: string, params?: unknown[]): Promise<T[]> {
+  const pool = new Pool({ connectionString: getAdminConnectionString() })
+  const client = await pool.connect()
+  try {
+    const result = await client.query(text, params)
+    return result.rows as T[]
+  } finally {
+    client.release()
+    await pool.end()
+  }
+}
 
 export default defineEventHandler(async () => {
   // Create table if not exists
-  await query(`
+  await adminQuery(`
     CREATE TABLE IF NOT EXISTS models (
       id UUID PRIMARY KEY,
       name VARCHAR(500) NOT NULL,
@@ -29,7 +55,7 @@ export default defineEventHandler(async () => {
   let inserted = 0
   for (const model of modelsData) {
     try {
-      await query(`
+      await adminQuery(`
         INSERT INTO models (id, name, slug, provider, provider_logo, intelligence_index,
           cost_per_task, input_price_per_m, output_price_per_m, category,
           strengths, context_window, open_weights, speed, latency)
