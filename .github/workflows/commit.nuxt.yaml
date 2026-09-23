@@ -25,7 +25,7 @@ jobs:
       dockerfile: environments/dev/Dockerfile
       dockerfile-context: environments/dev
       registry: ghcr.io/simonbrundin/dashboard
-      platforms: linux/amd64
+      platforms: linux/amd64,linux/arm64
   update-deployment:
     needs: build-publish-image
     runs-on: ubuntu-latest
