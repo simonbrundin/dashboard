@@ -1,15 +1,14 @@
 FROM node:22-alpine AS builder
 
-RUN apk add --no-cache npm bash
-
-RUN npm install -g nub
-
 ENV PATH="/root/.nub/bin:${PATH}"
+
+RUN apk add --no-cache npm bash && \
+    npm install -g nub
 
 WORKDIR /app
 
 COPY package*.json ./
-RUN nub install
+RUN /root/.nub/bin/nub install
 
 COPY . .
 
