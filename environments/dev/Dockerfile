@@ -4,14 +4,14 @@ RUN apk add --no-cache npm bash
 
 WORKDIR /app
 
-COPY src/nuxt/package.json src/nuxt/nub.lock ./
+COPY package.json nub.lock ./
 RUN npm install
 
-COPY src/nuxt/app ./app
-COPY src/nuxt/nuxt.config.ts ./nuxt.config.ts
-COPY src/nuxt/tsconfig.json ./tsconfig.json
-COPY src/nuxt/server ./server
-COPY src/nuxt/public ./public
+COPY app ./app
+COPY nuxt.config.ts ./nuxt.config.ts
+COPY tsconfig.json ./tsconfig.json
+COPY server ./server
+COPY public ./public
 
 RUN npx nuxt prepare && npx nuxt build
 
