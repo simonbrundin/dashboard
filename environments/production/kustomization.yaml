@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - ../common
   - secrets
+  - db
 
 patches:
   - path: patches/deployment.yaml

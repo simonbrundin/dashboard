@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: dashboard-db-admin
+    namespace: dashboard
+    labels:
+        cnpg.io/reload: "true"
+type: Opaque
+stringData:
+    password: ENC[AES256_GCM,data:EU/z/qgVRnvOtDIaDTEaf1bZn6Xf85IpuEXU5A5qOj0=,iv:S6WtvKXMAx3ADb/NqI9+cHkxJBUBNiFSbudZ6Usi5gI=,tag:Bj/uha9uTahebJc9H5CLXA==,type:str]
+    username: ENC[AES256_GCM,data:ZHnvf84=,iv:NXNHwq2wRacrbxfU5zDaZoLE6/8+ABwncPN7xFIvEV0=,tag:Xi/wU/T2Yoa1vFa8p4rixQ==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAyQWRKSmFyNHZsVHFGcjBE
+            bG9HYUxzRXVpeFBPOG5ab3gvcHRSUVE1NDNzClJWUDZneENIMnNJZzFqM3dQd2ZC
+            Vng3UFRsSFZwcjh2Q0Nma3daNW5BcWsKLS0tIDhBSzFjT3VlUG5Ga0ROamkvT3hN
+            R2R6bGxRSXdUNnp5WnEzNXdZOWZJQ0UKk7EBLPOoxnQCaelcnBj2v4oMzEGeWRgY
+            am9R45x5NKRV1RoVC+Rd4LODzbvm3LSsO7japV5+vsLsNrBEwAdWqQ==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1mv3yrgdtqddlr5v9tg67nydvztm3sm6r3uu3j9zhdp736p0wt5gqwyj9lt
+    encrypted_regex: ^(stringData|data)$
+    lastmodified: "2026-09-23T18:30:02Z"
+    mac: ENC[AES256_GCM,data:LCtqOMS/F8YmIYLqAeeq0VwN2ZtgYEUvP3fnaSxiY8u93CsLg7hfO6JzNFBW8wMZ4URlsqOLt0R5hYnRVIvvLNbExp66wfMUso3XsVGOOfbu7xaQVV/4eU8OFU4f6ARfplv5W5J9TZbMa+5UpxgfmQPOKqoon5k07EAEx/Z1kTY=,iv:2htIwurla/Cu55Zy4TB7oWowT3a7XGCiAbF0fODfgC8=,tag:iq+Gqzm2+G51NUB7pvLXJA==,type:str]
+    version: 3.13.3

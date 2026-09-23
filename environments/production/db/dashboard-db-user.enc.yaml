@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: dashboard-db-user
+    namespace: dashboard
+    labels:
+        cnpg.io/reload: "true"
+type: Opaque
+stringData:
+    password: ENC[AES256_GCM,data:QFNvPX+sdBX4ZYwityAYaodkouexJNYVtOIKR3WXDAY=,iv:batKZ0LOz2SXvSgRTphOjiyk4AZ9Mv2cXlQSvkcGW7w=,tag:Gz66B97oZKL8pXJ5ygIOQQ==,type:str]
+    username: ENC[AES256_GCM,data:LIlWWA==,iv:CELrFFopetgMEPJ7bhm7ZhKy0QN4rRaE1RcDTlKpOeI=,tag:P9l+iaWr9rU5mLzlhMaVug==,type:str]
+    jdbc-uri: ENC[AES256_GCM,data:y50KazpG+ITebqffj6Wwkq1f/EBwjIQSs5+AqgM1nRReJKt3rF046dpAfRRxAnZGkUg9bX8WFJtu2OFaDzfyxGbdabrkpEd/kWGBEMWWh5NPkUCnb0Zz69Ayvg1xuAp775iNRvK9HND354ewW43QuD3agdBl4BkX6ZNu4wHXZCY=,iv:+CnxUzZdfUbKhgUQb/IzBvskC6pSSt+jwfyCPZp04oI=,tag:BeLCdytuJPgYdbDM+TgdHw==,type:str]
+    uri: ENC[AES256_GCM,data:IgY7133sLUdtHD/gKrRjk+3GRa+FF6jL14iWuRfzqIBzJ3g+cYGuChfyaQHmQckqCiOIaPLy90EadPdTf/pRfTvnseqNjVwhEp3nJMQDXOqU9sGXbU2o9dEq8C8gR4x2oz4oL9VNP6SLkFqUKA==,iv:hUlaMliO02GIQWfDG2pQbubil071pzzq8ErTL3Y5DPE=,tag:nSq6iuqwwV2gRko/ksd0/g==,type:str]
+    pgpass: ENC[AES256_GCM,data:Eqnpi+nebrG0FT92oHt9pDz0aSyoJfLrm3AZZomuYpCQyeis/U2vGKUnM+3TK7nk38qkloOt3c+QZAsTPo38uirkmYvUrOmTMm0eNWRUdJ5NNE00cvlDCFoqbrh6q3gv,iv:3w0/E6/LHraZ1uyQ7edAN1sUW7wnMi1NhNwXfEtm0rc=,tag:Q8N216XrWec5OVb2JRr1hw==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBINnZzNU5ReW5lZ1g4R0x1
+            NVpaZmhwRHRJS0VUSy8xZkh0eVZhVUZ2TFhJCnF4bU5GeldqK0IzUU5NR3R5YnhU
+            ZVpONFhmamFpSnlXUzVnTklKbzh1ZFkKLS0tIHhhWW96dm1USnZ4ejRxNm1zN0JH
+            bk9Ydk5nT2lyc1BsL1kweDV0QWR2M0UKRFzHTz6bhsh2EqsKAJjMii62f80cORks
+            b3HpQaZ7C3qTtCnT2MKANtYeBfGz6bdxPWJ79n4HgpizTwxFMXR5ww==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1mv3yrgdtqddlr5v9tg67nydvztm3sm6r3uu3j9zhdp736p0wt5gqwyj9lt
+    encrypted_regex: ^(stringData|data)$
+    lastmodified: "2026-09-23T18:30:02Z"
+    mac: ENC[AES256_GCM,data:boQpcqUnzUm35IuNTEqVwo+2F+UT9N7BDtw6HEgS3vgofoSpyG2/xJapqeGcSz85muBAyAxa3xa1TEI8ZIayAUqataqiojpsNIfsDh/I7W2WWgp3B9OSI5aYYgC0kRryYR1fO2v8chP9AzWxcnnNQjPPg8CiDHFntcwSphiVWTE=,iv:zC4J81E1/eQy+aTErtiL3/y4zMHi5MFyv1zwF1qT2iY=,tag:H8N4+DFGd70dmdFnHQDUKw==,type:str]
+    version: 3.13.3
