@@ -12,26 +12,112 @@ jobs:
       simonbrundin/deployment-pipeline/.github/workflows/run-tests-bun.yaml@main
     with:
       package-json-path: src/nuxt
-  build-publish-image:
+
+  build-amd64:
     needs: unit-tests
     permissions:
       contents: read
       packages: write
-    uses: >-
-      simonbrundin/deployment-pipeline/.github/workflows/commit.build-publish-image.yaml@main
-    secrets:
-      REGISTRY_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
-    with:
-      dockerfile: environments/dev/Dockerfile
-      dockerfile-context: .
-      registry: ghcr.io/simonbrundin/dashboard
-      platforms: linux/amd64,linux/arm64
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.REGISTRY_TOKEN }}
+
+      - name: Build and push amd64
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          dockerfile: environments/dev/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: ghcr.io/simonbrundin/dashboard:build-amd64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  build-arm64:
+    needs: unit-tests
+    permissions:
+      contents: read
+      packages: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.REGISTRY_TOKEN }}
+
+      - name: Build and push arm64
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          dockerfile: environments/dev/Dockerfile
+          platforms: linux/arm64
+          push: true
+          tags: ghcr.io/simonbrundin/dashboard:build-arm64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  manifest:
+    needs: [build-amd64, build-arm64]
+    permissions:
+      contents: read
+      packages: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.REGISTRY_TOKEN }}
+
+      - name: Create manifest
+        run: |
+          docker manifest create ghcr.io/simonbrundin/dashboard:latest \
+            ghcr.io/simonbrundin/dashboard:build-amd64 \
+            ghcr.io/simonbrundin/dashboard:build-arm64
+          docker manifest push ghcr.io/simonbrundin/dashboard:latest
+          
+          # Get SHA
+          DIGEST=$(docker manifest inspect ghcr.io/simonbrundin/dashboard:latest | jq -r '.manifests[0].digest')
+          echo "IMAGE=ghcr.io/simonbrundin/dashboard@${DIGEST}" >> $GITHUB_OUTPUT
+          
+      - name: Output image
+        id: image
+        run: echo "image=ghcr.io/simonbrundin/dashboard:latest" >> $GITHUB_OUTPUT
+
   update-deployment:
-    needs: build-publish-image
+    needs: manifest
     runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
+    outputs:
+      image: ${{ steps.image.outputs.image }}
     steps:
       - name: Checkout main
         uses: actions/checkout@v4
@@ -42,7 +128,7 @@ jobs:
 
       - name: Update deployment image
         env:
-          IMAGE: ${{ needs.build-publish-image.outputs.image }}
+          IMAGE: ${{ needs.manifest.outputs.image }}
         run: |
           echo "Updating image to: $IMAGE"
           sed -i "s|image: ghcr.io/simonbrundin/dashboard.*|image: $IMAGE|" \
@@ -59,7 +145,7 @@ jobs:
           title: "chore: update dashboard-app image"
           body: |
             Automated image update from commit workflow
-            - Image: `${{ needs.build-publish-image.outputs.image }}`
+            - Image: `${{ needs.manifest.outputs.image }}`
           labels: |
             ci
             skip-review
