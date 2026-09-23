@@ -2,6 +2,12 @@
 export default defineNuxtConfig({
   modules: ["@nuxt/ui", "@vueuse/nuxt", "@nuxt/eslint"],
 
+  icon: {
+    serverBundle: {
+      collections: ["lucide", "simple-icons"],
+    },
+  },
+
   devtools: {
     enabled: false,
   },
