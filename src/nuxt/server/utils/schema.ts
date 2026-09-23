@@ -1,7 +1,7 @@
-import { pgTable, uuid, varchar, integer, decimal, boolean, text, timestamp, index } from 'drizzle-orm/pg-core'
+import { pgTable, text, varchar, integer, decimal, boolean, timestamp, index } from 'drizzle-orm/pg-core'
 
 export const models = pgTable('models', {
-  id: uuid('id').primaryKey(),
+  id: text('id').primaryKey(),
   name: varchar('name', { length: 500 }).notNull(),
   slug: varchar('slug', { length: 255 }).notNull().unique(),
   provider: varchar('provider', { length: 255 }).notNull(),

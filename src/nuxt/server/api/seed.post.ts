@@ -33,10 +33,13 @@ export default defineEventHandler(async () => {
   await adminQuery('GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "user"')
   await adminQuery('GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO "user"')
 
-  // Create table if not exists
+  // Drop and recreate table
+  await adminQuery('DROP TABLE IF EXISTS models')
+
+  // Create table
   await adminQuery(`
-    CREATE TABLE IF NOT EXISTS models (
-      id UUID PRIMARY KEY,
+    CREATE TABLE models (
+      id TEXT PRIMARY KEY,
       name VARCHAR(500) NOT NULL,
       slug VARCHAR(255) NOT NULL UNIQUE,
       provider VARCHAR(255) NOT NULL,
