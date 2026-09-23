@@ -2,6 +2,7 @@
 import type { FluxStatus } from '~/types'
 
 const { data, pending, refresh } = await useAsyncData<FluxStatus>('flux-status', () => $fetch('/api/flux-status'), {
+  server: false,
   default: () => ({
     controllers: [],
     sources: [],
