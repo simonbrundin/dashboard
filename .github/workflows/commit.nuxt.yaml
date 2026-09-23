@@ -23,7 +23,7 @@ jobs:
       REGISTRY_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
     with:
       dockerfile: environments/dev/Dockerfile
-      dockerfile-context: environments/dev
+      dockerfile-context: .
       registry: ghcr.io/simonbrundin/dashboard
       platforms: linux/amd64,linux/arm64
   update-deployment:
