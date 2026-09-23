@@ -9,7 +9,7 @@ RUN nub install
 
 COPY src/nuxt/ ./
 
-RUN nub run build
+RUN nub prepare && nub run build
 
 FROM node:22-alpine AS runner
 
