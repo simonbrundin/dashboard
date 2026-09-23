@@ -49,7 +49,7 @@ jobs:
           dockerfile: Dockerfile
           platforms: linux/amd64
           push: true
-          tags: ghcr.io/simonbrundin/dashboard:build-amd64
+          tags: ghcr.io/simonbrundin/dashboard:${{ github.sha }}-amd64
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -89,12 +89,14 @@ jobs:
           dockerfile: Dockerfile
           platforms: linux/arm64
           push: true
-          tags: ghcr.io/simonbrundin/dashboard:build-arm64
+          tags: ghcr.io/simonbrundin/dashboard:${{ github.sha }}-arm64
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
   manifest:
     needs: [build-amd64, build-arm64]
+    outputs:
+      image: ${{ steps.manifest.outputs.image }}
     permissions:
       contents: read
       packages: write
@@ -114,19 +116,14 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create manifest
+        id: manifest
         run: |
-          docker manifest create ghcr.io/simonbrundin/dashboard:latest \
-            ghcr.io/simonbrundin/dashboard:build-amd64 \
-            ghcr.io/simonbrundin/dashboard:build-arm64
-          docker manifest push ghcr.io/simonbrundin/dashboard:latest
-          
-          # Get SHA
-          DIGEST=$(docker manifest inspect ghcr.io/simonbrundin/dashboard:latest | jq -r '.manifests[0].digest')
-          echo "IMAGE=ghcr.io/simonbrundin/dashboard@${DIGEST}" >> $GITHUB_OUTPUT
-          
-      - name: Output image
-        id: image
-        run: echo "image=ghcr.io/simonbrundin/dashboard:latest" >> $GITHUB_OUTPUT
+          IMAGE="ghcr.io/simonbrundin/dashboard:${{ github.sha }}"
+          docker buildx imagetools create \
+            --tag "$IMAGE" \
+            "ghcr.io/simonbrundin/dashboard:${{ github.sha }}-amd64" \
+            "ghcr.io/simonbrundin/dashboard:${{ github.sha }}-arm64"
+          echo "image=$IMAGE" >> "$GITHUB_OUTPUT"
 
   update-deployment:
     needs: manifest
