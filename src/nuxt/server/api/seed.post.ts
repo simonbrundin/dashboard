@@ -28,6 +28,11 @@ async function adminQuery<T>(text: string, params?: unknown[]): Promise<T[]> {
 }
 
 export default defineEventHandler(async () => {
+  // Grant permissions to user
+  await adminQuery(`GRANT ALL ON SCHEMA public TO user`)
+  await adminQuery(`GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO user`)
+  await adminQuery(`GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO user`)
+
   // Create table if not exists
   await adminQuery(`
     CREATE TABLE IF NOT EXISTS models (
