@@ -22,3 +22,5 @@ spec:
           envFrom:
             - secretRef:
                 name: dashboard-uptime-kuma
+            - secretRef:
+                name: dashboard-auth
