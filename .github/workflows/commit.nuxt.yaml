@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - src/nuxt/**
+  workflow_dispatch:
 jobs:
   unit-tests:
     permissions:
@@ -21,8 +22,8 @@ jobs:
     secrets:
       REGISTRY_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
     with:
-      dockerfile: src/nuxt/Dockerfile
-      dockerfile-context: src/nuxt
+      dockerfile: environments/dev/Dockerfile
+      dockerfile-context: environments/dev
       registry: ghcr.io/simonbrundin/dashboard
       platforms: linux/amd64,linux/arm64
   update-deployment:
