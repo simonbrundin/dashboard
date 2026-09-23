@@ -21,6 +21,9 @@ spec:
           image: ghcr.io/simonbrundin/dashboard:frontend-TODO
           ports:
             - containerPort: 3000
+          envFrom:
+            - secretRef:
+                name: dashboard-auth
           readinessProbe:
             httpGet:
               path: /
