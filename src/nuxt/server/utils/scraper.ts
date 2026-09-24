@@ -7,7 +7,7 @@ import { chromium } from 'playwright'
 export async function scrapeModelCostPerTask(modelSlug: string): Promise<number | null> {
   let lastError: Error | null = null
   
-  for (let attempt = 0; attempt < 3; attempt++) {
+  for (let attempt = 0; attempt < 2; attempt++) {
     try {
       const browser = await chromium.launch({ 
         headless: true,
@@ -27,6 +27,7 @@ export async function scrapeModelCostPerTask(modelSlug: string): Promise<number 
           '--metrics-recording-only',
           '--mute-audio',
           '--no-first-run',
+          '--disable-features=IsolateOrigins,site-per-process',
         ]
       })
       
@@ -35,10 +36,10 @@ export async function scrapeModelCostPerTask(modelSlug: string): Promise<number 
         
         await page.goto(`https://artificialanalysis.ai/models/${modelSlug}`, {
           waitUntil: 'domcontentloaded',
-          timeout: 30000
+          timeout: 15000
         })
 
-        await page.waitForTimeout(1500)
+        await page.waitForTimeout(1000)
         const html = await page.content()
 
         // Look for the cost near "Cost per Intelligence Index task" text
