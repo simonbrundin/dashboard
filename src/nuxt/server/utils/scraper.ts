@@ -7,7 +7,8 @@ import { chromium } from 'playwright'
 export async function scrapeModelCostPerTask(modelSlug: string): Promise<number | null> {
   const browser = await chromium.launch({ 
     headless: true,
-    executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH || undefined
+    executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH || undefined,
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu']
   })
   const page = await browser.newPage()
 
