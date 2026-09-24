@@ -1,16 +1,32 @@
-import { execSync } from 'child_process'
-
 /**
  * Scrapes the "Cost per Intelligence Index task" from an Artificial Analysis model page.
- * Uses curl for faster and more reliable scraping.
+ * Uses native fetch for fast and reliable scraping.
  * Returns the cost as a number, or null if the cost cannot be found.
  */
 export async function scrapeModelCostPerTask(modelSlug: string): Promise<number | null> {
   try {
-    const html = execSync(
-      `curl -s -m 15 "https://artificialanalysis.ai/models/${modelSlug}" 2>/dev/null`,
-      { encoding: 'utf8', timeout: 20000 }
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 15000)
+    
+    const response = await fetch(
+      `https://artificialanalysis.ai/models/${modelSlug}`,
+      {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; DashboardBot/1.0)',
+          'Accept': 'text/html,application/xhtml+xml',
+        },
+        signal: controller.signal
+      }
     )
+    
+    clearTimeout(timeout)
+    
+    if (!response.ok) {
+      console.error(`HTTP ${response.status} for ${modelSlug}`)
+      return null
+    }
+    
+    const html = await response.text()
 
     // Look for the cost near "Cost per Intelligence Index task" text
     const costMatch = html.match(/<span>\$([0-9.]+)<\/span>[\s\S]{0,500}?Cost per Intelligence Index task/i)
@@ -42,7 +58,7 @@ export async function scrapeModelCostPerTask(modelSlug: string): Promise<number 
  */
 export async function scrapeModelCosts(
   slugs: string[],
-  delayMs: number = 800,
+  delayMs: number = 600,
   onProgress?: (current: number, total: number, slug: string, cost: number | null) => void
 ): Promise<Map<string, number | null>> {
   const results = new Map<string, number | null>()
