@@ -23,6 +23,12 @@ ENV NODE_ENV=production
 
 RUN addgroup -g 1001 -S nodejs && adduser -S nuxt -u 1001
 
+# Install Playwright browsers with system chromium
+RUN apk add --no-cache chromium nss freetype fontconfig ca-certificates ttf-freefont
+
+ENV PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
+
 # Install kubectl at runtime (works for both amd64 and arm64)
 RUN apk add --no-cache curl && \
     KUBECTL_VERSION=$(curl -L -s https://dl.k8s.io/release/stable.txt) && \

@@ -5,7 +5,10 @@ import { chromium } from 'playwright'
  * Returns the cost as a number, or null if the cost cannot be found.
  */
 export async function scrapeModelCostPerTask(modelSlug: string): Promise<number | null> {
-  const browser = await chromium.launch({ headless: true })
+  const browser = await chromium.launch({ 
+    headless: true,
+    executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH || undefined
+  })
   const page = await browser.newPage()
 
   try {
