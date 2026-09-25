@@ -10,7 +10,7 @@ export function useModelFilters(models: Ref<ModelData[]>) {
   const sortDirection = ref<'asc' | 'desc'>('asc')
   const showOnlyOpenWeights = ref(false)
   const showWithoutPrice = ref(false)
-  const minIntelligence = ref(0)
+  const minIntelligence = ref(23)
 
   // Max intelligence index in current data (slider upper bound)
   const maxIntelligence = computed(() =>
