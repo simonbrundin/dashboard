@@ -6,6 +6,7 @@ resources:
   - deployment.yaml
   - service.yaml
   - http-route.yaml
+  - security-policy.yaml
   - service-account.yaml
   - cluster-role.yaml
   - cluster-role-binding.yaml

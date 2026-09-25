@@ -10,7 +10,7 @@ spec:
       name: simons-gateway
       namespace: envoy
   hostnames:
-    - "TODO-dashboard.simonbrundin.com"
+    - "dashboard.simonbrundin.com"
   rules:
     - backendRefs:
         - group: ""
