@@ -8,6 +8,8 @@ services:
     container_name: dashboard-dev
     ports:
       - "${DASHBOARD_PORT:-3000}:3000"
+    env_file:
+      - .env
     environment:
       - NODE_ENV=development
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/dashboard

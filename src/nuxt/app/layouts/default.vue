@@ -25,6 +25,13 @@ const links = [[{
   onSelect: () => {
     open.value = false
   }
+}, {
+  label: 'Model Methodology',
+  icon: 'i-lucide-calculator',
+  to: '/models/methodology',
+  onSelect: () => {
+    open.value = false
+  }
 }]] satisfies NavigationMenuItem[][]
 
 const groups = computed(() => [{

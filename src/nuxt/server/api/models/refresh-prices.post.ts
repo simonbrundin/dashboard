@@ -1,11 +1,13 @@
 import { query } from '../../utils/db'
 import { scrapeModelCostPerTask } from '../../utils/scraper'
 import { pauseForRateLimit } from '../../utils/rateLimit'
+import { ensureModelsSchema } from '../../utils/artificialAnalysis'
 
 export default defineEventHandler(async () => {
   try {
+    await ensureModelsSchema()
     const models = await query<{ slug: string; name: string }>(
-      "SELECT slug, name FROM models WHERE cost_per_task > 0"
+      "SELECT slug, name FROM models WHERE COALESCE(coding_agent_cost_per_task, aa_intelligence_cost_per_task, cost_per_task) > 0"
     )
 
     console.log(`Refreshing prices for ${models.length} models...`)
@@ -17,7 +19,7 @@ export default defineEventHandler(async () => {
 
       if (costPerTask !== null && costPerTask > 0) {
         await query(
-          'UPDATE models SET cost_per_task = $1, updated_at = CURRENT_TIMESTAMP WHERE slug = $2',
+          'UPDATE models SET aa_intelligence_cost_per_task = $1, cost_per_task = $1, updated_at = CURRENT_TIMESTAMP WHERE slug = $2',
           [costPerTask, model.slug]
         )
         updated++

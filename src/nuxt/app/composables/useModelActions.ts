@@ -11,8 +11,12 @@ interface ProgressEvent {
 
 function extractErrorMessage(error: unknown, fallback: string): string {
   if (typeof error === 'object' && error !== null) {
-    const details = error as { data?: { message?: string }; message?: string }
-    return details.data?.message || details.message || fallback
+    const details = error as {
+      data?: { message?: string; statusMessage?: string }
+      message?: string
+      statusMessage?: string
+    }
+    return details.data?.message || details.data?.statusMessage || details.message || details.statusMessage || fallback
   }
 
   return fallback

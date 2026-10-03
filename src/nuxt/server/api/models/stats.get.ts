@@ -1,21 +1,31 @@
 import { query } from '../../utils/db'
+import { ensureModelsSchema } from '../../utils/artificialAnalysis'
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async () => {
   const config = useRuntimeConfig()
   const apiKey = process.env.ARTIFICIAL_ANALYSIS_API_KEY || config.artificialAnalysisApiKey
   
   try {
+    await ensureModelsSchema()
+
     // Get count from database
     const dbCountResult = await query<{ count: string }>(
       'SELECT COUNT(*) as count FROM models'
     )
     const dbCount = parseInt(dbCountResult[0]?.count || '0')
     
-    // Get count with prices
-    const withPricesResult = await query<{ count: string }>(
-      "SELECT COUNT(*) as count FROM models WHERE cost_per_task > 0"
+    // Keep measured coding costs separate from the broader AA proxy cost.
+    const withMeasuredCodingCostResult = await query<{ count: string }>(
+      'SELECT COUNT(*) as count FROM models WHERE coding_agent_cost_per_successful_task IS NOT NULL'
     )
-    const withPricesCount = parseInt(withPricesResult[0]?.count || '0')
+    const withMeasuredCodingCost = parseInt(withMeasuredCodingCostResult[0]?.count || '0')
+
+    const withProxyCostResult = await query<{ count: string }>(
+      "SELECT COUNT(*) as count FROM models WHERE coding_agent_cost_per_successful_task IS NULL AND COALESCE(aa_intelligence_cost_per_task, cost_per_task) IS NOT NULL"
+    )
+    const withProxyCost = parseInt(withProxyCostResult[0]?.count || '0')
+
+    const withPricesCount = withMeasuredCodingCost + withProxyCost
     
     // Get count from AA API
     let aaCount = 0
@@ -37,6 +47,8 @@ export default defineEventHandler(async (event) => {
       aaTotal: aaCount,
       dbTotal: dbCount,
       withPrices: withPricesCount,
+      withMeasuredCodingCost,
+      withProxyCost,
       needsImport: aaCount > dbCount,
       needsPrices: dbCount - withPricesCount
     }

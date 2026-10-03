@@ -1,99 +1,109 @@
 import type { ModelData } from '~/data/models'
 import type { Category } from '~/utils/modelFormatters'
+import {
+  getCodingScore,
+  getRankingCodingValue,
+  getTaskCost,
+  hasRankableCodingEvidence,
+  hasTaskCost
+} from '~/utils/modelScoring'
 
-export type SortColumn = 'value' | 'intelligence' | 'cost' | 'speed'
+export type SortColumn = 'codingValue' | 'coding' | 'intelligence' | 'cost' | 'speed'
 
 export function useModelFilters(models: Ref<ModelData[]>) {
-  // State
   const selectedCategory = ref<Category>('all')
-  const sortBy = ref<SortColumn>('value')
-  const sortDirection = ref<'asc' | 'desc'>('asc')
+  const sortBy = ref<SortColumn>('codingValue')
+  const sortDirection = ref<'asc' | 'desc'>('desc')
   const showOnlyOpenWeights = ref(false)
   const showWithoutPrice = ref(false)
-  const minIntelligence = ref(23)
+  const includeEstimatedScores = ref(false)
+  const minCodingIndex = ref(0)
 
-  // Max intelligence index in current data (slider upper bound)
-  const maxIntelligence = computed(() =>
-    models.value.reduce((max, m) => Math.max(max, m.intelligenceIndex), 0)
+  const maxCodingIndex = computed(() =>
+    models.value.reduce((max, model) => Math.max(max, getCodingScore(model) ?? 0), 0)
   )
 
-  // Global page filter: only models at or above the intelligence threshold
+  // Models without a coding score remain visible at zero threshold, but are
+  // excluded as soon as the user asks for a minimum coding score.
   const modelsAboveThreshold = computed(() =>
-    minIntelligence.value > 0
-      ? models.value.filter((m) => m.intelligenceIndex >= minIntelligence.value)
+    minCodingIndex.value > 0
+      ? models.value.filter(model => (getCodingScore(model) ?? -Infinity) >= minCodingIndex.value)
       : models.value
   )
 
-  // Category stats
   const categoryStats = computed(() => ({
     all: modelsAboveThreshold.value.length,
-    frontier: modelsAboveThreshold.value.filter((m) => m.category === 'frontier').length,
-    high: modelsAboveThreshold.value.filter((m) => m.category === 'high').length,
-    mid: modelsAboveThreshold.value.filter((m) => m.category === 'mid').length,
-    budget: modelsAboveThreshold.value.filter((m) => m.category === 'budget').length,
-    openWeights: modelsAboveThreshold.value.filter((m) => m.openWeights).length
+    frontier: modelsAboveThreshold.value.filter(model => model.category === 'frontier').length,
+    high: modelsAboveThreshold.value.filter(model => model.category === 'high').length,
+    mid: modelsAboveThreshold.value.filter(model => model.category === 'mid').length,
+    budget: modelsAboveThreshold.value.filter(model => model.category === 'budget').length,
+    openWeights: modelsAboveThreshold.value.filter(model => model.openWeights).length
   }))
 
-  // Filtered models
   const filteredModels = computed(() => {
     let result = modelsAboveThreshold.value
 
     if (selectedCategory.value !== 'all') {
-      result = result.filter((m) => m.category === selectedCategory.value)
+      result = result.filter(model => model.category === selectedCategory.value)
     }
 
     if (showOnlyOpenWeights.value) {
-      result = result.filter((m) => m.openWeights)
+      result = result.filter(model => model.openWeights)
     }
 
     if (!showWithoutPrice.value) {
-      result = result.filter((m) => m.costPerTask != null && m.costPerTask > 0)
+      result = result.filter(model => getCodingScore(model) !== null || hasTaskCost(model))
     }
 
     return result
   })
 
-  // Sorted models
   const sortedModels = computed(() => {
     const result = [...filteredModels.value]
-    const dir = sortDirection.value === 'desc' ? -1 : 1
+    const direction = sortDirection.value === 'desc' ? -1 : 1
 
     switch (sortBy.value) {
-      case 'value':
+      case 'codingValue':
         return result.sort((a, b) => {
-          const aCost = a.costPerTask ?? 0
-          const bCost = b.costPerTask ?? 0
-          if (aCost === 0 && bCost === 0) return 0
-          if (aCost === 0) return -1 * dir
-          if (bCost === 0) return 1 * dir
-          const aRatio = a.intelligenceIndex / aCost
-          const bRatio = b.intelligenceIndex / bCost
-          return (bRatio - aRatio) * dir
+          const aValue = getRankingCodingValue(a, includeEstimatedScores.value)
+          const bValue = getRankingCodingValue(b, includeEstimatedScores.value)
+          if (aValue === null && bValue === null) return 0
+          if (aValue === null) return 1
+          if (bValue === null) return -1
+          return (bValue - aValue) * direction
+        })
+
+      case 'coding':
+        return result.sort((a, b) => {
+          const aScore = hasRankableCodingEvidence(a, includeEstimatedScores.value) ? getCodingScore(a) : null
+          const bScore = hasRankableCodingEvidence(b, includeEstimatedScores.value) ? getCodingScore(b) : null
+          if (aScore === null && bScore === null) return 0
+          if (aScore === null) return 1
+          if (bScore === null) return -1
+          return (bScore - aScore) * direction
         })
 
       case 'intelligence':
-        return result.sort((a, b) =>
-          (b.intelligenceIndex - a.intelligenceIndex) * dir
-        )
+        return result.sort((a, b) => (b.intelligenceIndex - a.intelligenceIndex) * direction)
 
       case 'cost':
         return result.sort((a, b) => {
-          const aCost = a.costPerTask ?? 0
-          const bCost = b.costPerTask ?? 0
-          return (aCost - bCost) * dir
+          const aCost = getTaskCost(a)
+          const bCost = getTaskCost(b)
+          if (aCost === null && bCost === null) return 0
+          if (aCost === null) return 1
+          if (bCost === null) return -1
+          return (aCost - bCost) * direction
         })
 
       case 'speed':
-        return result.sort((a, b) =>
-          ((b.speed || 0) - (a.speed || 0)) * dir
-        )
+        return result.sort((a, b) => ((b.speed ?? -Infinity) - (a.speed ?? -Infinity)) * direction)
 
       default:
         return result
     }
   })
 
-  // Sort handler
   function handleSort(column: SortColumn) {
     if (sortBy.value === column) {
       sortDirection.value = sortDirection.value === 'desc' ? 'asc' : 'desc'
@@ -104,20 +114,18 @@ export function useModelFilters(models: Ref<ModelData[]>) {
   }
 
   return {
-    // State
     selectedCategory,
     sortBy,
     sortDirection,
     showOnlyOpenWeights,
     showWithoutPrice,
-    minIntelligence,
-    // Computed
-    maxIntelligence,
+    includeEstimatedScores,
+    minCodingIndex,
+    maxCodingIndex,
     modelsAboveThreshold,
     categoryStats,
     filteredModels,
     sortedModels,
-    // Methods
     handleSort
   }
 }

@@ -1,4 +1,5 @@
 import type { ModelData } from '~/data/models'
+import { getCodingScore, getMeasuredTaskCost, getTaskCost } from '~/utils/modelScoring'
 
 export function useModels() {
   // State
@@ -7,14 +8,22 @@ export function useModels() {
   const isLoading = ref(false)
   const error = ref<string | null>(null)
 
-  // Computed: models with price data
+  // Computed: models with known task cost. Zero is a valid free price.
   const modelsWithCost = computed(() =>
-    modelsData.value.filter(m => m.costPerTask != null && m.costPerTask > 0)
+    modelsData.value.filter(model => getTaskCost(model) != null)
   )
 
-  // Computed: models without price data
+  // Computed: models without task cost. Free models are not missing a price.
   const modelsWithoutCost = computed(() =>
-    modelsData.value.filter(m => !m.costPerTask || m.costPerTask <= 0)
+    modelsData.value.filter(model => getTaskCost(model) == null)
+  )
+
+  const modelsWithMeasuredCost = computed(() =>
+    modelsData.value.filter(model => getMeasuredTaskCost(model) != null)
+  )
+
+  const modelsWithCodingScore = computed(() =>
+    modelsData.value.filter(model => getCodingScore(model) != null)
   )
 
   // Computed: total in database
@@ -56,6 +65,8 @@ export function useModels() {
       aaTotal: number
       dbTotal: number
       withPrices: number
+      withMeasuredCodingCost: number
+      withProxyCost: number
       needsImport: boolean
     }>('/api/models/stats')
   }
@@ -67,6 +78,8 @@ export function useModels() {
     error,
     modelsWithCost,
     modelsWithoutCost,
+    modelsWithMeasuredCost,
+    modelsWithCodingScore,
     totalInDb,
     fetchModels,
     getStats

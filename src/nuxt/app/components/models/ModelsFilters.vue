@@ -2,12 +2,13 @@
 import type { SortColumn } from '~/composables/useModelFilters'
 import type { Category } from '~/utils/modelFormatters'
 
-const props = defineProps<{
+defineProps<{
   selectedCategory: Category
   sortBy: SortColumn
   showOnlyOpenWeights: boolean
-  minIntelligence: number
-  maxIntelligence: number
+  includeEstimatedScores: boolean
+  minCodingIndex: number
+  maxCodingIndex: number
   categoryStats: {
     all: number
     frontier: number
@@ -21,17 +22,19 @@ const props = defineProps<{
 const emit = defineEmits<{
   'update:selectedCategory': [value: Category]
   'update:sortBy': [value: SortColumn]
-  'update:minIntelligence': [value: number]
+  'update:minCodingIndex': [value: number]
   'toggleOpenWeights': []
+  'toggleEstimatedScores': []
 }>()
 
 const categories: Category[] = ['all', 'frontier', 'high', 'mid', 'budget']
 
 const sortOptions = [
-  { value: 'value', label: 'Best Value (Int/Cost)' },
+  { value: 'codingValue', label: 'Best Coding Value (pts/$)' },
+  { value: 'coding', label: 'Coding Index' },
   { value: 'intelligence', label: 'Intelligence Index' },
   { value: 'cost', label: 'Lowest Cost' },
-  { value: 'speed', label: 'Fastest Speed' }
+  { value: 'speed', label: 'Fastest Speed (info)' }
 ] as const
 
 function updateSort(value: unknown) {
@@ -40,16 +43,16 @@ function updateSort(value: unknown) {
   }
 }
 
-function updateMinimumIntelligence(value: number | number[] | undefined) {
+function updateMinimumCoding(value: number | number[] | undefined) {
   if (typeof value === 'number') {
-    emit('update:minIntelligence', value)
+    emit('update:minCodingIndex', value)
   }
 }
 </script>
 
 <template>
   <div class="flex flex-wrap items-center gap-4">
-    <!-- Category Filter -->
+    <!-- Category filter -->
     <div class="flex items-center gap-2">
       <span class="text-sm text-muted-foreground">Category:</span>
       <div class="flex gap-1">
@@ -76,29 +79,45 @@ function updateMinimumIntelligence(value: number | number[] | undefined) {
         :model-value="sortBy"
         :options="sortOptions"
         size="xs"
-        class="w-48"
+        class="w-52"
         @update:model-value="updateSort"
       />
     </div>
 
-    <!-- Min Intelligence Filter -->
+    <!-- Minimum coding score filter -->
     <div class="flex items-center gap-3">
-      <span class="text-sm text-muted-foreground">Min Intelligence:</span>
+      <span class="text-sm text-muted-foreground">Min Coding Score:</span>
       <USlider
-        :model-value="minIntelligence"
+        :model-value="minCodingIndex"
         :min="0"
-        :max="maxIntelligence"
+        :max="Math.max(maxCodingIndex, 1)"
         :step="1"
         tooltip
         class="w-40"
-        @update:model-value="updateMinimumIntelligence"
+        @update:model-value="updateMinimumCoding"
       />
       <span class="text-sm font-semibold w-8 text-primary">
-        {{ minIntelligence === 0 ? 'Alla' : `≥ ${minIntelligence}` }}
+        {{ minCodingIndex === 0 ? 'All' : `≥ ${minCodingIndex}` }}
       </span>
     </div>
 
-    <!-- Open Weights Toggle -->
+    <!-- Estimated score toggle -->
+    <div class="flex items-center gap-2">
+      <button
+        type="button"
+        class="relative inline-flex h-5 w-9 items-center rounded-full bg-muted transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+        :class="{ 'bg-primary': includeEstimatedScores }"
+        @click="emit('toggleEstimatedScores')"
+      >
+        <span
+          class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
+          :class="{ 'translate-x-4': includeEstimatedScores, 'translate-x-0': !includeEstimatedScores }"
+        />
+      </button>
+      <span class="text-sm text-muted-foreground">Include estimated scores</span>
+    </div>
+
+    <!-- Open weights toggle -->
     <div class="flex items-center gap-2">
       <button
         type="button"

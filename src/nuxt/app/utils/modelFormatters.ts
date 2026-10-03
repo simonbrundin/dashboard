@@ -16,8 +16,11 @@ export interface ValueRating {
   label: string
 }
 
-export function getValueRating(ratio: number | undefined): ValueRating {
-  if (ratio === undefined || !isFinite(ratio)) {
+export function getValueRating(ratio: number | null | undefined): ValueRating {
+  if (ratio == null || Number.isNaN(ratio)) {
+    return { stars: 0, label: 'Unavailable' }
+  }
+  if (!isFinite(ratio)) {
     return { stars: 5, label: 'Free' }
   }
   if (ratio >= 200) return { stars: 5, label: 'Excellent' }
@@ -27,10 +30,18 @@ export function getValueRating(ratio: number | undefined): ValueRating {
   return { stars: 1, label: 'Basic' }
 }
 
+export function formatCodingValue(value: number | null | undefined): string {
+  if (value == null || Number.isNaN(value)) return '—'
+  if (!isFinite(value)) return 'Free'
+  return `${value.toFixed(0)} pts/$`
+}
+
 export function formatCost(cost: number | string | null | undefined): string {
   if (cost == null) return '—'
   const numCost = typeof cost === 'string' ? parseFloat(cost) : cost
-  if (isNaN(numCost) || numCost === 0) return 'Free'
+  if (isNaN(numCost)) return '—'
+  if (!isFinite(numCost)) return '∞'
+  if (numCost === 0) return 'Free'
   if (numCost < 0.01) return `$${numCost.toFixed(3)}/task`
   if (numCost < 0.1) return `$${numCost.toFixed(2)}/task`
   if (numCost < 1) return `$${numCost.toFixed(2)}/task`

@@ -1,3 +1,5 @@
+import { getCodingScore, getMeasuredCodingValue, getMeasuredTaskCost } from '~/utils/modelScoring'
+
 export interface ModelData {
   id: string
   slug?: string
@@ -5,16 +7,49 @@ export interface ModelData {
   provider: string
   providerLogo: string
   intelligenceIndex: number
-  costPerTask: number
-  inputPricePerM: number
-  outputPricePerM: number
+  /** Legacy Artificial Analysis Coding Index, retained for source transparency. */
+  codingIndex?: number | null
+  /** Terminal-Bench 4.0 score, on a 0-100 scale. */
+  terminalBenchScore?: number | null
+  /** BenchLM Coding score, matched by canonical model name. */
+  benchLmCodingScore?: number | null
+  /** BenchLM evidence label, e.g. supported or estimated. */
+  benchLmEvidenceStatus?: string | null
+  /** BenchLM row used for the score, when available. */
+  benchLmModelName?: string | null
+  /** exact configuration match or base-family fallback. */
+  benchLmMatchType?: 'exact' | 'family' | null
+  /** API-provided effective cost classification. */
+  costSource?: 'measured-coding' | 'proxy' | 'unknown'
+  /** Measured coding-agent benchmark cost (Terminal-Bench/DeepSWE average or single source). */
+  codingAgentCostPerTask?: number | null
+  /** Raw measured Terminal-Bench 4.0 cost per attempt/task. */
+  terminalBenchCostPerTask?: number | null
+  /** Raw measured DeepSWE v1.1 cost per attempt/task. */
+  deepSweCostPerTask?: number | null
+  /** Terminal-Bench cost per successful task. */
+  terminalBenchCostPerSuccessfulTask?: number | null
+  /** DeepSWE cost per successful task. */
+  deepSweCostPerSuccessfulTask?: number | null
+  /** Average available benchmark cost per successful task. */
+  codingAgentCostPerSuccessfulTask?: number | null
+  /** AA Coding Agent Index score (0-100). Primary source for coding value. */
+  aaCodingAgentIndex?: number | null
+  /** AA Coding Agent Index cost per task in USD. Primary cost source. */
+  aaCodingAgentCostPerTask?: number | null
+  /** Measured AA Intelligence Index task cost. */
+  aaIntelligenceCostPerTask?: number | null
+  /** Legacy/effective cost field retained for older seeded rows. */
+  costPerTask: number | null
+  inputPricePerM: number | null
+  outputPricePerM: number | null
   category: 'frontier' | 'high' | 'mid' | 'budget'
   strengths: string[]
   contextWindow: string
   openWeights: boolean
   notes?: string
-  speed?: number       // tokens per second
-  latency?: number      // time to first token in seconds
+  speed?: number | null       // tokens per second
+  latency?: number | null      // time to first token in seconds
 }
 
 // Data baserad på Artificial Analysis Intelligence Index och kostnadsjämförelser
@@ -374,34 +409,48 @@ export const modelsData: ModelData[] = [
   }
 ]
 
-// Beräkna value ratio (intelligence per dollar)
+// Legacy exports retained for callers of the static fallback data. They now use
+// coding ability when a Coding Index is available and never invent one from the
+// general Intelligence Index.
 export const modelsWithValue = modelsData.map((model) => ({
   ...model,
-  valueRatio: model.costPerTask > 0 ? model.intelligenceIndex / model.costPerTask : Infinity
+  codingValue: getMeasuredCodingValue(model)
 }))
 
-// Sortera efter bästa värde (högst ratio)
-export const bestValueModels = modelsWithValue
-  .filter((m) => m.costPerTask > 0)
-  .sort((a, b) => b.valueRatio - a.valueRatio)
+export const bestCodingValueModels = modelsWithValue
+  .filter(model => model.codingValue !== null)
+  .sort((a, b) => (b.codingValue ?? -Infinity) - (a.codingValue ?? -Infinity))
 
-// Sortera efter Intelligence Index (för de som prioriterar kvalitet)
-export const topIntelligenceModels = [...modelsData].filter((m) => m.intelligenceIndex >= 40).sort((a, b) => b.intelligenceIndex - a.intelligenceIndex)
+// Backwards-compatible name; the value represented here is now coding value.
+export const bestValueModels = bestCodingValueModels
 
-// Sortera efter lägsta kostnad
-export const lowestCostModels = [...modelsData].filter((m) => m.costPerTask > 0).sort((a, b) => a.costPerTask - b.costPerTask)
+export const topCodingModels = [...modelsData]
+  .filter(model => getCodingScore(model) !== null)
+  .sort((a, b) => (getCodingScore(b) ?? -Infinity) - (getCodingScore(a) ?? -Infinity))
 
-// Pareto-optimala modeller (bästa i sin kategori)
+export const topIntelligenceModels = [...modelsData]
+  .filter(model => model.intelligenceIndex >= 40)
+  .sort((a, b) => b.intelligenceIndex - a.intelligenceIndex)
+
+export const lowestCostModels = [...modelsData]
+  .filter(model => getMeasuredTaskCost(model) !== null)
+  .sort((a, b) => (getMeasuredTaskCost(a) ?? Infinity) - (getMeasuredTaskCost(b) ?? Infinity))
+
 export const paretoOptimalModels = modelsData.filter((model) => {
-  const cheaperOrBetter = modelsData.filter((other) => {
-    return (
-      other.costPerTask <= model.costPerTask
-      && other.intelligenceIndex >= model.intelligenceIndex
-      && (other.costPerTask < model.costPerTask || other.intelligenceIndex > model.intelligenceIndex)
-    )
+  const modelCost = getMeasuredTaskCost(model)
+  const modelCodingScore = getCodingScore(model)
+  if (modelCost === null || modelCodingScore === null) return false
+
+  return !modelsData.some((other) => {
+    const otherCost = getMeasuredTaskCost(other)
+    const otherCodingScore = getCodingScore(other)
+    if (otherCost === null || otherCodingScore === null) return false
+
+    return otherCost <= modelCost
+      && otherCodingScore >= modelCodingScore
+      && (otherCost < modelCost || otherCodingScore > modelCodingScore)
   })
-  return cheaperOrBetter.length === 0
-}).sort((a, b) => b.intelligenceIndex - a.intelligenceIndex)
+}).sort((a, b) => (getCodingScore(b) ?? -Infinity) - (getCodingScore(a) ?? -Infinity))
 
 export const providerLogos: Record<string, string> = {
   anthropic: 'i-logos-anthropic',

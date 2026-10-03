@@ -1,9 +1,20 @@
 <script setup lang="ts">
 import { useModelFilters } from '~/composables/useModelFilters'
 import { useModelStats } from '~/composables/useModelStats'
+import { hasRankableCodingEvidence } from '~/utils/modelScoring'
 
 // Data composables
-const { modelsData, metaData, fetchModels, getStats, modelsWithCost, modelsWithoutCost, totalInDb } = useModels()
+const {
+  modelsData,
+  metaData,
+  fetchModels,
+  getStats,
+  modelsWithCost,
+  modelsWithoutCost,
+  modelsWithMeasuredCost,
+  modelsWithCodingScore,
+  totalInDb
+} = useModels()
 const progress = useProgress()
 const actions = useModelActions(modelsData, progress, fetchModels)
 
@@ -14,16 +25,27 @@ const {
   sortDirection,
   showOnlyOpenWeights,
   showWithoutPrice,
-  minIntelligence,
-  maxIntelligence,
+  includeEstimatedScores,
+  minCodingIndex,
+  maxCodingIndex,
   modelsAboveThreshold,
   categoryStats,
   sortedModels,
   handleSort
 } = useModelFilters(modelsData)
 
-// Stats composable (uses only models above the intelligence threshold)
-const { bestValueModels, topIntelligenceModels, lowestCostModels, paretoOptimalModels } = useModelStats(modelsAboveThreshold)
+// Primary stats use supported coding evidence by default. Estimated rows can be
+// included explicitly from the filters without changing the stored source data.
+const rankingModels = computed(() =>
+  modelsAboveThreshold.value.filter(model => hasRankableCodingEvidence(model, includeEstimatedScores.value))
+)
+
+const {
+  bestMeasuredCodingValueModels,
+  topCodingModels,
+  lowestMeasuredCostModels,
+  paretoOptimalModels
+} = useModelStats(rankingModels)
 
 // Fetch on mount
 onMounted(async () => {
@@ -43,27 +65,27 @@ onMounted(async () => {
 
 // Head
 useHead({
-  title: 'AI Model Value Comparison | Dashboard',
+  title: 'AI Coding Model Value Comparison | Dashboard',
   meta: [
     {
       name: 'description',
-      content: 'Compare AI models by Intelligence Index vs Cost per Task. Find the best value models based on artificialanalysis.ai data.'
+      content: 'Compare AI models by coding ability per dollar. Find the best coding value models based on Artificial Analysis data.'
     }
   ]
 })
 
 useSeoMeta({
-  title: 'AI Model Value Comparison',
-  description: 'Compare AI models by Intelligence Index vs Cost per Task. Find the best value models.',
-  ogTitle: 'AI Model Value Comparison',
-  ogDescription: 'Find the most cost-effective AI models based on Intelligence Index.'
+  title: 'AI Coding Model Value Comparison',
+  description: 'Compare AI models by Coding Index per task cost. Find the most cost-effective coding models.',
+  ogTitle: 'AI Coding Model Value Comparison',
+  ogDescription: 'Find the models with the most coding ability per dollar.'
 })
 </script>
 
 <template>
   <UDashboardPanel id="models">
     <template #header>
-      <UDashboardNavbar title="AI Model Value Comparison">
+      <UDashboardNavbar title="AI Coding Model Value Comparison">
         <template #leading>
           <UDashboardSidebarCollapse />
         </template>
@@ -74,7 +96,7 @@ useSeoMeta({
             icon="i-lucide-download"
             @click="actions.importModels"
           >
-            Lägg till modeller ({{ totalInDb }})
+            Synka modeller ({{ totalInDb }})
           </UButton>
           <UButton
             v-if="modelsWithoutCost.length > 0"
@@ -96,6 +118,14 @@ useSeoMeta({
             Uppdatera priser ({{ modelsWithCost.length }})
           </UButton>
           <UButton
+            to="/models/methodology"
+            variant="ghost"
+            size="sm"
+            icon="i-lucide-calculator"
+          >
+            Beräkningar
+          </UButton>
+          <UButton
             variant="ghost"
             size="sm"
             :href="'https://artificialanalysis.ai/models'"
@@ -112,8 +142,9 @@ useSeoMeta({
         <!-- Header Info -->
         <ModelsHeader
           :total="totalInDb"
-          :with-price="modelsWithCost.length"
+          :with-measured-cost="modelsWithMeasuredCost.length"
           :without-price="modelsWithoutCost.length"
+          :with-coding-score="modelsWithCodingScore.length"
           :updated-at="metaData?.updatedAt"
         />
 
@@ -128,10 +159,20 @@ useSeoMeta({
         />
 
         <!-- Error Message -->
-        <UAlert v-if="actions.error.value" color="error" variant="soft" title="Error">
+        <UAlert
+          v-if="actions.error.value"
+          color="error"
+          variant="soft"
+          title="Error"
+        >
           {{ actions.error.value }}
           <template #footer>
-            <UButton size="xs" variant="outline" color="error" @click="actions.error.value = null">
+            <UButton
+              size="xs"
+              variant="outline"
+              color="error"
+              @click="actions.error.value = null"
+            >
               Dismiss
             </UButton>
           </template>
@@ -150,20 +191,22 @@ useSeoMeta({
             :selected-category="selectedCategory"
             :sort-by="sortBy"
             :show-only-open-weights="showOnlyOpenWeights"
-            :min-intelligence="minIntelligence"
-            :max-intelligence="maxIntelligence"
+            :include-estimated-scores="includeEstimatedScores"
+            :min-coding-index="minCodingIndex"
+            :max-coding-index="maxCodingIndex"
             :category-stats="categoryStats"
             @update:selected-category="selectedCategory = $event"
             @update:sort-by="sortBy = $event"
-            @update:min-intelligence="minIntelligence = $event"
+            @update:min-coding-index="minCodingIndex = $event"
             @toggle-open-weights="showOnlyOpenWeights = !showOnlyOpenWeights"
+            @toggle-estimated-scores="includeEstimatedScores = !includeEstimatedScores"
           />
 
           <!-- Stats Cards -->
           <ModelsStatsCards
-            :best-value="bestValueModels[0]"
-            :top-intelligence="topIntelligenceModels[0]"
-            :lowest-cost="lowestCostModels[0]"
+            :best-measured-coding-value="bestMeasuredCodingValueModels[0]"
+            :top-coding="topCodingModels[0]"
+            :lowest-cost="lowestMeasuredCostModels[0]"
           />
 
           <!-- Pareto Optimal Section -->
@@ -175,14 +218,17 @@ useSeoMeta({
           <!-- Full Comparison Table -->
           <div v-if="sortedModels.length > 0">
             <div class="flex items-center justify-between mb-4">
-              <h3 class="font-semibold text-lg">Full Model Comparison</h3>
+              <div>
+                <h3 class="font-semibold text-lg">Full Model Comparison</h3>
+                <p class="text-xs text-muted-foreground">Default value ranking uses measured coding costs and Supported evidence.</p>
+              </div>
               <div class="flex items-center gap-4">
                 <label class="flex items-center gap-2 text-sm cursor-pointer">
                   <input
                     v-model="showWithoutPrice"
                     type="checkbox"
                     class="w-4 h-4 rounded border-border text-primary focus:ring-primary"
-                  />
+                  >
                   <span class="text-muted-foreground">Visa utan pris ({{ modelsWithoutCost.length }})</span>
                 </label>
                 <span class="text-sm text-muted-foreground">
@@ -195,6 +241,7 @@ useSeoMeta({
               :models="sortedModels"
               :sort-by="sortBy"
               :sort-direction="sortDirection"
+              :include-estimated-scores="includeEstimatedScores"
               @sort="handleSort"
             />
           </div>

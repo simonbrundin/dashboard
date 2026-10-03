@@ -6,6 +6,21 @@ CREATE TABLE IF NOT EXISTS models (
     provider VARCHAR(255) NOT NULL,
     provider_logo VARCHAR(100),
     intelligence_index INTEGER NOT NULL,
+    coding_index DECIMAL(5, 2),
+    terminal_bench_score DECIMAL(5, 2),
+    benchlm_coding_score DECIMAL(5, 2),
+    benchlm_evidence_status VARCHAR(30),
+    benchlm_model_name VARCHAR(500),
+    benchlm_match_type VARCHAR(20),
+    aa_intelligence_cost_per_task DECIMAL(10, 4),
+    terminal_bench_cost_per_task DECIMAL(10, 4),
+    deep_swe_cost_per_task DECIMAL(10, 4),
+    coding_agent_cost_per_task DECIMAL(10, 4),
+    terminal_bench_cost_per_successful_task DECIMAL(10, 4),
+    deep_swe_cost_per_successful_task DECIMAL(10, 4),
+    coding_agent_cost_per_successful_task DECIMAL(10, 4),
+    aa_coding_agent_index DECIMAL(5, 2),
+    aa_coding_agent_cost_per_task DECIMAL(10, 4),
     cost_per_task DECIMAL(10, 4),
     input_price_per_m DECIMAL(10, 2),
     output_price_per_m DECIMAL(10, 2),
@@ -22,6 +37,8 @@ CREATE TABLE IF NOT EXISTS models (
 -- Index for faster queries
 CREATE INDEX IF NOT EXISTS idx_models_category ON models(category);
 CREATE INDEX IF NOT EXISTS idx_models_intelligence ON models(intelligence_index DESC);
+CREATE INDEX IF NOT EXISTS idx_models_coding ON models(coding_index DESC);
+CREATE INDEX IF NOT EXISTS idx_models_benchlm_coding ON models(benchlm_coding_score DESC);
 CREATE INDEX IF NOT EXISTS idx_models_cost ON models(cost_per_task);
 CREATE INDEX IF NOT EXISTS idx_models_slug ON models(slug);
 
