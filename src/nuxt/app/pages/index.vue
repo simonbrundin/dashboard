@@ -13,6 +13,7 @@
         <div class="flex flex-col gap-4 w-full">
           <HomeUptimeKuma />
           <HomeFluxStatus />
+          <TalosClusterOverview />
         </div>
         <div class="self-start">
           <HomeTokenUsage />

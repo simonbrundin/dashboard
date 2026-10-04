@@ -21,7 +21,7 @@ local_resource(
         done
         
         # Run schema.sql
-        docker exec -i plan-dev-postgres psql -U postgres -d dashboard < /home/simon/repos/dashboard/environments/dev/schema.sql
+        docker exec -i plan-dev-postgres psql -U postgres -d dashboard < /home/simon/repos/dashboard__worktrees/omni/environments/dev/schema.sql
         echo 'PostgreSQL started with schema'
     """],
     labels = ["Database"],
@@ -44,9 +44,8 @@ local_resource(
 # Nuxt dev server
 local_resource(
     "dev",
-    serve_cmd = ["/home/linuxbrew/.linuxbrew/bin/nub", "run", "dev", "--port", "0"],
-    serve_dir = "../../src/nuxt",
+    cmd = ["/bin/sh", "-c", "cd /home/simon/repos/dashboard__worktrees/omni/src/nuxt && NUXT_IGNORE_LOCK=1 /home/linuxbrew/.linuxbrew/bin/nub run dev --port 40807"],
+    dir = "/home/simon/repos/dashboard__worktrees/omni/src/nuxt",
     labels = ["Frontend"],
-    resource_deps = ["postgres"],
-    auto_init = False,
+    auto_init = True,
 )
