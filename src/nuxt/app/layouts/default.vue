@@ -12,6 +12,29 @@ const links = [[{
     open.value = false
   }
 }, {
+  label: 'Talos',
+  icon: 'i-lucide-server',
+  children: [
+    {
+      label: 'All Nodes',
+      icon: 'i-lucide-list',
+      to: '/talos',
+    },
+    {
+      label: 'Cluster Overview',
+      icon: 'i-lucide-layout-dashboard',
+      to: '/talos/cluster',
+    },
+    {
+      label: 'Upgrade',
+      icon: 'i-lucide-upload',
+      to: '/talos/upgrade',
+    },
+  ],
+  onSelect: () => {
+    open.value = false
+  }
+}, {
   label: 'GitHub Repos',
   icon: 'i-lucide-git-branch',
   to: '/github-repos',
