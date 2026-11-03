@@ -172,6 +172,24 @@ export interface FluxHelmRelease {
 	message?: string;
 }
 
+// PXE-server typer
+export type PxeCheckStatus = "ok" | "fail" | "unknown";
+
+export interface PxeCheck {
+	label: string;
+	status: PxeCheckStatus;
+	httpStatus: number | null;
+	latencyMs: number;
+	detail?: string;
+}
+
+export interface PxeStatus {
+	host: string;
+	ok: boolean;
+	checkedAt: string;
+	checks: PxeCheck[];
+}
+
 export interface FluxStatus {
 	controllers: FluxController[];
 	sources: FluxSource[];
