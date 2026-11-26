@@ -44,8 +44,8 @@ local_resource(
 # Nuxt dev server
 local_resource(
     "dev",
-    cmd = ["sh", "-c", "NUXT_IGNORE_LOCK=1 nub run dev --port 40807"],
-    dir = "../../src/nuxt",
+    serve_cmd = ["sh", "-c", "NUXT_IGNORE_LOCK=1 nub run dev --port 40807"],
+    serve_dir = "../../src/nuxt",
     labels = ["Frontend"],
     auto_init = True,
 )
