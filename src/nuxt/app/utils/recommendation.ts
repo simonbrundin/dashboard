@@ -19,8 +19,11 @@ export interface RecommendationOption {
   /**
    * The ranking metric: cost per successful task when the benchmark has a
    * pass rate, otherwise cost per attempt.
+   *
+   * Null when the cost is not known at all - a plan whose model is neither
+   * measured nor priced. Such an option is only listed, never ranked.
    */
-  costPerTask: number
+  costPerTask: number | null
   /** True when the metric is cost per attempt rather than per solved task. */
   costIsPerAttempt: boolean
   /** Cost of a single attempt, when the benchmark publishes it. */
@@ -234,7 +237,7 @@ export function buildRecommendation(
     .filter(qualifies)
     .map(toOption)
     .filter((option): option is RecommendationOption => option !== null)
-    .sort((a, b) => a.costPerTask - b.costPerTask)
+    .sort((a, b) => (a.costPerTask ?? Infinity) - (b.costPerTask ?? Infinity))
 
   // Models that clear the bar but have no measured cost in this benchmark.
   const unpricedOptions: RecommendationOption[] = measured
@@ -301,14 +304,14 @@ export function buildRecommendation(
     const measuredPlanModels = planModels.filter(model => benchmark.score(model) != null)
     if (measuredPlanModels.length === 0) {
       // No model of this plan is measured in this benchmark. The plan stays
-      // visible with a token-price estimate, but it can never win.
+      // visible with its price and quota, but it can never win and it has no
+      // price per task: neither the quality nor the cost per run is known.
       const best = [...planModels].sort(
         (a, b) => (benchmark.score(b) ?? -1) - (benchmark.score(a) ?? -1)
       )[0]!
       const estimate = estimateCost(best)
-      if (estimate === null) continue
 
-      const planCost = computePlanCost(plan, estimate, usageMonth)
+      const planCost = computePlanCost(plan, estimate ?? 0, usageMonth)
       unmeasuredPlanOptions.push({
         kind: 'plan',
         label: `${plan.vendor} ${plan.name}`,
@@ -322,7 +325,7 @@ export function buildRecommendation(
         ciLow: null,
         ciHigh: null,
         agent: null,
-        apiCostPerTask: estimate,
+        apiCostPerTask: estimate ?? 0,
         breakEvenTasksPerMonth: planCost.breakEvenTasksPerMonth,
         apiCostIsEstimated: true,
         qualityKnown: false,
@@ -395,17 +398,17 @@ export function buildRecommendation(
     else conditionalPlanOptions.push(option)
   }
 
-  planOptions.sort((a, b) => a.costPerTask - b.costPerTask)
+  planOptions.sort((a, b) => (a.costPerTask ?? Infinity) - (b.costPerTask ?? Infinity))
   // A conditional plan is ranked by how quickly it pays off: the number of
   // tasks per month where the plan price equals the API price.
   conditionalPlanOptions.sort(
     (a, b) => (a.breakEvenTasksPerMonth ?? Infinity) - (b.breakEvenTasksPerMonth ?? Infinity)
   )
-  unmeasuredPlanOptions.sort((a, b) => a.costPerTask - b.costPerTask)
+  unmeasuredPlanOptions.sort((a, b) => (a.costPerTask ?? Infinity) - (b.costPerTask ?? Infinity))
 
   // Only options whose cost can be trusted may win. A plan with an
   // unpublished quota is shown next to the winner, never as the winner.
-  const ranked = [...planOptions, ...apiOptions].sort((a, b) => a.costPerTask - b.costPerTask)
+  const ranked = [...planOptions, ...apiOptions].sort((a, b) => (a.costPerTask ?? Infinity) - (b.costPerTask ?? Infinity))
 
   return {
     benchmark,
@@ -438,11 +441,13 @@ export function paretoFrontier(options: RecommendationOption[]): RecommendationO
       other !== option
       && other.score != null
       && option.score != null
+      && other.costPerTask !== null
+      && option.costPerTask !== null
       && other.costPerTask <= option.costPerTask
       && other.score >= option.score
       && (other.costPerTask < option.costPerTask || other.score > option.score)
     ))
-    .sort((a, b) => a.costPerTask - b.costPerTask)
+    .sort((a, b) => (a.costPerTask ?? Infinity) - (b.costPerTask ?? Infinity))
 }
 
 /** The published quota of a plan, in words. */

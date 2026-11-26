@@ -118,6 +118,7 @@ function monthlyCost(option: RecommendationOption): number | null {
   // The usage level counts attempts: that is what you pay for. A solved task
   // costs more, because only part of the attempts succeed.
   const perAttempt = option.costPerAttempt ?? option.costPerTask
+  if (perAttempt === null) return null
   return perAttempt * tasksPerDay.value * 30
 }
 
@@ -142,7 +143,8 @@ function agentLabel(agent: string | null): string | null {
 /** The frontier, best quality first. */
 const frontierOptions = computed(() =>
   [...result.value.frontier].sort(
-    (a, b) => (b.score ?? 0) - (a.score ?? 0) || a.costPerTask - b.costPerTask
+    (a, b) => (b.score ?? 0) - (a.score ?? 0)
+      || (a.costPerTask ?? Infinity) - (b.costPerTask ?? Infinity)
   )
 )
 </script>
@@ -420,24 +422,28 @@ const frontierOptions = computed(() =>
       <h3 class="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
         Ej mätt i {{ benchmarkLabel }} — kan inte jämföras
       </h3>
+      <p class="text-xs text-muted-foreground mb-2">
+        Modellerna i dessa planer är inte mätta i {{ benchmarkLabel }}, så det går inte att säga
+        om de når din nivå. Därför visas bara planpriset och kvoten - inte ett pris per körning.
+        Ett sådant pris går inte att jämföra mellan planer, eftersom en körning i den ena planen
+        kan förbruka helt annan kvot än i den andra.
+      </p>
       <ul class="space-y-2">
         <li
           v-for="option in result.unmeasuredPlanOptions"
           :key="option.plan?.id"
-          class="flex items-center justify-between gap-3 text-sm border-b border-border/50 pb-2 opacity-75"
+          class="flex items-start justify-between gap-3 text-sm border-b border-border/50 pb-2 opacity-75"
         >
           <span>
             {{ option.label }}
             <span class="block text-xs text-muted-foreground">
-              {{ formatModelName(option.model.name) }} · ≈ kodnivå ej mätt i det här benchmarket
+              {{ formatModelName(option.model.name) }} · kodnivå ej mätt i det här benchmarket
             </span>
           </span>
-          <span class="tabular-nums text-right">
-            <span class="font-medium">
-              {{ option.costIsLowerBound ? '≤ ' : '' }}≈{{ formatMetricCost(option.costPerTask) }}
-            </span>
-            <span class="block text-xs text-muted-foreground">
-              {{ metricUnitLabel(option.costIsPerAttempt) }} · kodnivå ej mätt
+          <span class="tabular-nums text-right text-xs text-muted-foreground">
+            {{ option.plan?.pricePerMonth.toFixed(0) }}$/mån
+            <span class="block">
+              kvot: {{ option.quotaLabel ?? 'ej publicerad' }}
             </span>
           </span>
         </li>

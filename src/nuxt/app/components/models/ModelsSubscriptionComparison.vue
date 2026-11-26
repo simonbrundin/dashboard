@@ -95,17 +95,20 @@ function formatApiCredits(row: SubscriptionComparisonRow): string {
     >
       <p class="text-sm">
         <span class="font-semibold text-green-600 dark:text-green-400">Svar:</span>
-        Vid {{ tasksPerDay }} agentuppgifter per dag kostar
-        <span class="font-semibold">{{ formatPlanLabel(winner) }}</span>
-        <span class="font-semibold">
-          {{ winner.costIsLowerBound ? '≤ ' : '' }}{{ formatCost(winner.effectiveCostPerTask) }} per uppgift
-        </span>
-        — mot {{ formatApiCost(winner) }} via API för samma uppgift.
-        <template v-if="winner.breakEvenTasksPerMonth !== null">
-          Prenumerationen lönar sig {{ formatBreakEven(winner) }}.
+        Vid {{ tasksPerDay }} agentkörningar per dag
+        <template v-if="winner.costIsLowerBound">
+          kostar <span class="font-semibold">{{ formatPlanLabel(winner) }}</span>
+          ${{ winner.plan.pricePerMonth.toFixed(2) }}/mån, och den lönar sig
+          <span class="font-semibold">{{ formatBreakEven(winner) }}</span> mot API.
+          Kvoten saknar publicerat dollarvärde, så ett pris per uppgift går inte att räkna ut.
         </template>
         <template v-else>
-          Kvoten är räknad i credits, så planen kan inte bli billigare än API.
+          kostar <span class="font-semibold">{{ formatPlanLabel(winner) }}</span>
+          <span class="font-semibold">{{ formatCost(winner.effectiveCostPerTask) }} per lyckad uppgift</span>
+          — mot {{ formatApiCost(winner) }} via API för samma uppgift.
+        </template>
+        <template v-if="winner.breakEvenTasksPerMonth !== null && !winner.costIsLowerBound">
+          Prenumerationen lönar sig {{ formatBreakEven(winner) }}.
         </template>
       </p>
       <p v-if="winner.costIsLowerBound" class="text-xs text-muted-foreground mt-1">
@@ -180,12 +183,15 @@ function formatApiCredits(row: SubscriptionComparisonRow): string {
               :class="row.cheaperThanApi ? 'text-green-600 dark:text-green-400 font-medium' : ''"
               :title="row.costIsLowerBound ? 'Gäller så länge planens gränser räcker' : (row.hasOverage ? 'Inkluderar listpris för användning över kvoten' : 'All användning ryms i kvoten')"
             >
-              <template v-if="row.costPerTaskAtUsage === null">—</template>
-              <template v-else>
-                <span>{{ row.costIsLowerBound ? '≤ ' : '' }}{{ formatCost(row.costPerTaskAtUsage) }}</span>
-                <span v-if="row.costIsLowerBound" class="block text-[10px] font-normal text-muted-foreground">
-                  om kvoten räcker
+              <template v-if="row.plan.quota?.kind === 'soft-limits' || row.plan.quota?.kind === 'quota-units'">
+                <span class="text-muted-foreground">går inte att räkna ut</span>
+                <span class="block text-[10px] font-normal text-muted-foreground">
+                  kvoten saknar dollarvärde
                 </span>
+              </template>
+              <template v-else-if="row.costPerTaskAtUsage === null">—</template>
+              <template v-else>
+                <span>{{ formatCost(row.costPerTaskAtUsage) }}</span>
               </template>
             </td>
           </tr>
@@ -201,7 +207,9 @@ function formatApiCredits(row: SubscriptionComparisonRow): string {
       chat och kodkompletteringar. API-credits (Anthropic Max/Ultra) gäller bara API-anrop, inte
       agentanvändningen i apparna, och förgår vid månadsskiftet. Mjuka gränser (t.ex.
       5-timmarsfönster) och anropskvoter (MiniMax) kan inte omräknas till antal agentuppgifter -
-      de visas därför som ≤ och gäller bara så länge gränserna räcker. Priser är snapshot från
+      de visas därför som "går inte att räkna ut", och planens brytpunkt mot API-priset visas i
+      stället för ett pris per uppgift. Ett pris per uppgift går inte att jämföra mellan planer,
+      eftersom en körning i den ena planen kan förbruka helt annan kvot än i den andra. Priser är snapshot från
       leverantörernas prissidor, verifierade 2026-11-26 (⚠ = ej omverifierat).
     </p>
   </UCard>
