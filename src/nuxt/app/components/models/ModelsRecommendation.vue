@@ -253,7 +253,9 @@ function agentLabel(agent: string | null): string | null {
                   <template v-else-if="option.quotaKind === 'credits-usd' && option.includedTasksPerMonth">
                     ≈{{ Math.floor(option.includedTasksPerMonth) }} körningar/mån inkluderat
                   </template>
-                  <template v-else-if="option.costIsLowerBound">gränserna ej omräknade till $</template>
+                  <template v-else-if="option.costIsLowerBound">
+                    kvoten saknar publicerat dollarvärde<template v-if="option.plan?.quota?.publishedRange"> · {{ option.plan.quota.publishedRange }}</template>
+                  </template>
                   <template v-else>{{ option.plan?.pricePerMonth.toFixed(0) }}$/mån</template>
                 </span>
               </span>
