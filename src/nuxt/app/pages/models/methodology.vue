@@ -233,7 +233,40 @@ useSeoMeta({
             </section>
 
             <section>
-              <h2 class="font-semibold text-base">13. Viktigt om tolkningen</h2>
+              <h2 class="font-semibold text-base">13. Användningsgränser per modell</h2>
+              <p class="text-muted-foreground mt-2">
+                Gränsvyn visar vad leverantören själv publicerar per modell, uppdelat i timgräns,
+                dagsgräns och månadsgräns för spend. De tre är olika saker och blandas aldrig ihop.
+              </p>
+              <ul class="list-disc list-inside mt-3 space-y-2 text-muted-foreground">
+                <li>
+                  <strong class="text-foreground">Timgräns</strong> - anrop per minut, anrop per sekund,
+                  token per minut och antal samtidiga förfrågningar.
+                </li>
+                <li>
+                  <strong class="text-foreground">Dagsgräns</strong> - token per dygn. När leverantören anger
+                  obegränsat på en högre nivå skrivs det ut, aldrig som noll.
+                </li>
+                <li>
+                  <strong class="text-foreground">Månadsgräns</strong> - en cap för organisationens månatliga
+                  spend. Det är en gräns för vad du får betala, inte en inkluderad kvot.
+                </li>
+                <li>
+                  <strong class="text-foreground">Ej publicerade gränser</strong> - Google och Mistral visar
+                  gränserna i sin egen konsol i stället för som siffror. Då står det
+                  <em>ej publicerade</em>, aldrig 0.
+                </li>
+              </ul>
+              <p class="text-muted-foreground mt-2">
+                Gränserna är tier-bundna: exempelvis gäller Kimis värden på Tier 0 och blir obegränsade på
+                högre nivå. Prenumerationens kvot är en helt annan sak och visas i egen kolumn - den gäller
+                agentanvändningen i apparna, medan API-gränserna gäller API-nivån. En prenumeration täcker
+                modellen i alla reasoning-effort-nivåer.
+              </p>
+            </section>
+
+            <section>
+              <h2 class="font-semibold text-base">14. Viktigt om tolkningen</h2>
               <p class="text-muted-foreground mt-2">
                 Publicerade benchmarkkostnader är uppskattningar, inte en garanti för fakturan för ett visst
                 repository-uppgift. De verkliga kostnaderna beror på prompten, kontextlängden, reasoning-effort, harness,

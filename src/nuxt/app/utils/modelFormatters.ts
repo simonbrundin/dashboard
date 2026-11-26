@@ -32,6 +32,18 @@ export function getReasoningEffort(model: { name: string; deepSweReasoningEffort
   return 'unknown'
 }
 
+/**
+ * The slug of a model without its reasoning-effort suffix.
+ *
+ * The catalog has one row per effort, so "claude-sonnet-5-5-high" and
+ * "claude-sonnet-5-5" are the same model in different settings. A
+ * subscription includes the model, not one setting of it.
+ */
+export function baseModelSlug(slug: string | null | undefined): string {
+  if (!slug) return ''
+  return slug.replace(/-(non-reasoning|xhigh|high|medium|low|max|minimal|none)$/i, '')
+}
+
 export function getCategoryColor(category: string | null | undefined): string {
   const colors: Record<Exclude<Category, 'all'>, string> = {
     frontier: 'text-purple-500 bg-purple-500/10',

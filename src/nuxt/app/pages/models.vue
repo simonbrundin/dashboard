@@ -249,6 +249,9 @@ useSeoMeta({
             <!-- Normalised price per million tokens -->
             <ModelsUnitEconomics :models="modelsData" />
 
+            <!-- Published usage limits per model -->
+            <ModelsUsageLimits :models="modelsData" />
+
             <!-- Full Comparison Table -->
             <div v-if="sortedModels.length > 0">
             <div class="flex items-center justify-between mb-4">

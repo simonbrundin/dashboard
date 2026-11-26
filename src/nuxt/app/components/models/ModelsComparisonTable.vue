@@ -21,6 +21,7 @@ import {
   formatCostPerSuccessfulTask
 } from '~/utils/modelFormatters'
 import { AGENT_BENCHMARKS } from '~/utils/agentBenchmarks'
+import { getModelUsageLimits, usageLimitRows } from '~/utils/usageLimits'
 
 const props = defineProps<{
   models: ModelData[]
@@ -53,6 +54,20 @@ function getConfidence(model: ModelData): string | null {
   const published = agentBenchmark.value?.confidenceFor?.(model)
   if (!published) return null
   return formatConfidenceInterval(published.low, published.high)
+}
+
+/**
+ * The usage limits of a single row.
+ *
+ * Only the published ones are shown. A provider that does not publish
+ * per-model numbers is marked as such instead of showing a zero.
+ */
+function getLimits(model: ModelData): string {
+  const limits = getModelUsageLimits(model)
+  if (limits.notPublished) return 'ej publicerade'
+  const rows = usageLimitRows(limits)
+  if (rows.length === 0) return '—'
+  return rows.map(row => row.text).join(' · ')
 }
 
 function getScore(model: ModelData): number | null {
@@ -163,6 +178,9 @@ function getIntelligencePercent(index: number | null): number {
           <th class="text-center py-3 px-4 font-medium text-muted-foreground" title="Öppna vikter">
             Öppen
           </th>
+          <th class="text-left py-3 px-4 font-medium text-muted-foreground" title="Publicerade användningsgränser">
+            Gränser
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -262,6 +280,9 @@ function getIntelligencePercent(index: number | null): number {
               name="i-lucide-x"
               class="w-4 h-4 text-muted-foreground"
             />
+          </td>
+          <td class="py-4 px-4 text-xs text-muted-foreground">
+            {{ getLimits(model) }}
           </td>
         </tr>
       </tbody>

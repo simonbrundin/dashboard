@@ -8,6 +8,7 @@ import {
   metricUnitLabel
 } from '~/utils/modelFormatters'
 import { AGENT_BENCHMARKS, type AgentBenchmarkId } from '~/utils/agentBenchmarks'
+import { getModelUsageLimits, usageLimitRows } from '~/utils/usageLimits'
 
 const props = defineProps<{
   models: ModelData[]
@@ -71,6 +72,22 @@ const result = computed(() =>
 )
 
 const benchmarkLabel = computed(() => result.value.benchmark?.label ?? '')
+
+/** The published usage limits of the recommended model. */
+const bestLimits = computed(() => {
+  const model = result.value.best?.model
+  if (!model) return []
+  const limits = getModelUsageLimits(model)
+  const rows = [...usageLimitRows(limits)]
+  if (limits.notPublished) {
+    rows.unshift({
+      period: 'gräns',
+      text: 'ej publicerade i siffror',
+      unquantified: true
+    })
+  }
+  return rows
+})
 
 // Measured options first, then a couple of estimated ones (marked ≈), so
 // models without a measured run - like MiniMax M2.7 - stay comparable.
@@ -187,6 +204,12 @@ function agentLabel(agent: string | null): string | null {
         <p v-if="result.best.costIsLowerBound" class="text-xs text-muted-foreground mt-1">
           ≤ betyder att planens användningsgränser inte publiceras som dollarbelopp. Kostnaden
           gäller så länge gränserna räcker vid din användning.
+        </p>
+        <p v-if="bestLimits.length > 0" class="text-xs text-muted-foreground mt-1">
+          Gränser:
+          <template v-for="(limit, index) in bestLimits" :key="limit.period + index">
+            <span v-if="index > 0"> · </span>{{ limit.text }}
+          </template>
         </p>
       </div>
 
