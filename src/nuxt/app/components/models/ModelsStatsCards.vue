@@ -1,90 +1,133 @@
 <script setup lang="ts">
 import type { ModelData } from '~/data/models'
 import {
-  getCodingScore,
-  getCodingValue,
-  getTaskCost,
-  getTerminalBenchCodingScore,
-  getBenchLmCodingScore
+  getBenchmarkCostPerAttempt,
+  getBenchmarkOption,
+  getBenchmarkRankingMetric,
+  getBenchmarkScore,
+  type RankingBenchmark
 } from '~/utils/modelScoring'
-import { formatCodingValue, formatCost } from '~/utils/modelFormatters'
+import {
+  formatCodingValue,
+  formatCost,
+  formatCostPerSuccessfulTask
+} from '~/utils/modelFormatters'
 
-defineProps<{
-  bestMeasuredCodingValue?: ModelData
-  topCoding?: ModelData
+const props = defineProps<{
+  bestValue?: ModelData
+  topScore?: ModelData
   lowestCost?: ModelData
+  benchmark: RankingBenchmark
+  includeEstimatedScores: boolean
 }>()
 
-function formatCodingScore(model?: ModelData): string {
-  const score = model ? getCodingScore(model) : null
-  return score == null ? '—' : score.toFixed(1)
+const benchmarkOption = computed(() => getBenchmarkOption(props.benchmark))
+
+function formatMetric(model?: ModelData): string {
+  if (!model) return '—'
+  const metric = getBenchmarkRankingMetric(model, props.benchmark, props.includeEstimatedScores)
+  if (!metric) return '—'
+  if (metric.kind === 'cost-per-success') return formatCostPerSuccessfulTask(metric.value)
+  if (metric.kind === 'score-only') return `${metric.value.toFixed(1)} / 100`
+  return formatCodingValue(metric.value)
+}
+
+function formatScore(model?: ModelData): string {
+  if (!model) return '—'
+  const score = getBenchmarkScore(model, props.benchmark, props.includeEstimatedScores)
+  return score === null ? '—' : `${score.toFixed(1)} / 100`
+}
+
+function getBestValueTitle(): string {
+  if (props.benchmark === 'benchlm') return 'BenchLM quality score'
+  if (props.benchmark === 'estimated') return 'Best estimated intelligence value'
+  if (props.benchmark === 'aa-coding-agent') return 'Best Coding Agent value'
+  return 'Lowest cost per successful task'
+}
+
+function getCostTitle(): string {
+  if (props.benchmark === 'aa-coding-agent') return 'Lowest AA cost per task'
+  if (props.benchmark === 'estimated') return 'Lowest estimated cost per attempt'
+  return 'Lowest cost per attempt'
 }
 </script>
 
 <template>
   <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-    <!-- Best measured coding value card -->
-    <UCard class="bg-gradient-to-br from-green-500/10 to-green-500/5 border-green-500/20">
+    <UCard
+      v-if="benchmark !== 'benchlm'"
+      class="bg-gradient-to-br from-green-500/10 to-green-500/5 border-green-500/20"
+    >
       <div class="flex items-center gap-3">
         <div class="p-3 rounded-xl bg-green-500/20">
           <UIcon name="i-lucide-trophy" class="w-6 h-6 text-green-500" />
         </div>
         <div>
-          <p class="text-sm text-muted-foreground">Best Coding Value</p>
+          <p class="text-sm text-muted-foreground">{{ getBestValueTitle() }}</p>
           <a
-            v-if="bestMeasuredCodingValue"
-            :href="`https://artificialanalysis.ai/models/${bestMeasuredCodingValue.slug}`"
+            v-if="bestValue"
+            :href="`https://artificialanalysis.ai/models/${bestValue.slug}`"
             target="_blank"
             rel="noopener noreferrer"
             class="font-bold text-lg hover:underline hover:text-primary"
           >
-            {{ bestMeasuredCodingValue.name }}
+            {{ bestValue.name }}
           </a>
-          <p class="text-sm text-green-500">
-            {{ bestMeasuredCodingValue ? formatCodingValue(getCodingValue(bestMeasuredCodingValue)) : '—' }}
-          </p>
-          <p v-if="bestMeasuredCodingValue" class="text-xs text-muted-foreground">
-            Cost per successful task: {{ formatCost(getTaskCost(bestMeasuredCodingValue)) }}
+          <p class="text-sm text-green-500">{{ formatMetric(bestValue) }}</p>
+          <p v-if="bestValue" class="text-xs text-muted-foreground">
+            {{ benchmarkOption.label }} · score {{ formatScore(bestValue) }}
           </p>
         </div>
       </div>
     </UCard>
 
-    <!-- Highest coding score card -->
+    <UCard
+      v-else
+      class="bg-gradient-to-br from-muted/50 to-muted/20 border-border"
+    >
+      <div class="flex items-center gap-3">
+        <div class="p-3 rounded-xl bg-muted">
+          <UIcon name="i-lucide-info" class="w-6 h-6 text-muted-foreground" />
+        </div>
+        <div>
+          <p class="text-sm text-muted-foreground">No price-aligned value ranking</p>
+          <p class="text-sm font-medium">BenchLM provides a quality score, not a matching task cost.</p>
+          <p class="text-xs text-muted-foreground">Choose DeepSWE, Terminal-Bench, or AA Coding Agent for a cost comparison.</p>
+        </div>
+      </div>
+    </UCard>
+
     <UCard class="bg-gradient-to-br from-purple-500/10 to-purple-500/5 border-purple-500/20">
       <div class="flex items-center gap-3">
         <div class="p-3 rounded-xl bg-purple-500/20">
           <UIcon name="i-lucide-code-2" class="w-6 h-6 text-purple-500" />
         </div>
         <div>
-          <p class="text-sm text-muted-foreground">Highest Coding Score</p>
+          <p class="text-sm text-muted-foreground">Highest {{ benchmarkOption.label }} score</p>
           <a
-            v-if="topCoding"
-            :href="`https://artificialanalysis.ai/models/${topCoding.slug}`"
+            v-if="topScore"
+            :href="`https://artificialanalysis.ai/models/${topScore.slug}`"
             target="_blank"
             rel="noopener noreferrer"
             class="font-bold text-lg hover:underline hover:text-primary"
           >
-            {{ topCoding.name }}
+            {{ topScore.name }}
           </a>
-          <p class="text-sm text-purple-500">
-            Combined: {{ formatCodingScore(topCoding) }} / 100
-          </p>
-          <p v-if="topCoding" class="text-xs text-muted-foreground">
-            TB {{ getTerminalBenchCodingScore(topCoding) ?? '—' }} · BenchLM {{ getBenchLmCodingScore(topCoding) ?? '—' }}
-          </p>
+          <p class="text-sm text-purple-500">{{ formatScore(topScore) }}</p>
         </div>
       </div>
     </UCard>
 
-    <!-- Lowest cost per successful task card -->
-    <UCard class="bg-gradient-to-br from-blue-500/10 to-blue-500/5 border-blue-500/20">
+    <UCard
+      v-if="benchmark !== 'benchlm'"
+      class="bg-gradient-to-br from-blue-500/10 to-blue-500/5 border-blue-500/20"
+    >
       <div class="flex items-center gap-3">
         <div class="p-3 rounded-xl bg-blue-500/20">
           <UIcon name="i-lucide-coins" class="w-6 h-6 text-blue-500" />
         </div>
         <div>
-          <p class="text-sm text-muted-foreground">Lowest Cost per Successful Task</p>
+          <p class="text-sm text-muted-foreground">{{ getCostTitle() }}</p>
           <a
             v-if="lowestCost"
             :href="`https://artificialanalysis.ai/models/${lowestCost.slug}`"
@@ -95,10 +138,10 @@ function formatCodingScore(model?: ModelData): string {
             {{ lowestCost.name }}
           </a>
           <p class="text-sm text-blue-500">
-            {{ formatCost(lowestCost ? getTaskCost(lowestCost) : null) }}
+            {{ formatCost(lowestCost ? getBenchmarkCostPerAttempt(lowestCost, benchmark) : null) }}
           </p>
           <p v-if="lowestCost" class="text-xs text-muted-foreground">
-            {{ formatCost((lowestCost as ModelData).terminalBenchCostPerSuccessfulTask ?? (lowestCost as ModelData).deepSweCostPerSuccessfulTask) }}
+            {{ benchmarkOption.costLabel }}
           </p>
         </div>
       </div>

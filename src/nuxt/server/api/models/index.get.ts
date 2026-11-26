@@ -6,9 +6,13 @@ interface ModelRow {
   slug: string
   provider: string
   provider_logo: string
-  intelligence_index: number
+  intelligence_index: number | null
   coding_index?: number | string | null
   terminal_bench_score?: number | string | null
+  terminal_bench_41_score?: number | string | null
+  terminal_bench_41_cost_per_task?: number | string | null
+  terminal_bench_41_cost_per_successful_task?: number | string | null
+  deep_swe_score?: number | string | null
   benchlm_coding_score?: number | string | null
   benchlm_evidence_status?: string | null
   benchlm_model_name?: string | null
@@ -22,10 +26,12 @@ interface ModelRow {
   coding_agent_cost_per_successful_task?: number | string | null
   aa_coding_agent_index?: number | string | null
   aa_coding_agent_cost_per_task?: number | string | null
+  aa_coding_agent_name?: string | null
+  estimated_cost_per_task?: number | string | null
   cost_per_task?: number | string | null
   input_price_per_m?: number | string | null
   output_price_per_m?: number | string | null
-  category: string
+  category: string | null
   strengths?: string[] | string | null
   context_window: string
   open_weights: boolean
@@ -39,8 +45,13 @@ interface ApiModel {
   slug: string
   provider: string
   providerLogo: string
-  intelligenceIndex: number
+  intelligenceIndex: number | null
   codingIndex: number | null
+  terminalBenchScore: number | null
+  terminalBench41Score: number | null
+  terminalBench41CostPerTask: number | null
+  terminalBench41CostPerSuccessfulTask: number | null
+  deepSweScore: number | null
   benchLmCodingScore: number | null
   benchLmEvidenceStatus: string | null
   benchLmModelName: string | null
@@ -54,11 +65,13 @@ interface ApiModel {
   codingAgentCostPerSuccessfulTask: number | null
   aaCodingAgentIndex: number | null
   aaCodingAgentCostPerTask: number | null
+  aaCodingAgentName: string | null
+  estimatedCostPerTask: number | null
   costPerTask: number | null
   costSource: 'measured-coding' | 'proxy' | 'unknown'
   inputPricePerM: number | null
   outputPricePerM: number | null
-  category: string
+  category: string | null
   strengths: string[]
   contextWindow: string
   openWeights: boolean
@@ -109,6 +122,9 @@ export default defineEventHandler(async () => {
         intelligenceIndex: row.intelligence_index,
         codingIndex: parseNullableNumber(row.coding_index),
         terminalBenchScore: parseNullableNumber(row.terminal_bench_score),
+        terminalBench41Score: parseNullableNumber(row.terminal_bench_41_score),
+        terminalBench41CostPerTask: parseNullableNumber(row.terminal_bench_41_cost_per_task),
+        terminalBench41CostPerSuccessfulTask: parseNullableNumber(row.terminal_bench_41_cost_per_successful_task),
         benchLmCodingScore: parseNullableNumber(row.benchlm_coding_score),
         benchLmEvidenceStatus: row.benchlm_evidence_status ?? null,
         benchLmModelName: row.benchlm_model_name ?? null,
@@ -117,6 +133,7 @@ export default defineEventHandler(async () => {
           : null,
         aaIntelligenceCostPerTask: aaIntelligenceCost ?? legacyCost,
         terminalBenchCostPerTask: terminalBenchCost,
+        deepSweScore: parseNullableNumber(row.deep_swe_score),
         deepSweCostPerTask: deepSweCost,
         codingAgentCostPerTask: codingAgentCost,
         terminalBenchCostPerSuccessfulTask: terminalBenchSuccessfulCost,
@@ -124,6 +141,8 @@ export default defineEventHandler(async () => {
         codingAgentCostPerSuccessfulTask: codingAgentSuccessfulCost,
         aaCodingAgentIndex: parseNullableNumber(row.aa_coding_agent_index),
         aaCodingAgentCostPerTask: parseNullableNumber(row.aa_coding_agent_cost_per_task),
+        aaCodingAgentName: row.aa_coding_agent_name ?? null,
+        estimatedCostPerTask: parseNullableNumber(row.estimated_cost_per_task),
         costPerTask,
         costSource,
         inputPricePerM: parseNullableNumber(row.input_price_per_m),

@@ -1,5 +1,5 @@
 import type { ModelData } from '~/data/models'
-import { getCodingScore, getMeasuredTaskCost, getTaskCost } from '~/utils/modelScoring'
+import { getMeasuredTaskCost, getTaskCost, hasAnyCodingScore } from '~/utils/modelScoring'
 
 export function useModels() {
   // State
@@ -23,7 +23,28 @@ export function useModels() {
   )
 
   const modelsWithCodingScore = computed(() =>
-    modelsData.value.filter(model => getCodingScore(model) != null)
+    modelsData.value.filter(hasAnyCodingScore)
+  )
+
+  // Proxy task costs (AA Intelligence Index cost) exist only for models with
+  // an index - those are the only ones the price scraper can fill in.
+  const hasProxyTaskCost = (model: ModelData): boolean =>
+    model.aaIntelligenceCostPerTask != null || model.costPerTask != null
+
+  const modelsWithProxyCost = computed(() =>
+    modelsData.value.filter(hasProxyTaskCost)
+  )
+
+  const modelsWithoutProxyCost = computed(() =>
+    modelsData.value.filter(model => model.intelligenceIndex != null && !hasProxyTaskCost(model))
+  )
+
+  const modelsWithEstimatedCost = computed(() =>
+    modelsData.value.filter(model => model.estimatedCostPerTask != null)
+  )
+
+  const modelsWithoutPrices = computed(() =>
+    modelsData.value.filter(model => model.inputPricePerM == null && model.outputPricePerM == null)
   )
 
   // Computed: total in database
@@ -80,6 +101,10 @@ export function useModels() {
     modelsWithoutCost,
     modelsWithMeasuredCost,
     modelsWithCodingScore,
+    modelsWithProxyCost,
+    modelsWithoutProxyCost,
+    modelsWithEstimatedCost,
+    modelsWithoutPrices,
     totalInDb,
     fetchModels,
     getStats

@@ -1,47 +1,69 @@
 import type { ModelData } from '~/data/models'
 import type { Category } from '~/utils/modelFormatters'
 import {
-  getCodingScore,
-  getRankingCodingValue,
-  getTaskCost,
-  hasRankableCodingEvidence,
-  hasTaskCost
+  getBenchmarkCostPerAttempt,
+  getBenchmarkOption,
+  getBenchmarkRankingMetric,
+  getBenchmarkScore,
+  type RankingBenchmark,
+  type RankingDirection
 } from '~/utils/modelScoring'
 
-export type SortColumn = 'codingValue' | 'coding' | 'intelligence' | 'cost' | 'speed'
+export type SortColumn = 'ranking' | 'score' | 'intelligence' | 'cost' | 'speed'
+
+function compareNullable(
+  a: number | null,
+  b: number | null,
+  direction: RankingDirection
+): number {
+  if (a === null && b === null) return 0
+  if (a === null) return 1
+  if (b === null) return -1
+  if (a === b) return 0
+  const ascending = a < b ? -1 : 1
+  return direction === 'asc' ? ascending : -ascending
+}
 
 export function useModelFilters(models: Ref<ModelData[]>) {
   const selectedCategory = ref<Category>('all')
-  const sortBy = ref<SortColumn>('codingValue')
-  const sortDirection = ref<'asc' | 'desc'>('desc')
+  const selectedBenchmark = ref<RankingBenchmark>('deep-swe')
+  const sortBy = ref<SortColumn>('ranking')
+  const sortDirection = ref<RankingDirection>(getBenchmarkOption('deep-swe').direction)
   const showOnlyOpenWeights = ref(false)
-  const showWithoutPrice = ref(false)
+  const showUnrankable = ref(false)
   const includeEstimatedScores = ref(false)
-  const minCodingIndex = ref(0)
+  const minBenchmarkScore = ref(0)
 
-  const maxCodingIndex = computed(() =>
-    models.value.reduce((max, model) => Math.max(max, getCodingScore(model) ?? 0), 0)
+  const maxBenchmarkScore = computed(() =>
+    models.value.reduce((max, model) =>
+      Math.max(max, getBenchmarkScore(model, selectedBenchmark.value, includeEstimatedScores.value) ?? 0), 0)
   )
 
-  // Models without a coding score remain visible at zero threshold, but are
-  // excluded as soon as the user asks for a minimum coding score.
   const modelsAboveThreshold = computed(() =>
-    minCodingIndex.value > 0
-      ? models.value.filter(model => (getCodingScore(model) ?? -Infinity) >= minCodingIndex.value)
+    minBenchmarkScore.value > 0
+      ? models.value.filter(model =>
+          (getBenchmarkScore(model, selectedBenchmark.value, includeEstimatedScores.value) ?? -Infinity) >= minBenchmarkScore.value
+        )
       : models.value
   )
 
+  const rankableModels = computed(() =>
+    modelsAboveThreshold.value.filter(model =>
+      getBenchmarkRankingMetric(model, selectedBenchmark.value, includeEstimatedScores.value) !== null
+    )
+  )
+
   const categoryStats = computed(() => ({
-    all: modelsAboveThreshold.value.length,
-    frontier: modelsAboveThreshold.value.filter(model => model.category === 'frontier').length,
-    high: modelsAboveThreshold.value.filter(model => model.category === 'high').length,
-    mid: modelsAboveThreshold.value.filter(model => model.category === 'mid').length,
-    budget: modelsAboveThreshold.value.filter(model => model.category === 'budget').length,
-    openWeights: modelsAboveThreshold.value.filter(model => model.openWeights).length
+    all: rankableModels.value.length,
+    frontier: rankableModels.value.filter(model => model.category === 'frontier').length,
+    high: rankableModels.value.filter(model => model.category === 'high').length,
+    mid: rankableModels.value.filter(model => model.category === 'mid').length,
+    budget: rankableModels.value.filter(model => model.category === 'budget').length,
+    openWeights: rankableModels.value.filter(model => model.openWeights).length
   }))
 
   const filteredModels = computed(() => {
-    let result = modelsAboveThreshold.value
+    let result = showUnrankable.value ? modelsAboveThreshold.value : rankableModels.value
 
     if (selectedCategory.value !== 'all') {
       result = result.filter(model => model.category === selectedCategory.value)
@@ -51,81 +73,83 @@ export function useModelFilters(models: Ref<ModelData[]>) {
       result = result.filter(model => model.openWeights)
     }
 
-    if (!showWithoutPrice.value) {
-      result = result.filter(model => getCodingScore(model) !== null || hasTaskCost(model))
-    }
-
     return result
   })
 
   const sortedModels = computed(() => {
     const result = [...filteredModels.value]
-    const direction = sortDirection.value === 'desc' ? -1 : 1
+    const benchmark = selectedBenchmark.value
+    const includeEstimated = includeEstimatedScores.value
 
     switch (sortBy.value) {
-      case 'codingValue':
-        return result.sort((a, b) => {
-          const aValue = getRankingCodingValue(a, includeEstimatedScores.value)
-          const bValue = getRankingCodingValue(b, includeEstimatedScores.value)
-          if (aValue === null && bValue === null) return 0
-          if (aValue === null) return 1
-          if (bValue === null) return -1
-          return (bValue - aValue) * direction
-        })
+      case 'ranking':
+        return result.sort((a, b) => compareNullable(
+          getBenchmarkRankingMetric(a, benchmark, includeEstimated)?.value ?? null,
+          getBenchmarkRankingMetric(b, benchmark, includeEstimated)?.value ?? null,
+          sortDirection.value
+        ))
 
-      case 'coding':
-        return result.sort((a, b) => {
-          const aScore = hasRankableCodingEvidence(a, includeEstimatedScores.value) ? getCodingScore(a) : null
-          const bScore = hasRankableCodingEvidence(b, includeEstimatedScores.value) ? getCodingScore(b) : null
-          if (aScore === null && bScore === null) return 0
-          if (aScore === null) return 1
-          if (bScore === null) return -1
-          return (bScore - aScore) * direction
-        })
+      case 'score':
+        return result.sort((a, b) => compareNullable(
+          getBenchmarkScore(a, benchmark, includeEstimated),
+          getBenchmarkScore(b, benchmark, includeEstimated),
+          sortDirection.value
+        ))
 
       case 'intelligence':
-        return result.sort((a, b) => (b.intelligenceIndex - a.intelligenceIndex) * direction)
+        return result.sort((a, b) => compareNullable(
+          a.intelligenceIndex,
+          b.intelligenceIndex,
+          sortDirection.value
+        ))
 
-      case 'cost':
-        return result.sort((a, b) => {
-          const aCost = getTaskCost(a)
-          const bCost = getTaskCost(b)
-          if (aCost === null && bCost === null) return 0
-          if (aCost === null) return 1
-          if (bCost === null) return -1
-          return (aCost - bCost) * direction
-        })
+      case 'cost': {
+        const getCost = (model: ModelData): number | null =>
+          getBenchmarkCostPerAttempt(model, benchmark)
+        return result.sort((a, b) => compareNullable(getCost(a), getCost(b), sortDirection.value))
+      }
 
       case 'speed':
-        return result.sort((a, b) => ((b.speed ?? -Infinity) - (a.speed ?? -Infinity)) * direction)
-
-      default:
-        return result
+        return result.sort((a, b) => compareNullable(a.speed ?? null, b.speed ?? null, sortDirection.value))
     }
   })
+
+  function setSelectedBenchmark(benchmark: RankingBenchmark) {
+    selectedBenchmark.value = benchmark
+    if (sortBy.value === 'ranking') {
+      sortDirection.value = getBenchmarkOption(benchmark).direction
+    }
+  }
 
   function handleSort(column: SortColumn) {
     if (sortBy.value === column) {
       sortDirection.value = sortDirection.value === 'desc' ? 'asc' : 'desc'
-    } else {
-      sortBy.value = column
-      sortDirection.value = 'desc'
+      return
     }
+
+    sortBy.value = column
+    sortDirection.value = column === 'ranking'
+      ? getBenchmarkOption(selectedBenchmark.value).direction
+      : column === 'cost'
+        ? 'asc'
+        : 'desc'
   }
 
   return {
     selectedCategory,
+    selectedBenchmark,
     sortBy,
     sortDirection,
     showOnlyOpenWeights,
-    showWithoutPrice,
+    showUnrankable,
     includeEstimatedScores,
-    minCodingIndex,
-    maxCodingIndex,
+    minBenchmarkScore,
+    maxBenchmarkScore,
     modelsAboveThreshold,
     categoryStats,
     filteredModels,
     sortedModels,
+    setSelectedBenchmark,
     handleSort
   }
 }

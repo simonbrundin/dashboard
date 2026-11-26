@@ -1,21 +1,27 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import type { ModelData } from '~/data/models'
 import type { SortColumn } from '~/composables/useModelFilters'
 import {
-  getBenchLmCodingScore,
-  getTerminalBenchCodingScore,
+  getBenchmarkCostPerAttempt,
+  getBenchmarkCostPerSuccessfulTask,
+  getBenchmarkOption,
+  getBenchmarkRankingMetric,
+  getBenchmarkScore,
+  getBenchLmConfidenceLabel,
   getBenchLmMatchLabel,
-  getCodingConfidenceLabel,
-  getCodingCostLabel,
-  getCodingScore,
-  getCodingValue,
-  getRankingCodingValue,
-  getTaskCost
+  type RankingBenchmark
 } from '~/utils/modelScoring'
-import { getCategoryColor, formatCodingValue, formatCost, getValueRating } from '~/utils/modelFormatters'
+import {
+  getCategoryColor,
+  formatCodingValue,
+  formatCost,
+  formatCostPerSuccessfulTask
+} from '~/utils/modelFormatters'
 
-defineProps<{
+const props = defineProps<{
   models: ModelData[]
+  benchmark: RankingBenchmark
   sortBy: SortColumn
   sortDirection: 'asc' | 'desc'
   includeEstimatedScores: boolean
@@ -25,20 +31,33 @@ const emit = defineEmits<{
   sort: [column: SortColumn]
 }>()
 
-function getCodingPercent(index: number | null | undefined): number {
-  if (index == null) return 0
-  return Math.min(Math.max(index, 0), 100)
+const benchmarkOption = computed(() => getBenchmarkOption(props.benchmark))
+
+function getScore(model: ModelData): number | null {
+  return getBenchmarkScore(model, props.benchmark, props.includeEstimatedScores)
 }
 
-function getIntelligencePercent(index: number): number {
+function getRankingMetric(model: ModelData) {
+  return getBenchmarkRankingMetric(model, props.benchmark, props.includeEstimatedScores)
+}
+
+function formatRankingMetric(model: ModelData): string {
+  const metric = getRankingMetric(model)
+  if (!metric) return '—'
+  if (metric.kind === 'cost-per-success') return formatCostPerSuccessfulTask(metric.value)
+  if (metric.kind === 'score-only') return `${metric.value.toFixed(1)} / 100`
+  if (metric.kind === 'estimated-score-per-dollar') return `≈ ${formatCodingValue(metric.value)}`
+  return formatCodingValue(metric.value)
+}
+
+function getScoreEvidence(model: ModelData): string {
+  if (props.benchmark !== 'benchlm' || getScore(model) === null) return ''
+  return `${getBenchLmConfidenceLabel(model)} · ${getBenchLmMatchLabel(model)}`
+}
+
+function getIntelligencePercent(index: number | null): number {
+  if (index === null) return 0
   return Math.min((index / 70) * 100, 100)
-}
-
-function getDisplayedCodingValue(
-  model: ModelData,
-  includeEstimatedScores: boolean
-): number | null {
-  return getRankingCodingValue(model, includeEstimatedScores)
 }
 </script>
 
@@ -52,12 +71,12 @@ function getDisplayedCodingValue(
           </th>
           <th
             class="text-right py-3 px-4 font-medium text-muted-foreground cursor-pointer hover:bg-muted/50 select-none"
-            @click="emit('sort', 'codingValue')"
+            @click="emit('sort', 'ranking')"
           >
             <span class="flex items-center justify-end gap-1">
-              Coding Value (per successful task)
+              {{ benchmarkOption.rankingLabel }}
               <UIcon
-                v-if="sortBy === 'codingValue'"
+                v-if="sortBy === 'ranking'"
                 :name="sortDirection === 'desc' ? 'i-lucide-arrow-down' : 'i-lucide-arrow-up'"
                 class="w-4 h-4"
               />
@@ -68,12 +87,12 @@ function getDisplayedCodingValue(
           </th>
           <th
             class="text-right py-3 px-4 font-medium text-muted-foreground cursor-pointer hover:bg-muted/50 select-none"
-            @click="emit('sort', 'coding')"
+            @click="emit('sort', 'score')"
           >
             <span class="flex items-center justify-end gap-1">
-              Coding Score (TB + BenchLM)
+              {{ benchmarkOption.scoreLabel }}
               <UIcon
-                v-if="sortBy === 'coding'"
+                v-if="sortBy === 'score'"
                 :name="sortDirection === 'desc' ? 'i-lucide-arrow-down' : 'i-lucide-arrow-up'"
                 class="w-4 h-4"
               />
@@ -94,10 +113,11 @@ function getDisplayedCodingValue(
           </th>
           <th
             class="text-right py-3 px-4 font-medium text-muted-foreground cursor-pointer hover:bg-muted/50 select-none"
-            @click="emit('sort', 'cost')"
+            :class="{ 'cursor-default hover:bg-transparent': benchmark === 'benchlm' }"
+            @click="benchmark !== 'benchlm' && emit('sort', 'cost')"
           >
             <span class="flex items-center justify-end gap-1">
-              Cost/Task
+              {{ benchmarkOption.costLabel }}
               <UIcon
                 v-if="sortBy === 'cost'"
                 :name="sortDirection === 'desc' ? 'i-lucide-arrow-down' : 'i-lucide-arrow-up'"
@@ -148,62 +168,37 @@ function getDisplayedCodingValue(
             </div>
           </td>
           <td class="py-4 px-4 text-right">
-            <template v-if="getDisplayedCodingValue(model, includeEstimatedScores) !== null">
-              <div class="flex items-center justify-end gap-2">
-                <div class="flex items-center gap-1">
-                  <span
-                    v-for="n in 5"
-                    :key="n"
-                    class="text-primary"
-                  >
-                    {{ n <= Math.round(getValueRating(getDisplayedCodingValue(model, includeEstimatedScores)).stars) ? '★' : '☆' }}
-                  </span>
-                </div>
-                <span class="text-sm font-semibold text-primary">
-                  {{ formatCodingValue(getDisplayedCodingValue(model, includeEstimatedScores)) }}
-                </span>
-              </div>
-              <p class="text-[11px] text-muted-foreground">
-                {{ getCodingCostLabel(model) }}
-              </p>
-            </template>
-            <template
-              v-else-if="getCodingValue(model) !== null && !includeEstimatedScores && model.benchLmEvidenceStatus?.toLowerCase() !== 'supported'"
-            >
-              <span class="text-sm text-muted-foreground">Estimated only</span>
-              <p class="text-[11px] text-muted-foreground">Enable estimated scores to rank</p>
-            </template>
-            <template v-else-if="getCodingScore(model) !== null && getTaskCost(model) === null">
-              <span class="text-sm text-muted-foreground">No successful-task cost</span>
-              <p class="text-[11px] text-muted-foreground">Terminal-Bench or DeepSWE cost unavailable</p>
-            </template>
-            <span v-else class="text-sm text-muted-foreground">Unavailable</span>
+            <span v-if="getRankingMetric(model)" class="text-sm font-semibold text-primary">
+              {{ formatRankingMetric(model) }}
+            </span>
+            <span v-else class="text-sm text-muted-foreground">
+              {{ getScore(model) === null ? 'No benchmark score' : 'No matched cost' }}
+            </span>
           </td>
           <td class="py-4 px-4 text-center">
-            <UBadge :class="getCategoryColor(model.category)" size="sm">
+            <UBadge v-if="model.category" :class="getCategoryColor(model.category)" size="sm">
               {{ model.category }}
             </UBadge>
+            <span v-else class="text-muted-foreground">—</span>
           </td>
           <td class="py-4 px-4 text-right">
             <div class="flex items-center justify-end gap-1">
-              <span v-if="getCodingScore(model) != null" class="font-bold">{{ getCodingScore(model)?.toFixed(1) }}</span>
+              <span v-if="getScore(model) !== null" class="font-bold">{{ getScore(model)?.toFixed(1) }}</span>
               <span v-else class="text-muted-foreground">—</span>
               <div class="w-16 h-1.5 bg-muted rounded-full overflow-hidden">
                 <div
                   class="h-full bg-green-500 rounded-full"
-                  :style="{ width: `${getCodingPercent(getCodingScore(model))}%` }"
+                  :style="{ width: `${Math.min(Math.max(getScore(model) ?? 0, 0), 100)}%` }"
                 />
               </div>
             </div>
-            <p class="text-xs text-muted-foreground mt-1">
-              TB {{ getTerminalBenchCodingScore(model) ?? '—' }} · BenchLM {{ getBenchLmCodingScore(model) ?? '—' }}
-              <span v-if="model.benchLmEvidenceStatus"> · {{ model.benchLmEvidenceStatus }}</span>
-              <span v-if="getCodingScore(model) != null"> · {{ getCodingConfidenceLabel(model) }} · {{ getBenchLmMatchLabel(model) }}</span>
+            <p v-if="getScoreEvidence(model)" class="text-[11px] text-muted-foreground mt-1">
+              {{ getScoreEvidence(model) }}
             </p>
           </td>
           <td class="py-4 px-4 text-right">
             <div class="flex items-center justify-end gap-1">
-              <span class="font-bold">{{ model.intelligenceIndex }}</span>
+              <span class="font-bold">{{ model.intelligenceIndex ?? '—' }}</span>
               <div class="w-16 h-1.5 bg-muted rounded-full overflow-hidden">
                 <div
                   class="h-full bg-primary rounded-full"
@@ -213,16 +208,16 @@ function getDisplayedCodingValue(
             </div>
           </td>
           <td class="py-4 px-4 text-right">
-            <span class="font-mono">{{ formatCost(model.costPerTask) }}</span>
-            <p class="text-xs text-muted-foreground">
-              {{ getCodingCostLabel(model) }}
-            </p>
-            <p
-              v-if="model.terminalBenchCostPerSuccessfulTask != null || model.deepSweCostPerSuccessfulTask != null"
-              class="text-[11px] text-muted-foreground"
-            >
-              TB {{ formatCost(model.terminalBenchCostPerSuccessfulTask) }} · DeepSWE {{ formatCost(model.deepSweCostPerSuccessfulTask) }}
-            </p>
+            <template v-if="getBenchmarkCostPerAttempt(model, benchmark) !== null">
+              <span class="font-mono">
+                {{ formatCost(getBenchmarkCostPerAttempt(model, benchmark)) }}
+              </span>
+              <p v-if="getBenchmarkCostPerSuccessfulTask(model, benchmark) !== null" class="text-xs text-muted-foreground">
+                {{ formatCostPerSuccessfulTask(getBenchmarkCostPerSuccessfulTask(model, benchmark)) }}
+              </p>
+              <p v-else class="text-xs text-muted-foreground">per task</p>
+            </template>
+            <span v-else class="text-sm text-muted-foreground">—</span>
           </td>
           <td class="py-4 px-4 text-right text-sm">
             <span v-if="model.speed != null">{{ model.speed }} t/s</span>

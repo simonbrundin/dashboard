@@ -1,132 +1,122 @@
 /**
- * Fetches AA Coding Agent Index using Playwright to render JavaScript.
- * Extracts data from Next.js RSC payload in script tags.
+ * Artificial Analysis Coding Agent Index.
+ *
+ * The public leaderboard embeds its data in the Next.js flight payload. The
+ * rows contain the agent, the model configuration, the index score and the
+ * measured cost of the agent run, so score and cost always come from the same
+ * agent/model pair.
  */
 
-import { chromium } from 'playwright'
+const AA_CODING_AGENTS_URL = 'https://artificialanalysis.ai/agents/coding-agents'
 
 export interface CodingAgentBenchmark {
   agentName: string
   provider: string
-  model: string
-  hostModelSlug: string
+  /** Model configuration label, e.g. "Gemini 4 Neon (Xhigh)". */
+  modelName: string
+  /** Reasoning effort of the configuration, e.g. "xhigh". */
+  effort: string
+  /** Coding Agent Index score on a 0-100 scale. */
   indexScore: number | null
-  deepSweScore: number | null
-  sweAtlasScore: number | null
-  terminalBenchScore: number | null
+  /** Measured cost of the agent run in USD. */
   costPerTask: number | null
-  inputTokens: number | null
-  outputTokens: number | null
-  cacheHitRate: number | null
   isDefault: boolean
-  isHighlighted: boolean
 }
 
-const AA_CODING_AGENTS_URL = 'https://artificialanalysis.ai/agents/coding-agents'
+const ROWS_MARKER = '\\"rows\\":['
 
-function asFiniteNumber(value: unknown): number | null {
-  if (typeof value === 'number' && Number.isFinite(value)) return value
-  if (typeof value === 'string' && value.trim() !== '') {
-    const parsed = Number(value)
-    return Number.isFinite(parsed) ? parsed : null
+function extractSection(text: string, startIndex: number, maxLength: number): string {
+  const segment = text.slice(startIndex, startIndex + maxLength)
+  let depth = 0
+  let inString = false
+  let escaped = false
+
+  for (let i = 0; i < segment.length; i++) {
+    const char = segment[i]!
+
+    if (inString) {
+      if (escaped) escaped = false
+      else if (char === '\\') escaped = true
+      else if (char === '"') inString = false
+      continue
+    }
+
+    if (char === '"') inString = true
+    else if (char === '[') depth++
+    else if (char === ']') {
+      depth--
+      if (depth === 0) return segment.slice(0, i + 1)
+    }
   }
-  return null
+
+  return segment
 }
 
-function parseFirstCapture(pattern: RegExp, text: string): number | null {
+function matchNumber(text: string, pattern: RegExp): number | null {
   const match = pattern.exec(text)
-  if (match && match[1] !== undefined) {
-    return asFiniteNumber(match[1])
-  }
-  return null
+  if (!match?.[1]) return null
+  const parsed = Number(match[1])
+  return Number.isFinite(parsed) ? parsed : null
+}
+
+function matchString(text: string, pattern: RegExp): string | null {
+  const match = pattern.exec(text)
+  return match?.[1] ?? null
 }
 
 /**
- * Extracts agents from a script content that contains RSC data.
- * The data contains patterns like:
- * "agentName":"Muse Code","provider":"meta","hostModelSlug":"meta_aa_glacier135"
+ * Parses the agent rows from the embedded flight payload. Each row is parsed
+ * independently so a single malformed row cannot hide the rest.
  */
-function extractAgentsFromScript(scriptContent: string): CodingAgentBenchmark[] {
-  const results: CodingAgentBenchmark[] = []
-  
-  // Pattern to match agent entries in the script
-  // The script contains data like: "agentName":"Muse Code","provider":"meta","hostModelSlug":"meta_aa_glacier135"
-  const agentPattern = /"agentName":"([^"]+)","provider":"([^"]+)","hostModelSlug":"([^"]+)"/g
-  
-  let match
-  while ((match = agentPattern.exec(scriptContent)) !== null) {
-    const agentName = String(match[1] ?? '')
-    const provider = String(match[2] ?? '')
-    const hostModelSlug = String(match[3] ?? '')
-    
-    // Skip empty matches
-    if (!agentName || !provider) continue
-    
-    // Get context for this agent
-    const agentStart = match.index
-    const nextAgent = scriptContent.indexOf('"agentName":"', agentStart + 100)
-    const agentEnd = nextAgent > 0 ? nextAgent : scriptContent.length
-    const agentContext = scriptContent.slice(agentStart, agentEnd)
-    
-    // Extract model from display
-    const modelMatch = /"model":"([^"]+)"/.exec(agentContext)
-    const model = String(modelMatch?.[1] ?? '')
-    
-    // Extract indexScore
-    const indexScore = parseFirstCapture(/"indexScore":([0-9.]+)/, agentContext)
-    
-    // Extract costUsd
-    const costPerTask = parseFirstCapture(/"costUsd":([0-9.]+)/, agentContext)
-    
-    // Extract cacheHitRate
-    const cacheHitRate = parseFirstCapture(/"cacheHitRate":([0-9.]+)/, agentContext)
-    
-    // Extract isDefault and isHighlighted
-    const isDefault = agentContext.includes('"isDefault":true')
-    const isHighlighted = agentContext.includes('"isHighlighted":true')
-    
-    // Extract evals
-    let deepSweScore: number | null = null
-    let sweAtlasScore: number | null = null
-    let terminalBenchScore: number | null = null
-    
-    const evalsMatch = /"evals":\[(.*?)\]/.exec(agentContext)
-    if (evalsMatch && evalsMatch[1]) {
-      const evalsContent = evalsMatch[1]
-      deepSweScore = parseFirstCapture(/"deep-swe-v1.1"[^}]*"reward":([0-9.]+)/, evalsContent)
-      sweAtlasScore = parseFirstCapture(/"swe-atlas-qna"[^}]*"reward":([0-9.]+)/, evalsContent)
-      terminalBenchScore = parseFirstCapture(/"terminal-bench-v4"[^}]*"reward":([0-9.]+)/, evalsContent)
-    }
-    
-    results.push({
+export function parseCodingAgentRows(html: string): CodingAgentBenchmark[] {
+  const rowsIndex = html.indexOf(ROWS_MARKER)
+  if (rowsIndex < 0) return []
+
+  const start = rowsIndex + ROWS_MARKER.length - 1
+  const rawSection = extractSection(html, start, 2_000_000)
+  const markers = [...rawSection.matchAll(/\\"agentName\\":\\"/g)]
+  const agents: CodingAgentBenchmark[] = []
+
+  for (let index = 0; index < markers.length; index++) {
+    const marker = markers[index]!
+    const chunkStart = marker.index!
+    const chunkEnd = markers[index + 1]?.index ?? rawSection.length
+    const chunk = rawSection.slice(chunkStart, chunkEnd)
+
+    const agentName = matchString(chunk, /\\"agentName\\":\\"([^"]*)\\"/)
+    if (!agentName) continue
+
+    const provider = matchString(chunk, /\\"provider\\":\\"([^"]*)\\"/) ?? ''
+    const modelName = matchString(
+      chunk,
+      /\\"display\\":\{\\"agent\\":\\"[^"]*\\",\\"model\\":\\"([^"]*)\\"/
+    ) ?? matchString(chunk, /\\"model\\":\{[^}]*?\\"name\\":\\"([^"]*)\\"/)
+    if (!modelName) continue
+
+    const effort = matchString(chunk, /\\"effort\\":\{\\"slug\\":\\"([^"]*)\\"/) ?? 'max'
+    const indexScore = matchNumber(chunk, /\\"indexScore\\":([0-9.]+)/)
+    const costPerTask = matchNumber(chunk, /\\"mean\\":\{[^}]*?\\"costUsd\\":([0-9.]+)/)
+    const isDefault = matchString(chunk, /\\"isDefault\\":(true|false)/) === 'true'
+
+    agents.push({
       agentName,
       provider,
-      model,
-      hostModelSlug,
-      indexScore,
-      deepSweScore,
-      sweAtlasScore,
-      terminalBenchScore,
+      modelName,
+      effort,
+      indexScore: indexScore === null ? null : indexScore <= 1 ? indexScore * 100 : indexScore,
       costPerTask,
-      inputTokens: null,
-      outputTokens: null,
-      cacheHitRate,
-      isDefault,
-      isHighlighted
+      isDefault
     })
   }
-  
-  return results
+
+  return agents
 }
 
-// Cache for parsed results
 let cachedAgents: CodingAgentBenchmark[] | null = null
 let lastFetchTime = 0
-const CACHE_TTL_MS = 5 * 60 * 1000 // 5 minutes
+const CACHE_TTL_MS = 60 * 60 * 1000
 
-/**
- * Fetches the AA Coding Agent Index data using Playwright.
- */
+/** Fetches the Coding Agent Index rows from the public leaderboard. */
 export async function fetchCodingAgentBenchmarks(
   forceRefresh = false
 ): Promise<CodingAgentBenchmark[]> {
@@ -136,89 +126,49 @@ export async function fetchCodingAgentBenchmarks(
     return cachedAgents
   }
 
-  let browser = null
   try {
-    browser = await chromium.launch({ headless: true })
-    const page = await browser.newPage()
-    
-    await page.goto(AA_CODING_AGENTS_URL, { 
-      waitUntil: 'networkidle',
-      timeout: 60000 
-    })
-    
-    // Wait a bit more for React to finish rendering
-    await page.waitForTimeout(10000)
-    
-    // Extract data from script tags
-    const agents = await page.evaluate(() => {
-      const scripts = document.querySelectorAll('script')
-      
-      for (const script of scripts) {
-        const content = script.textContent || ''
-        
-        // Look for scripts that contain agent data
-        if (content.includes('"agentName"') && 
-            content.includes('"provider"') &&
-            content.includes('"hostModelSlug"') &&
-            content.includes('"Muse Code"')) {
-          return content
-        }
-      }
-      
-      return null
-    })
-    
-    if (agents && typeof agents === 'string') {
-      cachedAgents = extractAgentsFromScript(agents)
-      lastFetchTime = now
-      console.log(`[CodingAgentIndex] Fetched ${cachedAgents.length} agents via Playwright`)
-      return cachedAgents
-    }
-    
-    // If no data found, return empty array
-    console.warn('[CodingAgentIndex] No agents found on page')
-    return cachedAgents || []
-    
+    const html = await $fetch<string>(AA_CODING_AGENTS_URL)
+    const agents = parseCodingAgentRows(html)
+    cachedAgents = agents
+    lastFetchTime = now
+    console.log(`[CodingAgentIndex] Parsed ${agents.length} agent rows`)
+    return agents
   } catch (error) {
-    console.error('[CodingAgentIndex] Playwright error:', error)
-    return cachedAgents || []
-  } finally {
-    if (browser) {
-      await browser.close()
-    }
+    console.error('[CodingAgentIndex] Fetch failed:', error)
+    return cachedAgents ?? []
   }
 }
 
+export interface CodingAgentSelection {
+  benchmark: CodingAgentBenchmark
+  /** True when the agent is the leaderboard's default for the model. */
+  isDefault: boolean
+}
+
 /**
- * Finds a coding agent benchmark entry by model name or slug.
+ * Picks the agent row that represents a model: the highest index score, and
+ * for equal scores the cheapest run. Score and cost always come from the same
+ * agent run.
  */
-export function findCodingAgentBenchmark(
+export function selectBestAgentForModel(
   agents: CodingAgentBenchmark[],
-  modelName: string,
-  modelSlug?: string
-): CodingAgentBenchmark | null {
-  const normalizedName = modelName.toLowerCase()
+  modelName: string
+): CodingAgentSelection | null {
+  const candidates = agents.filter(agent => agent.modelName === modelName && agent.indexScore !== null)
+  if (candidates.length === 0) return null
 
-  for (const agent of agents) {
-    const agentName = agent.agentName.toLowerCase()
-    const provider = agent.provider.toLowerCase()
-    const model = agent.model.toLowerCase()
-
-    // Check for agent name match with provider
-    if (normalizedName.includes(agentName) || agentName.includes(normalizedName)) {
-      if (normalizedName.includes(provider) || provider.includes(normalizedName)) {
-        return agent
-      }
-      if (normalizedName.includes(model) || model.includes(normalizedName)) {
-        return agent
-      }
+  const best = candidates.reduce((winner, agent) => {
+    const winnerScore = winner.indexScore ?? -Infinity
+    const agentScore = agent.indexScore ?? -Infinity
+    if (agentScore > winnerScore) return agent
+    if (agentScore === winnerScore) {
+      return (agent.costPerTask ?? Infinity) < (winner.costPerTask ?? Infinity) ? agent : winner
     }
+    return winner
+  })
 
-    // Direct model slug match
-    if (modelSlug && agent.hostModelSlug.toLowerCase().includes(modelSlug.toLowerCase())) {
-      return agent
-    }
+  return {
+    benchmark: best,
+    isDefault: best.isDefault
   }
-
-  return null
 }

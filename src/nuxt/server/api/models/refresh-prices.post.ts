@@ -1,7 +1,7 @@
 import { query } from '../../utils/db'
 import { scrapeModelCostPerTask } from '../../utils/scraper'
 import { pauseForRateLimit } from '../../utils/rateLimit'
-import { ensureModelsSchema } from '../../utils/artificialAnalysis'
+import { ensureModelsSchema } from '../../utils/modelRows'
 
 export default defineEventHandler(async () => {
   try {

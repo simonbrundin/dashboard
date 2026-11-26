@@ -1,5 +1,6 @@
 import { query } from '../../utils/db'
-import { ensureModelsSchema } from '../../utils/artificialAnalysis'
+import { fetchAAModelCount } from '../../utils/artificialAnalysis'
+import { ensureModelsSchema } from '../../utils/modelRows'
 
 export default defineEventHandler(async () => {
   const config = useRuntimeConfig()
@@ -25,19 +26,21 @@ export default defineEventHandler(async () => {
     )
     const withProxyCost = parseInt(withProxyCostResult[0]?.count || '0')
 
+    // With the full catalog imported, models without an Intelligence Index
+    // cannot get a proxy task cost from scraping - only index models count
+    // as fetchable.
+    const needsPricesResult = await query<{ count: string }>(
+      "SELECT COUNT(*) as count FROM models WHERE intelligence_index IS NOT NULL AND COALESCE(aa_intelligence_cost_per_task, cost_per_task) IS NULL"
+    )
+    const needsPrices = parseInt(needsPricesResult[0]?.count || '0')
+
     const withPricesCount = withMeasuredCodingCost + withProxyCost
     
     // Get count from AA API
     let aaCount = 0
     if (apiKey) {
       try {
-        const response = await $fetch<{ status: number; data: unknown[] }>(
-          'https://artificialanalysis.ai/api/v2/data/llms/models',
-          { headers: { 'x-api-key': apiKey } }
-        )
-        if (response.status === 200) {
-          aaCount = response.data.length
-        }
+        aaCount = await fetchAAModelCount(apiKey)
       } catch (error) {
         console.error('Failed to fetch AA count:', error)
       }
@@ -50,7 +53,7 @@ export default defineEventHandler(async () => {
       withMeasuredCodingCost,
       withProxyCost,
       needsImport: aaCount > dbCount,
-      needsPrices: dbCount - withPricesCount
+      needsPrices
     }
   } catch (error: unknown) {
     throw createError({

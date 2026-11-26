@@ -1,15 +1,3 @@
-import { query } from './db'
-import {
-  averageBenchmarkCosts,
-  costPerSuccessfulTask,
-  getDeepSweBenchmark,
-  type CodingBenchmarkCosts
-} from './benchmarkCosts'
-import {
-  findCodingAgentBenchmark,
-  type CodingAgentBenchmark
-} from './fetchCodingAgents'
-
 export interface AAModel {
   id: string
   name: string
@@ -26,9 +14,11 @@ export interface AAModel {
     }
   }
   pricing: {
-    price_1m_blended_3_to_1: number
-    price_1m_input_tokens: number
-    price_1m_output_tokens: number
+    price_1m_blended_3_to_1: number | null
+    price_1m_input_tokens: number | null
+    price_1m_output_tokens: number | null
+    price_1m_cache_hit_tokens: number | null
+    price_1m_cache_write_tokens: number | null
   }
   median_output_tokens_per_second: number
   median_time_to_first_token_seconds: number
@@ -43,116 +33,57 @@ export interface BenchLMModel {
   evidenceStatus?: string | null
 }
 
-interface AAAPIResponse {
-  status: number
-  data: AAModel[]
+/**
+ * Wire format of the current Artificial Analysis V2 API.
+ * `/api/v2/data/*` was retired on 2026-11-04 (410 Gone) and replaced by
+ * `/api/v2/language/models` (Pro+) and `/api/v2/language/models/free`.
+ */
+interface AARawPricing {
+  price_1m_blended_3_to_1?: number | null
+  price_1m_input_tokens?: number | null
+  price_1m_output_tokens?: number | null
+  price_1m_cache_hit_tokens?: number | null
+  price_1m_cache_write_tokens?: number | null
+}
+
+interface AARawPerformance {
+  median_output_tokens_per_second?: number | null
+  median_time_to_first_token_seconds?: number | null
+}
+
+interface AARawPerformanceV3 {
+  mean_output_tokens_per_second?: number | null
+  mean_time_to_first_token_seconds?: number | null
+}
+
+interface AARawModel {
+  id: string
+  name: string
+  slug: string
+  model_creator?: { id: string; name: string; slug?: string } | null
+  evaluations?: Record<string, number | null | undefined>
+  artificial_analysis_intelligence_index_cost?: {
+    cost_per_task?: { total_cost?: number | null }
+  } | null
+  pricing?: AARawPricing | null
+  performance?: AARawPerformance | null
+  performance_v3?: AARawPerformanceV3 | null
+}
+
+interface AARawListResponse {
+  tier?: string
+  pagination?: {
+    page?: number
+    page_size?: number
+    total_pages?: number
+    has_more?: boolean
+  }
+  data?: AARawModel[]
 }
 
 interface BenchLMResponse {
   lastUpdated?: string
   models?: BenchLMModel[]
-}
-
-const MODEL_INSERT = `
-  INSERT INTO models (id, name, slug, provider, provider_logo, intelligence_index,
-    coding_index, terminal_bench_score, benchlm_coding_score, benchlm_evidence_status,
-    benchlm_model_name, benchlm_match_type,
-    aa_intelligence_cost_per_task, terminal_bench_cost_per_task,
-    deep_swe_cost_per_task, coding_agent_cost_per_task,
-    terminal_bench_cost_per_successful_task, deep_swe_cost_per_successful_task,
-    coding_agent_cost_per_successful_task,
-    aa_coding_agent_index, aa_coding_agent_cost_per_task,
-    cost_per_task,
-    input_price_per_m, output_price_per_m, category,
-    strengths, context_window, open_weights, speed, latency)
-  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16,
-    $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30)
-`
-
-/** Sync model metadata without replacing measured task costs. */
-export const UPSERT_MODELS = `${MODEL_INSERT}
-  ON CONFLICT (slug) DO UPDATE SET
-    name = EXCLUDED.name, provider = EXCLUDED.provider,
-    provider_logo = EXCLUDED.provider_logo,
-    intelligence_index = EXCLUDED.intelligence_index,
-    coding_index = COALESCE(EXCLUDED.coding_index, models.coding_index),
-    terminal_bench_score = COALESCE(EXCLUDED.terminal_bench_score, models.terminal_bench_score),
-    benchlm_coding_score = COALESCE(EXCLUDED.benchlm_coding_score, models.benchlm_coding_score),
-    benchlm_evidence_status = COALESCE(EXCLUDED.benchlm_evidence_status, models.benchlm_evidence_status),
-    benchlm_model_name = COALESCE(EXCLUDED.benchlm_model_name, models.benchlm_model_name),
-    benchlm_match_type = COALESCE(EXCLUDED.benchlm_match_type, models.benchlm_match_type),
-    aa_intelligence_cost_per_task = COALESCE(
-      EXCLUDED.aa_intelligence_cost_per_task,
-      models.aa_intelligence_cost_per_task
-    ),
-    terminal_bench_cost_per_task = COALESCE(
-      EXCLUDED.terminal_bench_cost_per_task,
-      models.terminal_bench_cost_per_task
-    ),
-    deep_swe_cost_per_task = COALESCE(
-      EXCLUDED.deep_swe_cost_per_task,
-      models.deep_swe_cost_per_task
-    ),
-    coding_agent_cost_per_task = COALESCE(
-      EXCLUDED.coding_agent_cost_per_task,
-      models.coding_agent_cost_per_task
-    ),
-    terminal_bench_cost_per_successful_task = COALESCE(
-      EXCLUDED.terminal_bench_cost_per_successful_task,
-      models.terminal_bench_cost_per_successful_task
-    ),
-    deep_swe_cost_per_successful_task = COALESCE(
-      EXCLUDED.deep_swe_cost_per_successful_task,
-      models.deep_swe_cost_per_successful_task
-    ),
-    coding_agent_cost_per_successful_task = COALESCE(
-      EXCLUDED.coding_agent_cost_per_successful_task,
-      models.coding_agent_cost_per_successful_task
-    ),
-    aa_coding_agent_index = COALESCE(
-      EXCLUDED.aa_coding_agent_index,
-      models.aa_coding_agent_index
-    ),
-    aa_coding_agent_cost_per_task = COALESCE(
-      EXCLUDED.aa_coding_agent_cost_per_task,
-      models.aa_coding_agent_cost_per_task
-    ),
-    input_price_per_m = EXCLUDED.input_price_per_m,
-    output_price_per_m = EXCLUDED.output_price_per_m,
-    category = EXCLUDED.category,
-    open_weights = EXCLUDED.open_weights,
-    speed = EXCLUDED.speed, latency = EXCLUDED.latency,
-    updated_at = CURRENT_TIMESTAMP
-`
-
-/** Kept for callers that only want to insert genuinely new rows. */
-export const INSERT_MODELS_IF_MISSING = `${MODEL_INSERT}
-  ON CONFLICT DO NOTHING
-`
-
-export async function ensureModelsSchema(): Promise<void> {
-  // Existing deployments may have been created before the additional source
-  // and cost fields existed. The backfill preserves the old scraped value.
-  await query(`
-    ALTER TABLE models ADD COLUMN IF NOT EXISTS coding_index DECIMAL(5, 2);
-    ALTER TABLE models ADD COLUMN IF NOT EXISTS terminal_bench_score DECIMAL(5, 2);
-    ALTER TABLE models ADD COLUMN IF NOT EXISTS benchlm_coding_score DECIMAL(5, 2);
-    ALTER TABLE models ADD COLUMN IF NOT EXISTS benchlm_evidence_status VARCHAR(30);
-    ALTER TABLE models ADD COLUMN IF NOT EXISTS benchlm_model_name VARCHAR(500);
-    ALTER TABLE models ADD COLUMN IF NOT EXISTS benchlm_match_type VARCHAR(20);
-    ALTER TABLE models ADD COLUMN IF NOT EXISTS aa_intelligence_cost_per_task DECIMAL(10, 4);
-    ALTER TABLE models ADD COLUMN IF NOT EXISTS terminal_bench_cost_per_task DECIMAL(10, 4);
-    ALTER TABLE models ADD COLUMN IF NOT EXISTS deep_swe_cost_per_task DECIMAL(10, 4);
-    ALTER TABLE models ADD COLUMN IF NOT EXISTS coding_agent_cost_per_task DECIMAL(10, 4);
-    ALTER TABLE models ADD COLUMN IF NOT EXISTS terminal_bench_cost_per_successful_task DECIMAL(10, 4);
-    ALTER TABLE models ADD COLUMN IF NOT EXISTS deep_swe_cost_per_successful_task DECIMAL(10, 4);
-    ALTER TABLE models ADD COLUMN IF NOT EXISTS coding_agent_cost_per_successful_task DECIMAL(10, 4);
-    ALTER TABLE models ADD COLUMN IF NOT EXISTS aa_coding_agent_index DECIMAL(5, 2);
-    ALTER TABLE models ADD COLUMN IF NOT EXISTS aa_coding_agent_cost_per_task DECIMAL(10, 4);
-    UPDATE models
-    SET aa_intelligence_cost_per_task = cost_per_task
-    WHERE aa_intelligence_cost_per_task IS NULL AND cost_per_task IS NOT NULL;
-  `)
 }
 
 export function requireApiKey(): string {
@@ -167,20 +98,144 @@ export function requireApiKey(): string {
   return apiKey.trim()
 }
 
-export async function fetchModelsFromAA(apiKey: string): Promise<AAModel[]> {
+const AA_API_BASE = 'https://artificialanalysis.ai/api/v2'
+const AA_MODELS_PATH = '/language/models'
+const AA_FREE_MODELS_PATH = '/language/models/free'
+const AA_CACHE_KEY = 'aa:language-models'
+/**
+ * The free tier only allows 100 requests per 24h window and a full model
+ * list costs one request per page, so the downloaded list is cached on disk.
+ */
+const AA_CACHE_TTL_MS = 6 * 60 * 60 * 1000
+
+interface AACacheEntry {
+  fetchedAt: number
+  models: AAModel[]
+}
+
+let memoryCache: AACacheEntry | null = null
+
+function slugifyCreator(name: string): string {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+}
+
+/** Map the V2 wire format onto the shape the rest of the app works with. */
+export function normalizeAAModel(raw: AARawModel): AAModel {
+  const pricing = raw.pricing ?? {}
+  const inputPrice = pricing.price_1m_input_tokens ?? null
+  const outputPrice = pricing.price_1m_output_tokens ?? null
+  // Blended pricing is Pro-only. Approximate the 3:1 input/output blend so
+  // the category buckets keep working for free-tier keys. A missing price
+  // stays null: a model without published prices is not free.
+  const blendedPrice = pricing.price_1m_blended_3_to_1
+    ?? (inputPrice != null || outputPrice != null ? (3 * (inputPrice ?? 0) + (outputPrice ?? 0)) / 4 : null)
+
+  const performance = raw.performance ?? {}
+  const performanceV3 = raw.performance_v3 ?? {}
+  const creator = raw.model_creator
+
+  return {
+    id: raw.id,
+    name: raw.name,
+    slug: raw.slug,
+    model_creator: {
+      id: creator?.id ?? '',
+      name: creator?.name ?? 'Unknown',
+      slug: creator?.slug ?? slugifyCreator(creator?.name ?? 'unknown')
+    },
+    evaluations: {
+      ...(raw.evaluations ?? {}),
+      artificial_analysis_intelligence_index: raw.evaluations?.artificial_analysis_intelligence_index ?? null,
+      artificial_analysis_coding_index: raw.evaluations?.artificial_analysis_coding_index ?? null
+    },
+    artificial_analysis_intelligence_index_cost: raw.artificial_analysis_intelligence_index_cost ?? undefined,
+    pricing: {
+      price_1m_blended_3_to_1: blendedPrice,
+      price_1m_input_tokens: inputPrice,
+      price_1m_output_tokens: outputPrice,
+      price_1m_cache_hit_tokens: pricing.price_1m_cache_hit_tokens ?? null,
+      price_1m_cache_write_tokens: pricing.price_1m_cache_write_tokens ?? null
+    },
+    // Median performance is retired on 2026-12-10, fall back to the v3 means.
+    median_output_tokens_per_second:
+      performance.median_output_tokens_per_second ?? performanceV3.mean_output_tokens_per_second ?? 0,
+    median_time_to_first_token_seconds:
+      performance.median_time_to_first_token_seconds ?? performanceV3.mean_time_to_first_token_seconds ?? 0
+  }
+}
+
+async function fetchAAList(apiKey: string, path: string, page: number): Promise<AARawListResponse> {
+  return await $fetch<AARawListResponse>(`${AA_API_BASE}${path}`, {
+    headers: { 'x-api-key': apiKey },
+    query: page > 1 ? { page } : undefined
+  })
+}
+
+async function downloadAAModels(apiKey: string): Promise<AAModel[]> {
+  // The free endpoint accepts every key and reports the tier, so it doubles
+  // as a tier probe. Pro/Commercial keys get the richer endpoint.
+  const probe = await fetchAAList(apiKey, AA_FREE_MODELS_PATH, 1)
+  const isPro = probe.tier !== undefined && probe.tier !== 'free'
+  const path = isPro ? AA_MODELS_PATH : AA_FREE_MODELS_PATH
+  const firstPage = isPro ? await fetchAAList(apiKey, path, 1) : probe
+  const totalPages = firstPage.pagination?.total_pages ?? 1
+
+  const rawModels: AARawModel[] = [...(firstPage.data ?? [])]
+  for (let page = 2; page <= totalPages; page++) {
+    const next = await fetchAAList(apiKey, path, page)
+    rawModels.push(...(next.data ?? []))
+  }
+
+  // The catalog is imported in full. Models without an Intelligence Index
+  // or prices stay in the database with null values so coverage counts and
+  // the ranking views can show what is actually measured versus missing.
+  return rawModels.map(normalizeAAModel)
+}
+
+async function readCachedModels(): Promise<AAModel[] | null> {
+  if (memoryCache?.models.length && Date.now() - memoryCache.fetchedAt <= AA_CACHE_TTL_MS) {
+    return memoryCache.models
+  }
+
   try {
-    const response = await $fetch<AAAPIResponse>('https://artificialanalysis.ai/api/v2/data/llms/models', {
-      headers: { 'x-api-key': apiKey }
-    })
-
-    if (response.status !== 200) {
-      throw createError({ statusCode: response.status, message: 'Failed to fetch from AA API' })
+    const entry = await useStorage('cache').getItem<AACacheEntry>(AA_CACHE_KEY)
+    if (entry?.models?.length && Date.now() - entry.fetchedAt <= AA_CACHE_TTL_MS) {
+      memoryCache = entry
+      return entry.models
     }
+  } catch {
+    // The cache mount is not available in every deployment - the in-memory
+    // cache still covers a single running process.
+  }
 
-    return response.data.filter(
-      model => model.evaluations?.artificial_analysis_intelligence_index != null &&
-        model.pricing?.price_1m_blended_3_to_1 !== undefined
-    )
+  return null
+}
+
+async function writeCachedModels(models: AAModel[]): Promise<void> {
+  const entry: AACacheEntry = { fetchedAt: Date.now(), models }
+  memoryCache = entry
+
+  try {
+    await useStorage('cache').setItem(AA_CACHE_KEY, entry)
+  } catch {
+    // Disk cache unavailable, the in-memory copy is enough for this process.
+  }
+}
+
+/**
+ * Download the model list. Results are cached because the free tier only
+ * allows 100 requests per 24 hours.
+ */
+export async function fetchModelsFromAA(apiKey: string, options?: { forceRefresh?: boolean }): Promise<AAModel[]> {
+  if (!options?.forceRefresh) {
+    const cached = await readCachedModels()
+    if (cached) return cached
+  }
+
+  try {
+    const models = await downloadAAModels(apiKey)
+    await writeCachedModels(models)
+    return models
   } catch (error: unknown) {
     const status = typeof error === 'object' && error !== null
       ? (error as { response?: { status?: number }; statusCode?: number }).response?.status
@@ -194,8 +249,21 @@ export async function fetchModelsFromAA(apiKey: string): Promise<AAModel[]> {
       })
     }
 
+    if (status === 429) {
+      throw createError({
+        statusCode: 502,
+        message: 'Artificial Analysis rate limit reached (100 requests per 24h on the free tier). Try again after the quota resets.'
+      })
+    }
+
     throw error
   }
+}
+
+/** Number of models Artificial Analysis publishes for the configured key. */
+export async function fetchAAModelCount(apiKey: string): Promise<number> {
+  const models = await fetchModelsFromAA(apiKey)
+  return models.length
 }
 
 export async function fetchBenchLMModels(): Promise<BenchLMModel[]> {
@@ -269,81 +337,4 @@ export function findBenchLMMatch(model: AAModel, benchModels: BenchLMModel[]): B
   if (family) return { model: family, matchType: 'family' }
 
   return undefined
-}
-
-export function determineCategory(pricePerMillion: number): string {
-  if (pricePerMillion === 0) return 'budget'
-  if (pricePerMillion > 50) return 'frontier'
-  if (pricePerMillion > 10) return 'high'
-  if (pricePerMillion > 1) return 'mid'
-  return 'budget'
-}
-
-export function isOpenWeights(name: string): boolean {
-  const patterns = ['llama', 'gemma', 'mistral', 'qwen', 'deepseek-r1', 'deepseek-v3', 'phi', 'granite', 'devstral', 'codestral']
-  const lower = name.toLowerCase()
-  return patterns.some(pattern => lower.includes(pattern.toLowerCase()))
-}
-
-export function toModelRow(
-  model: AAModel,
-  benchMatch?: BenchLMMatch,
-  benchmarkCosts?: CodingBenchmarkCosts,
-  codingAgentBenchmarks?: CodingAgentBenchmark[]
-): unknown[] {
-  const codingIndex = model.evaluations.artificial_analysis_coding_index
-  const aaTaskCost = model.artificial_analysis_intelligence_index_cost?.cost_per_task?.total_cost
-  const benchLmCodingScore = benchMatch?.model.categoryScores?.coding
-  const terminalBench = benchmarkCosts?.terminalBench.get(model.slug) ?? null
-  const deepSwe = benchmarkCosts
-    ? getDeepSweBenchmark(model.slug, model.name, benchmarkCosts.deepSwe)
-    : null
-  const terminalBenchCost = terminalBench?.costPerTask ?? null
-  const deepSweCost = deepSwe?.costPerTask ?? null
-  const codingAgentCost = averageBenchmarkCosts([terminalBenchCost, deepSweCost])
-  const terminalBenchCostPerSuccessfulTask = costPerSuccessfulTask(
-    terminalBenchCost,
-    terminalBench?.score
-  )
-  const deepSweCostPerSuccessfulTask = costPerSuccessfulTask(
-    deepSweCost,
-    deepSwe?.score
-  )
-  const codingAgentCostPerSuccessfulTask = averageBenchmarkCosts([
-    terminalBenchCostPerSuccessfulTask,
-    deepSweCostPerSuccessfulTask
-  ])
-
-  // Get AA Coding Agent Index data if available
-  const codingAgentMatch = codingAgentBenchmarks
-    ? findCodingAgentBenchmark(codingAgentBenchmarks, model.name, model.slug)
-    : null
-  const aaIndexScore = codingAgentMatch?.indexScore ?? null
-  const aaIndexCost = codingAgentMatch?.costPerTask ?? null
-
-  return [
-    model.id, model.name, model.slug, model.model_creator.name, model.model_creator.slug,
-    Math.round(model.evaluations.artificial_analysis_intelligence_index || 0),
-    codingIndex == null ? null : Math.round(codingIndex * 100) / 100,
-    terminalBench?.score == null ? null : Math.round(terminalBench.score * 100) / 100,
-    benchLmCodingScore == null ? null : Math.round(benchLmCodingScore * 100) / 100,
-    benchMatch?.model.evidenceStatus ?? null,
-    benchMatch?.model.model ?? null,
-    benchMatch?.matchType ?? null,
-    aaTaskCost == null ? null : aaTaskCost,
-    terminalBenchCost,
-    deepSweCost,
-    codingAgentCost,
-    terminalBenchCostPerSuccessfulTask,
-    deepSweCostPerSuccessfulTask,
-    codingAgentCostPerSuccessfulTask,
-    aaIndexScore,
-    aaIndexCost,
-    null, // cost_per_task - not computed here
-    model.pricing.price_1m_input_tokens, model.pricing.price_1m_output_tokens,
-    determineCategory(model.pricing.price_1m_blended_3_to_1), [], 'N/A',
-    isOpenWeights(model.name),
-    Math.round(model.median_output_tokens_per_second),
-    Math.round(model.median_time_to_first_token_seconds * 100) / 100
-  ]
 }

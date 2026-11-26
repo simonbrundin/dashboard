@@ -1,21 +1,45 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import type { ModelData } from '~/data/models'
 import {
-  getBenchLmCodingScore,
-  getCodingValue,
-  getCodingScore,
-  getTaskCost,
-  getTerminalBenchCodingScore
+  getBenchmarkCostPerAttempt,
+  getBenchmarkCostPerSuccessfulTask,
+  getBenchmarkOption,
+  getBenchmarkRankingMetric,
+  getBenchmarkScore,
+  type RankingBenchmark
 } from '~/utils/modelScoring'
-import { formatCodingValue, formatCost } from '~/utils/modelFormatters'
+import {
+  formatCodingValue,
+  formatCost,
+  formatCostPerSuccessfulTask
+} from '~/utils/modelFormatters'
 
-defineProps<{
+const props = defineProps<{
   models: ModelData[]
+  benchmark: RankingBenchmark
+  includeEstimatedScores: boolean
 }>()
 
-function formatCodingScore(model: ModelData): string {
-  const score = getCodingScore(model)
-  return score == null ? '—' : score.toFixed(1)
+const benchmarkOption = computed(() => getBenchmarkOption(props.benchmark))
+
+function formatMetric(model: ModelData): string {
+  const metric = getBenchmarkRankingMetric(model, props.benchmark, props.includeEstimatedScores)
+  if (!metric) return '—'
+  if (metric.kind === 'cost-per-success') return formatCostPerSuccessfulTask(metric.value)
+  if (metric.kind === 'score-only') return `${metric.value.toFixed(1)} / 100`
+  return formatCodingValue(metric.value)
+}
+
+function getCost(model: ModelData): number | null {
+  return getBenchmarkCostPerSuccessfulTask(model, props.benchmark) ??
+    getBenchmarkCostPerAttempt(model, props.benchmark)
+}
+
+function formatFrontierCost(model: ModelData): string {
+  return props.benchmark === 'terminal-bench-4-1' || props.benchmark === 'terminal-bench-4-0' || props.benchmark === 'deep-swe'
+    ? formatCostPerSuccessfulTask(getCost(model))
+    : formatCost(getCost(model))
 }
 </script>
 
@@ -23,12 +47,11 @@ function formatCodingScore(model: ModelData): string {
   <div>
     <div class="flex items-center gap-2 mb-3">
       <UIcon name="i-lucide-star" class="w-5 h-5 text-primary" />
-      <h3 class="font-semibold text-lg">Coding Value Frontier</h3>
+      <h3 class="font-semibold text-lg">{{ benchmarkOption.label }} frontier</h3>
       <UBadge variant="subtle" color="primary" size="sm">Best trade-offs</UBadge>
     </div>
     <p class="text-sm text-muted-foreground mb-3">
-      Pareto-optimal models: highest coding score for the lowest cost per successful task.
-      Requires both a coding score (Terminal-Bench or BenchLM) and a measured benchmark cost.
+      Pareto-optimal models using only {{ benchmarkOption.label }} score and its matching cost data.
     </p>
     <div class="flex flex-wrap gap-2">
       <UCard
@@ -45,31 +68,28 @@ function formatCodingScore(model: ModelData): string {
           >
             {{ model.name }}
           </a>
-          <UBadge :color="(model.category?.toLowerCase() ?? 'neutral') as any" size="xs">
+          <UBadge v-if="model.category" :color="(model.category.toLowerCase()) as any" size="xs">
             {{ model.category }}
           </UBadge>
+          <span v-else class="text-muted-foreground text-xs">—</span>
         </div>
         <div class="grid grid-cols-2 gap-2 text-xs">
           <div>
-            <span class="text-muted-foreground">Combined:</span>
-            <span class="font-semibold ml-1">{{ formatCodingScore(model) }}</span>
+            <span class="text-muted-foreground">Score:</span>
+            <span class="font-semibold ml-1">
+              {{ getBenchmarkScore(model, benchmark, includeEstimatedScores)?.toFixed(1) ?? '—' }}
+            </span>
           </div>
           <div>
-            <span class="text-muted-foreground">Value:</span>
-            <span class="font-semibold ml-1">{{ formatCodingValue(getCodingValue(model)) }}</span>
-          </div>
-          <div>
-            <span class="text-muted-foreground">TB:</span>
-            <span class="font-semibold ml-1">{{ getTerminalBenchCodingScore(model) ?? '—' }}</span>
-          </div>
-          <div>
-            <span class="text-muted-foreground">BenchLM:</span>
-            <span class="font-semibold ml-1">{{ getBenchLmCodingScore(model) ?? '—' }}</span>
+            <span class="text-muted-foreground">{{ benchmarkOption.rankingLabel }}:</span>
+            <span class="font-semibold ml-1">{{ formatMetric(model) }}</span>
           </div>
           <div class="col-span-2">
-            <span class="text-muted-foreground">Cost/success:</span>
-            <span class="font-semibold ml-1">{{ formatCost(getTaskCost(model)) }}</span>
-            <span class="text-xs text-muted-foreground ml-1">({{ formatCost(model.terminalBenchCostPerSuccessfulTask ?? model.deepSweCostPerSuccessfulTask) }})</span>
+            <span class="text-muted-foreground">Cost:</span>
+            <span class="font-semibold ml-1">{{ formatFrontierCost(model) }}</span>
+            <span v-if="benchmark === 'terminal-bench-4-1' || benchmark === 'terminal-bench-4-0' || benchmark === 'deep-swe'" class="text-muted-foreground ml-1">
+              ({{ formatCost(getBenchmarkCostPerAttempt(model, benchmark)) }} per attempt)
+            </span>
           </div>
         </div>
       </UCard>

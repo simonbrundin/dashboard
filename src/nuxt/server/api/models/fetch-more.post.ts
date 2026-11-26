@@ -3,19 +3,22 @@ import { query } from '../../utils/db'
 import { scrapeModelCostPerTask } from '../../utils/scraper'
 import { pauseForRateLimit } from '../../utils/rateLimit'
 import {
-  UPSERT_MODELS,
-  ensureModelsSchema,
   requireApiKey,
   fetchModelsFromAA,
   fetchBenchLMModels,
-  findBenchLMMatch,
-  toModelRow
+  findBenchLMMatch
 } from '../../utils/artificialAnalysis'
 import type { AAModel } from '../../utils/artificialAnalysis'
+import {
+  buildModelRow,
+  ensureModelsSchema,
+  UPSERT_MODELS
+} from '../../utils/modelRows'
 import {
   fetchCodingBenchmarkCosts,
   type CodingBenchmarkCosts
 } from '../../utils/benchmarkCosts'
+import { fetchCodingAgentBenchmarks, type CodingAgentBenchmark } from '../../utils/fetchCodingAgents'
 
 interface ProgressPayload {
   phase: 'fetching' | 'adding_models' | 'scraping_prices' | 'done' | 'error'
@@ -49,6 +52,7 @@ async function syncModels(
   models: AAModel[],
   benchModels: Awaited<ReturnType<typeof fetchBenchLMModels>>,
   benchmarkCosts: CodingBenchmarkCosts,
+  codingAgents: CodingAgentBenchmark[],
   stream: ProgressStream
 ): Promise<number> {
   sendProgress(stream, {
@@ -63,7 +67,7 @@ async function syncModels(
     const exists = await query<{ slug: string }>('SELECT slug FROM models WHERE slug = $1', [model.slug])
     await query(
       UPSERT_MODELS,
-      toModelRow(model, findBenchLMMatch(model, benchModels), benchmarkCosts)
+      buildModelRow(model, findBenchLMMatch(model, benchModels), { benchmarkCosts, codingAgents })
     )
     if (exists.length === 0) added++
 
@@ -79,8 +83,11 @@ async function syncModels(
 }
 
 async function scrapeMissingPrices(stream: ProgressStream): Promise<{ pricesAdded: number; total: number }> {
+  // The scraped proxy price is an Intelligence Index task cost, so it can
+  // only be used by models that have an index. Catalog models without a
+  // score would be scraped in vain.
   const modelsWithoutCost = await query<{ slug: string }>(
-    'SELECT slug FROM models WHERE COALESCE(coding_agent_cost_per_task, aa_intelligence_cost_per_task, cost_per_task) IS NULL'
+    'SELECT slug FROM models WHERE intelligence_index IS NOT NULL AND COALESCE(coding_agent_cost_per_task, aa_intelligence_cost_per_task, cost_per_task) IS NULL'
   )
   const total = modelsWithoutCost.length
 
@@ -125,12 +132,13 @@ export default defineEventHandler(async (event) => {
 
     sendProgress(stream, { phase: 'fetching', message: 'Hämtar modeller från Artificial Analysis...', progress: 0, total: 0 })
     const models = await fetchModelsFromAA(apiKey)
-    const [benchModels, benchmarkCosts] = await Promise.all([
+    const [benchModels, benchmarkCosts, codingAgents] = await Promise.all([
       fetchBenchLMModels(),
-      fetchCodingBenchmarkCosts()
+      fetchCodingBenchmarkCosts(),
+      fetchCodingAgentBenchmarks()
     ])
 
-    const newModelsAdded = await syncModels(models, benchModels, benchmarkCosts, stream)
+    const newModelsAdded = await syncModels(models, benchModels, benchmarkCosts, codingAgents, stream)
     const { pricesAdded, total } = await scrapeMissingPrices(stream)
 
     sendProgress(stream, {

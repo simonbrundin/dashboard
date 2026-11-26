@@ -1,6 +1,6 @@
 export type Category = 'all' | 'frontier' | 'high' | 'mid' | 'budget'
 
-export function getCategoryColor(category: string): string {
+export function getCategoryColor(category: string | null | undefined): string {
   const colors: Record<Exclude<Category, 'all'>, string> = {
     frontier: 'text-purple-500 bg-purple-500/10',
     high: 'text-blue-500 bg-blue-500/10',
@@ -47,6 +47,13 @@ export function formatCost(cost: number | string | null | undefined): string {
   if (numCost < 1) return `$${numCost.toFixed(2)}/task`
   if (numCost < 10) return `$${numCost.toFixed(1)}/task`
   return `$${numCost.toFixed(0)}/task`
+}
+
+export function formatCostPerSuccessfulTask(cost: number | string | null | undefined): string {
+  const formatted = formatCost(cost)
+  return formatted.endsWith('/task')
+    ? `${formatted.slice(0, -5)}/success`
+    : formatted
 }
 
 export function formatDate(dateStr: string | null | undefined): string {

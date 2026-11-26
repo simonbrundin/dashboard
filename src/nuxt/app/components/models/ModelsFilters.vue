@@ -1,14 +1,20 @@
 <script setup lang="ts">
 import type { SortColumn } from '~/composables/useModelFilters'
 import type { Category } from '~/utils/modelFormatters'
+import {
+  getBenchmarkOption,
+  RANKING_BENCHMARKS,
+  type RankingBenchmark
+} from '~/utils/modelScoring'
 
-defineProps<{
+const props = defineProps<{
   selectedCategory: Category
+  selectedBenchmark: RankingBenchmark
   sortBy: SortColumn
   showOnlyOpenWeights: boolean
   includeEstimatedScores: boolean
-  minCodingIndex: number
-  maxCodingIndex: number
+  minBenchmarkScore: number
+  maxBenchmarkScore: number
   categoryStats: {
     all: number
     frontier: number
@@ -21,38 +27,57 @@ defineProps<{
 
 const emit = defineEmits<{
   'update:selectedCategory': [value: Category]
+  'update:selectedBenchmark': [value: RankingBenchmark]
   'update:sortBy': [value: SortColumn]
-  'update:minCodingIndex': [value: number]
-  'toggleOpenWeights': []
-  'toggleEstimatedScores': []
+  'update:minBenchmarkScore': [value: number]
+  toggleOpenWeights: []
+  toggleEstimatedScores: []
 }>()
 
 const categories: Category[] = ['all', 'frontier', 'high', 'mid', 'budget']
+const benchmarkOptions = RANKING_BENCHMARKS.map(({ value, label }) => ({ value, label }))
 
-const sortOptions = [
-  { value: 'codingValue', label: 'Best Coding Value (pts/$)' },
-  { value: 'coding', label: 'Coding Index' },
-  { value: 'intelligence', label: 'Intelligence Index' },
-  { value: 'cost', label: 'Lowest Cost' },
-  { value: 'speed', label: 'Fastest Speed (info)' }
-] as const
+const sortOptions = computed(() => {
+  const selected = getBenchmarkOption(props.selectedBenchmark)
+  return [
+    { value: 'ranking', label: selected.rankingLabel },
+    { value: 'score', label: selected.scoreLabel },
+    {
+      value: 'cost',
+      label: selected.metricKind === 'cost-per-success' ? 'Cost per successful task' : selected.costLabel,
+      disabled: props.selectedBenchmark === 'benchlm'
+    },
+    { value: 'intelligence', label: 'Intelligence Index' },
+    { value: 'speed', label: 'Fastest speed' }
+  ]
+})
 
 function updateSort(value: unknown) {
-  if (sortOptions.some(option => option.value === value)) {
+  if (sortOptions.value.some(option => option.value === value && !option.disabled)) {
     emit('update:sortBy', value as SortColumn)
   }
 }
 
-function updateMinimumCoding(value: number | number[] | undefined) {
+function updateMinimumScore(value: number | number[] | undefined) {
   if (typeof value === 'number') {
-    emit('update:minCodingIndex', value)
+    emit('update:minBenchmarkScore', value)
   }
 }
 </script>
 
 <template>
   <div class="flex flex-wrap items-center gap-4">
-    <!-- Category filter -->
+    <div class="flex items-center gap-2">
+      <span class="text-sm text-muted-foreground">Benchmark:</span>
+      <USelect
+        :model-value="selectedBenchmark"
+        :items="benchmarkOptions"
+        size="xs"
+        class="w-56"
+        @update:model-value="emit('update:selectedBenchmark', $event as RankingBenchmark)"
+      />
+    </div>
+
     <div class="flex items-center gap-2">
       <span class="text-sm text-muted-foreground">Category:</span>
       <div class="flex gap-1">
@@ -72,40 +97,39 @@ function updateMinimumCoding(value: number | number[] | undefined) {
       </div>
     </div>
 
-    <!-- Sort -->
     <div class="flex items-center gap-2">
       <span class="text-sm text-muted-foreground">Sort by:</span>
       <USelect
         :model-value="sortBy"
-        :options="sortOptions"
+        :items="sortOptions"
         size="xs"
-        class="w-52"
+        class="w-64"
         @update:model-value="updateSort"
       />
     </div>
 
-    <!-- Minimum coding score filter -->
     <div class="flex items-center gap-3">
-      <span class="text-sm text-muted-foreground">Min Coding Score:</span>
+      <span class="text-sm text-muted-foreground">Minimum score:</span>
       <USlider
-        :model-value="minCodingIndex"
+        :model-value="minBenchmarkScore"
         :min="0"
-        :max="Math.max(maxCodingIndex, 1)"
+        :max="Math.max(maxBenchmarkScore, 1)"
         :step="1"
         tooltip
         class="w-40"
-        @update:model-value="updateMinimumCoding"
+        @update:model-value="updateMinimumScore"
       />
       <span class="text-sm font-semibold w-8 text-primary">
-        {{ minCodingIndex === 0 ? 'All' : `≥ ${minCodingIndex}` }}
+        {{ minBenchmarkScore === 0 ? 'All' : `≥ ${minBenchmarkScore}` }}
       </span>
     </div>
 
-    <!-- Estimated score toggle -->
     <div class="flex items-center gap-2">
       <button
         type="button"
-        class="relative inline-flex h-5 w-9 items-center rounded-full bg-muted transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+        :disabled="selectedBenchmark !== 'benchlm'"
+        :aria-pressed="includeEstimatedScores"
+        class="relative inline-flex h-5 w-9 items-center rounded-full bg-muted transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-40"
         :class="{ 'bg-primary': includeEstimatedScores }"
         @click="emit('toggleEstimatedScores')"
       >
@@ -114,13 +138,13 @@ function updateMinimumCoding(value: number | number[] | undefined) {
           :class="{ 'translate-x-4': includeEstimatedScores, 'translate-x-0': !includeEstimatedScores }"
         />
       </button>
-      <span class="text-sm text-muted-foreground">Include estimated scores</span>
+      <span class="text-sm text-muted-foreground">Include BenchLM family / estimated scores</span>
     </div>
 
-    <!-- Open weights toggle -->
     <div class="flex items-center gap-2">
       <button
         type="button"
+        :aria-pressed="showOnlyOpenWeights"
         class="relative inline-flex h-5 w-9 items-center rounded-full bg-muted transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
         :class="{ 'bg-primary': showOnlyOpenWeights }"
         @click="emit('toggleOpenWeights')"

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useModelFilters } from '~/composables/useModelFilters'
 import { useModelStats } from '~/composables/useModelStats'
-import { hasRankableCodingEvidence } from '~/utils/modelScoring'
+import { getBenchmarkOption } from '~/utils/modelScoring'
 
 // Data composables
 const {
@@ -9,10 +9,12 @@ const {
   metaData,
   fetchModels,
   getStats,
-  modelsWithCost,
-  modelsWithoutCost,
   modelsWithMeasuredCost,
   modelsWithCodingScore,
+  modelsWithProxyCost,
+  modelsWithoutProxyCost,
+  modelsWithEstimatedCost,
+  modelsWithoutPrices,
   totalInDb
 } = useModels()
 const progress = useProgress()
@@ -23,29 +25,39 @@ const {
   selectedCategory,
   sortBy,
   sortDirection,
+  selectedBenchmark,
   showOnlyOpenWeights,
-  showWithoutPrice,
+  showUnrankable,
   includeEstimatedScores,
-  minCodingIndex,
-  maxCodingIndex,
+  minBenchmarkScore,
+  maxBenchmarkScore,
   modelsAboveThreshold,
   categoryStats,
   sortedModels,
+  setSelectedBenchmark,
   handleSort
 } = useModelFilters(modelsData)
 
-// Primary stats use supported coding evidence by default. Estimated rows can be
-// included explicitly from the filters without changing the stored source data.
-const rankingModels = computed(() =>
-  modelsAboveThreshold.value.filter(model => hasRankableCodingEvidence(model, includeEstimatedScores.value))
-)
+const benchmarkOption = computed(() => getBenchmarkOption(selectedBenchmark.value))
+const rankingDescription = computed(() => {
+  switch (selectedBenchmark.value) {
+    case 'benchlm':
+      return 'Quality-only ranking: BenchLM scores have no matched task cost and are not converted to value per dollar.'
+    case 'aa-coding-agent':
+      return 'Ranked by the Coding Agent Index score and the cost of the same agent run.'
+    case 'estimated':
+      return 'Estimate for every model: token prices combined with the median token profile of the same effort tier. This is not a coding measurement.'
+    default:
+      return `Ranked by ${benchmarkOption.value.rankingLabel.toLowerCase()} using ${benchmarkOption.value.label} data only.`
+  }
+})
 
 const {
-  bestMeasuredCodingValueModels,
-  topCodingModels,
-  lowestMeasuredCostModels,
+  bestValueModels,
+  topScoreModels,
+  lowestCostModels,
   paretoOptimalModels
-} = useModelStats(rankingModels)
+} = useModelStats(modelsAboveThreshold, selectedBenchmark, includeEstimatedScores)
 
 // Fetch on mount
 onMounted(async () => {
@@ -65,27 +77,27 @@ onMounted(async () => {
 
 // Head
 useHead({
-  title: 'AI Coding Model Value Comparison | Dashboard',
+  title: 'AI Coding Model Benchmark & Cost Comparison | Dashboard',
   meta: [
     {
       name: 'description',
-      content: 'Compare AI models by coding ability per dollar. Find the best coding value models based on Artificial Analysis data.'
+      content: 'Compare coding benchmark scores and source-aligned cost per successful task across AI models.'
     }
   ]
 })
 
 useSeoMeta({
-  title: 'AI Coding Model Value Comparison',
-  description: 'Compare AI models by Coding Index per task cost. Find the most cost-effective coding models.',
-  ogTitle: 'AI Coding Model Value Comparison',
-  ogDescription: 'Find the models with the most coding ability per dollar.'
+  title: 'AI Coding Model Benchmark & Cost Comparison',
+  description: 'Compare coding benchmark scores and source-aligned task costs.',
+  ogTitle: 'AI Coding Model Benchmark & Cost Comparison',
+  ogDescription: 'Compare coding quality and cost within each benchmark.'
 })
 </script>
 
 <template>
   <UDashboardPanel id="models">
     <template #header>
-      <UDashboardNavbar title="AI Coding Model Value Comparison">
+      <UDashboardNavbar title="AI Coding Model Benchmark & Cost Comparison">
         <template #leading>
           <UDashboardSidebarCollapse />
         </template>
@@ -99,14 +111,14 @@ useSeoMeta({
             Synka modeller ({{ totalInDb }})
           </UButton>
           <UButton
-            v-if="modelsWithoutCost.length > 0"
+            v-if="modelsWithoutProxyCost.length > 0"
             variant="outline"
             size="sm"
             :loading="progress.show.value"
             icon="i-lucide-tag"
             @click="actions.fetchMorePrices"
           >
-            Hämta priser ({{ modelsWithoutCost.length }} utan)
+            Hämta priser ({{ modelsWithoutProxyCost.length }} utan)
           </UButton>
           <UButton
             variant="outline"
@@ -115,7 +127,7 @@ useSeoMeta({
             icon="i-lucide-refresh-cw"
             @click="actions.refreshPrices"
           >
-            Uppdatera priser ({{ modelsWithCost.length }})
+            Uppdatera priser ({{ modelsWithProxyCost.length }})
           </UButton>
           <UButton
             to="/models/methodology"
@@ -143,7 +155,8 @@ useSeoMeta({
         <ModelsHeader
           :total="totalInDb"
           :with-measured-cost="modelsWithMeasuredCost.length"
-          :without-price="modelsWithoutCost.length"
+          :with-estimated-cost="modelsWithEstimatedCost.length"
+          :without-prices="modelsWithoutPrices.length"
           :with-coding-score="modelsWithCodingScore.length"
           :updated-at="metaData?.updatedAt"
         />
@@ -189,47 +202,56 @@ useSeoMeta({
           <!-- Filters -->
           <ModelsFilters
             :selected-category="selectedCategory"
+            :selected-benchmark="selectedBenchmark"
             :sort-by="sortBy"
             :show-only-open-weights="showOnlyOpenWeights"
             :include-estimated-scores="includeEstimatedScores"
-            :min-coding-index="minCodingIndex"
-            :max-coding-index="maxCodingIndex"
+            :min-benchmark-score="minBenchmarkScore"
+            :max-benchmark-score="maxBenchmarkScore"
             :category-stats="categoryStats"
             @update:selected-category="selectedCategory = $event"
-            @update:sort-by="sortBy = $event"
-            @update:min-coding-index="minCodingIndex = $event"
+            @update:selected-benchmark="setSelectedBenchmark($event)"
+            @update:sort-by="handleSort($event)"
+            @update:min-benchmark-score="minBenchmarkScore = $event"
             @toggle-open-weights="showOnlyOpenWeights = !showOnlyOpenWeights"
             @toggle-estimated-scores="includeEstimatedScores = !includeEstimatedScores"
           />
 
           <!-- Stats Cards -->
           <ModelsStatsCards
-            :best-measured-coding-value="bestMeasuredCodingValueModels[0]"
-            :top-coding="topCodingModels[0]"
-            :lowest-cost="lowestMeasuredCostModels[0]"
+            :best-value="bestValueModels[0]"
+            :top-score="topScoreModels[0]"
+            :lowest-cost="lowestCostModels[0]"
+            :benchmark="selectedBenchmark"
+            :include-estimated-scores="includeEstimatedScores"
           />
 
           <!-- Pareto Optimal Section -->
           <ModelsTopModels
             v-if="paretoOptimalModels.length > 0"
             :models="paretoOptimalModels"
+            :benchmark="selectedBenchmark"
+            :include-estimated-scores="includeEstimatedScores"
           />
 
           <!-- Full Comparison Table -->
           <div v-if="sortedModels.length > 0">
             <div class="flex items-center justify-between mb-4">
               <div>
-                <h3 class="font-semibold text-lg">Full Model Comparison</h3>
-                <p class="text-xs text-muted-foreground">Default value ranking uses measured coding costs and Supported evidence.</p>
+                <h3 class="font-semibold text-lg">{{ benchmarkOption.label }} comparison</h3>
+                <p class="text-xs text-muted-foreground">{{ rankingDescription }}</p>
+                <p class="text-xs text-muted-foreground">
+                  {{ sortedModels.length }} av {{ totalInDb }} modeller kan jämföras i den här vyn.
+                </p>
               </div>
               <div class="flex items-center gap-4">
                 <label class="flex items-center gap-2 text-sm cursor-pointer">
                   <input
-                    v-model="showWithoutPrice"
+                    v-model="showUnrankable"
                     type="checkbox"
                     class="w-4 h-4 rounded border-border text-primary focus:ring-primary"
                   >
-                  <span class="text-muted-foreground">Visa utan pris ({{ modelsWithoutCost.length }})</span>
+                  <span class="text-muted-foreground">Show models without a ranking metric</span>
                 </label>
                 <span class="text-sm text-muted-foreground">
                   {{ sortedModels.length }} modeller
@@ -239,12 +261,21 @@ useSeoMeta({
 
             <ModelsComparisonTable
               :models="sortedModels"
+              :benchmark="selectedBenchmark"
               :sort-by="sortBy"
               :sort-direction="sortDirection"
               :include-estimated-scores="includeEstimatedScores"
               @sort="handleSort"
             />
           </div>
+          <UAlert
+            v-else
+            color="neutral"
+            variant="soft"
+            title="No ranked models for this benchmark"
+          >
+            There are no matching score/cost pairs for {{ benchmarkOption.label }} in the current data. Select another benchmark or synchronize the source data.
+          </UAlert>
 
           <!-- Methodology Note -->
           <ModelsMethodology />

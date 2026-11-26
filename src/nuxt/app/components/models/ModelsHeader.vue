@@ -4,7 +4,8 @@ import { formatDate } from '~/utils/modelFormatters'
 defineProps<{
   total: number
   withMeasuredCost: number
-  withoutPrice: number
+  withEstimatedCost: number
+  withoutPrices: number
   withCodingScore: number
   updatedAt?: string | null
 }>()
@@ -19,13 +20,14 @@ defineProps<{
         </div>
         <div>
           <h2 class="font-semibold text-lg">
-            Coding Ability per Dollar
+            Coding Benchmark & Cost Comparison
           </h2>
           <p class="text-sm text-muted-foreground mt-1">
             <span class="font-semibold">{{ total }}</span> modeller i databasen.
-            <span v-if="withCodingScore > 0"> · {{ withCodingScore }} med combined coding score</span>
-            <span v-if="withMeasuredCost > 0"> · {{ withMeasuredCost }} med cost per successful task</span>
-            <span v-if="withoutPrice > 0"> · {{ withoutPrice }} utan kostnad</span>
+            <span v-if="withCodingScore > 0"> · {{ withCodingScore }} med benchmark-scores</span>
+            <span v-if="withMeasuredCost > 0"> · {{ withMeasuredCost }} med mätt task-kostnad</span>
+            <span v-if="withEstimatedCost > 0"> · {{ withEstimatedCost }} med uppskattad kostnad</span>
+            <span v-if="withoutPrices > 0"> · {{ withoutPrices }} utan priser</span>
           </p>
           <p v-if="updatedAt" class="text-xs text-muted-foreground mt-1">
             Last updated: {{ formatDate(updatedAt) }}

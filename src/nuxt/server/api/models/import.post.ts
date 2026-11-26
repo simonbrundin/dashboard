@@ -1,13 +1,15 @@
 import { query } from '../../utils/db'
 import {
-  UPSERT_MODELS,
-  ensureModelsSchema,
   requireApiKey,
   fetchModelsFromAA,
   fetchBenchLMModels,
-  findBenchLMMatch,
-  toModelRow
+  findBenchLMMatch
 } from '../../utils/artificialAnalysis'
+import {
+  buildModelRow,
+  ensureModelsSchema,
+  UPSERT_MODELS
+} from '../../utils/modelRows'
 import { fetchCodingBenchmarkCosts } from '../../utils/benchmarkCosts'
 import { fetchCodingAgentBenchmarks } from '../../utils/fetchCodingAgents'
 
@@ -17,9 +19,11 @@ export default defineEventHandler(async () => {
   try {
     await ensureModelsSchema()
 
-    // Fetch all data sources in parallel
-    const [allModels, benchModels, benchmarkCosts, codingAgentBenchmarks] = await Promise.all([
-      fetchModelsFromAA(apiKey),
+    // Fetch all data sources in parallel. A full sync bypasses the AA cache:
+    // the catalog changes upstream and a cached list would leave removed or
+    // renamed models behind.
+    const [allModels, benchModels, benchmarkCosts, codingAgents] = await Promise.all([
+      fetchModelsFromAA(apiKey, { forceRefresh: true }),
       fetchBenchLMModels(),
       fetchCodingBenchmarkCosts(),
       fetchCodingAgentBenchmarks()
@@ -32,11 +36,10 @@ export default defineEventHandler(async () => {
       const batch = allModels.slice(i, i + batchSize)
 
       for (const model of batch) {
-        const row = toModelRow(
+        const row = buildModelRow(
           model,
           findBenchLMMatch(model, benchModels),
-          benchmarkCosts,
-          codingAgentBenchmarks
+          { benchmarkCosts, codingAgents }
         )
 
         await query(UPSERT_MODELS, row)
