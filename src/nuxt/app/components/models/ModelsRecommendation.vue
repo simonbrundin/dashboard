@@ -115,7 +115,10 @@ function scoreLine(option: RecommendationOption): string {
 /** The cost of this option per month at the user's usage level. */
 function monthlyCost(option: RecommendationOption): number | null {
   if (!option.costIsVerifiable) return null
-  return option.costPerTask * tasksPerDay.value * 30
+  // The usage level counts attempts: that is what you pay for. A solved task
+  // costs more, because only part of the attempts succeed.
+  const perAttempt = option.costPerAttempt ?? option.costPerTask
+  return perAttempt * tasksPerDay.value * 30
 }
 
 /** The number of tasks per month where a plan costs the same as the API. */
@@ -179,7 +182,9 @@ const frontierOptions = computed(() =>
         />
       </div>
       <div class="flex items-center gap-2">
-        <span class="text-sm text-muted-foreground">Agentkörningar:</span>
+        <span class="text-sm text-muted-foreground" title="Ett försök på en uppgift. Det kan misslyckas - bara en del av försöken lyckas.">
+          Agentkörningar:
+        </span>
         <USlider
           v-model="tasksPerDay"
           :min="1"
@@ -191,6 +196,15 @@ const frontierOptions = computed(() =>
         <span class="text-sm font-medium tabular-nums">{{ tasksPerDay }}/dag</span>
       </div>
     </div>
+
+    <!-- What the units mean -->
+    <p class="text-xs text-muted-foreground mb-5 border-l-2 border-border pl-3">
+      En <strong class="text-foreground">agentkörning</strong> är ett försök på en uppgift, och den
+      kan misslyckas. En <strong class="text-foreground">lyckad uppgift</strong> är en körning som
+      löste uppgiften - på Terminal-Bench lyckas omkring 65 % av körningarna. Ett
+      <strong class="text-foreground">anrop</strong> är ett API-anrop mot leverantören, och en
+      körning består av många anrop. Slidaren räknar körningar, alltså försök.
+    </p>
 
     <!-- The frontier: what is actually worth choosing between -->
     <div v-if="frontierMode && result.frontier.length > 0" class="rounded-lg border border-border bg-muted/40 p-5">

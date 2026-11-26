@@ -295,7 +295,37 @@ useSeoMeta({
             </section>
 
             <section>
-              <h2 class="font-semibold text-base">15. Viktigt om tolkningen</h2>
+              <h2 class="font-semibold text-base">15. Enheterna: körning, lyckad uppgift, anrop</h2>
+              <p class="text-muted-foreground mt-2">
+                Tre enheter blandas lätt ihop, så de hålls isär:
+              </p>
+              <ul class="list-disc list-inside mt-3 space-y-2 text-muted-foreground">
+                <li>
+                  <strong class="text-foreground">Agentkörning</strong> - ett försök på en uppgift.
+                  Det kan misslyckas. Det är den enhet du betalar för och den enhet slidern
+                  <em>agentkörningar per dag</em> räknar.
+                </li>
+                <li>
+                  <strong class="text-foreground">Lyckad uppgift</strong> - en körning som löste
+                  uppgiften. Kostnaden per lyckad uppgift är kostnad per körning delat med
+                  andelen lyckade körningar.
+                </li>
+                <li>
+                  <strong class="text-foreground">Anrop</strong> - ett API-anrop mot leverantören. En
+                  agentkörning består av många anrop, så en anropskvot aldrig kan räknas om till
+                  antal uppgifter.
+                </li>
+              </ul>
+              <p class="text-muted-foreground mt-2">
+                Månadskostnaden räknas på körningar: <span class="font-medium">körningar per dag ×
+                30 × kostnad per körning</span>. Antalet lösta uppgifter per månad blir detsamma
+                multiplicerat med andelen lyckade körningar. Kostnad per lyckad uppgift och
+                månadskostnad är alltså olika enheter och redovisas i varsin kolumn.
+              </p>
+            </section>
+
+            <section>
+              <h2 class="font-semibold text-base">16. Viktigt om tolkningen</h2>
               <p class="text-muted-foreground mt-2">
                 Publicerade benchmarkkostnader är uppskattningar, inte en garanti för fakturan för ett visst
                 repository-uppgift. De verkliga kostnaderna beror på prompten, kontextlängden, reasoning-effort, harness,

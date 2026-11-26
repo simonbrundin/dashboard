@@ -48,8 +48,19 @@ interface DecisionRow {
    * pass rate. */
   costPerTask: number
   costIsPerAttempt: boolean
-  /** The cost at the user's usage level, per month. */
+  /** The cost of a single attempt, when the benchmark publishes it. */
+  costPerAttempt: number | null
+  /** Pass rate in percent, when the benchmark has one. */
+  passRate: number | null
+  /**
+   * The cost at the user's usage level, per month.
+   *
+   * The usage level is counted in attempts - that is what you pay for. A
+   * solved task costs more because only part of the attempts succeed.
+   */
   monthlyCost: number
+  /** How many tasks are solved per month at this usage level. */
+  solvedTasksPerMonth: number | null
   /** The cheapest subscription that includes the model. */
   plan: SubscriptionPlan | null
   /** What the plan's quota looks like, when it is published. */
@@ -90,7 +101,12 @@ const rows = computed<DecisionRow[]>(() => {
       agent: active.harnessFor?.(model) ?? active.harness,
       costPerTask: metric,
       costIsPerAttempt: basis?.isPerAttempt ?? true,
-      monthlyCost: metric * props.tasksPerDay * 30,
+      costPerAttempt: basis?.costPerAttempt ?? null,
+      passRate: basis?.passRate ?? null,
+      monthlyCost: (basis?.costPerAttempt ?? metric) * props.tasksPerDay * 30,
+      solvedTasksPerMonth: basis?.passRate != null
+        ? Math.round((basis.passRate / 100) * props.tasksPerDay * 30)
+        : null,
       plan,
       quotaText: quota?.publishedRange
         ?? (quota?.requestsPerWindow != null
@@ -188,7 +204,9 @@ const isPassRate = computed(() => benchmark.value?.isPassRate ?? false)
             <th class="py-2 pr-3 font-medium text-right">95 % CI</th>
             <th class="py-2 pr-3 font-medium">Agent</th>
             <th class="py-2 pr-3 font-medium text-right">$ per lyckad uppgift</th>
-            <th class="py-2 pr-3 font-medium text-right">$ per månad</th>
+            <th class="py-2 pr-3 font-medium text-right" :title="`Kostnad för ${tasksPerDay} agentkörningar per dag via API`">
+              $ per månad
+            </th>
             <th class="py-2 pr-3 font-medium">Prenumeration</th>
           </tr>
         </thead>
@@ -218,7 +236,12 @@ const isPassRate = computed(() => benchmark.value?.isPassRate ?? false)
             </td>
             <td class="py-2 pr-3 text-right tabular-nums">
               {{ formatMetricCost(row.monthlyCost) }}
-              <span class="block text-[11px] text-muted-foreground">via API</span>
+              <span class="block text-[11px] text-muted-foreground">
+                via API
+                <template v-if="row.solvedTasksPerMonth !== null">
+                  · {{ row.solvedTasksPerMonth }} lösta/mån
+                </template>
+              </span>
             </td>
             <td class="py-2 pr-3 text-xs">
               <template v-if="row.plan">

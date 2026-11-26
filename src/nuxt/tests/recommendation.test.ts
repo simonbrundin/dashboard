@@ -334,3 +334,21 @@ test('a published confidence interval is reported with the score', () => {
   assert.equal(result.best?.agent, 'mini-swe-agent')
   assert.equal(result.best?.costPerTask, 5.98)
 })
+
+test('a monthly cost is counted in attempts, not in solved tasks', () => {
+  // 5 runs a day for a month is 150 attempts. The plan price is spread over
+  // those attempts, and the pass rate then converts the result into a cost
+  // per solved task. Mixing the two units would overstate the price.
+  const result = buildRecommendation([SONNET], 'claude-sonnet-5-5', 5)
+
+  const copilot = result.planOptions.find(option => option.plan?.id === 'copilot-max')
+  assert.ok(copilot)
+  // The plan price plus overage at list price, spread over 150 attempts.
+  const expected = (100 + (150 * 11.4 - 200)) / 150
+  assert.ok(Math.abs(copilot.costPerTask - expected) < 1e-9)
+
+  // Without a pass rate the metric stays per attempt.
+  const planWithoutPassRate = buildRecommendation([SONNET], 'claude-sonnet-5-5', 5)
+    .planOptions.find(option => option.plan?.id === 'copilot-max')
+  assert.equal(planWithoutPassRate?.costIsPerAttempt, true)
+})
