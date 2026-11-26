@@ -23,6 +23,40 @@ export interface ModelData {
   terminalBench41CostPerSuccessfulTask?: number | null
   /** DeepSWE v1.1 pass rate, on a 0-100 scale. */
   deepSweScore?: number | null
+  /** Agent harness DeepSWE used for the run, e.g. mini-swe-agent. */
+  deepSweHarness?: string | null
+  /** Reasoning effort of the DeepSWE measurement. */
+  deepSweReasoningEffort?: string | null
+  /** Lower bound of DeepSWE's 95% run-to-run confidence interval, in percent. */
+  deepSweCiLow?: number | null
+  /** Upper bound of DeepSWE's 95% run-to-run confidence interval, in percent. */
+  deepSweCiHigh?: number | null
+  /** Number of repeated benchmark passes behind the interval. */
+  deepSweRuns?: number | null
+  /** pass@4: tasks solved by at least one of four attempts, in percent. */
+  deepSwePassAt4?: number | null
+  /** Tasks that were attempted in the DeepSWE run. */
+  deepSweTasksAttempted?: number | null
+  /** Attempts that passed. */
+  deepSwePassedAttempts?: number | null
+  /** Total scored attempts. */
+  deepSweAttempts?: number | null
+  /** Mean input tokens per attempt. */
+  deepSweMeanInputTokens?: number | null
+  /** Mean input tokens that were not served from the prompt cache. */
+  deepSweMeanUncachedInputTokens?: number | null
+  /** Mean input tokens served from the prompt cache. */
+  deepSweMeanCacheReadTokens?: number | null
+  /** Mean tokens written to the prompt cache. */
+  deepSweMeanCacheWriteTokens?: number | null
+  /** Mean output tokens per attempt. */
+  deepSweMeanOutputTokens?: number | null
+  /** Mean reasoning tokens per attempt. */
+  deepSweMeanReasoningTokens?: number | null
+  /** Median number of agent steps per task. */
+  deepSweMedianAgentSteps?: number | null
+  /** Mean wall-clock time per task, in seconds. */
+  deepSweMeanDurationSeconds?: number | null
   /** BenchLM Coding score, matched by canonical model name. */
   benchLmCodingScore?: number | null
   /** BenchLM evidence label, e.g. supported or estimated. */
@@ -59,6 +93,10 @@ export interface ModelData {
   costPerTask: number | null
   inputPricePerM: number | null
   outputPricePerM: number | null
+  /** Price per million cached (replayed) input tokens, when published. */
+  cacheHitPricePerM?: number | null
+  /** Price per million tokens written to the prompt cache, when published. */
+  cacheWritePricePerM?: number | null
   category: 'frontier' | 'high' | 'mid' | 'budget' | null
   strengths: string[]
   contextWindow: string

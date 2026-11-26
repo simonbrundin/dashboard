@@ -31,15 +31,22 @@ const MODEL_INSERT = `
     terminal_bench_score, terminal_bench_cost_per_task, terminal_bench_cost_per_successful_task,
     terminal_bench_41_score, terminal_bench_41_cost_per_task, terminal_bench_41_cost_per_successful_task,
     deep_swe_score, deep_swe_cost_per_task, deep_swe_cost_per_successful_task,
+    deep_swe_harness, deep_swe_reasoning_effort, deep_swe_ci_low, deep_swe_ci_high,
+    deep_swe_runs, deep_swe_pass_at_4, deep_swe_tasks_attempted, deep_swe_passed_attempts,
+    deep_swe_attempts, deep_swe_mean_input_tokens, deep_swe_mean_uncached_input_tokens,
+    deep_swe_mean_cache_read_tokens, deep_swe_mean_cache_write_tokens,
+    deep_swe_mean_output_tokens, deep_swe_mean_reasoning_tokens,
+    deep_swe_median_agent_steps, deep_swe_mean_duration_seconds,
     benchlm_coding_score, benchlm_evidence_status, benchlm_model_name, benchlm_match_type,
     aa_coding_agent_index, aa_coding_agent_cost_per_task, aa_coding_agent_name,
     aa_intelligence_cost_per_task, estimated_cost_per_task,
     cost_per_task,
-    input_price_per_m, output_price_per_m, category,
+    input_price_per_m, output_price_per_m, cache_hit_price_per_m, cache_write_price_per_m, category,
     strengths, context_window, open_weights, speed, latency)
   VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16,
     $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31,
-    $32, $33, $34)
+    $32, $33, $34, $35, $36, $37, $38, $39, $40, $41, $42, $43, $44, $45, $46,
+    $47, $48, $49, $50, $51, $52, $53)
 `
 
 /**
@@ -62,6 +69,23 @@ export const UPSERT_MODELS = `${MODEL_INSERT}
     deep_swe_score = EXCLUDED.deep_swe_score,
     deep_swe_cost_per_task = EXCLUDED.deep_swe_cost_per_task,
     deep_swe_cost_per_successful_task = EXCLUDED.deep_swe_cost_per_successful_task,
+    deep_swe_harness = EXCLUDED.deep_swe_harness,
+    deep_swe_reasoning_effort = EXCLUDED.deep_swe_reasoning_effort,
+    deep_swe_ci_low = EXCLUDED.deep_swe_ci_low,
+    deep_swe_ci_high = EXCLUDED.deep_swe_ci_high,
+    deep_swe_runs = EXCLUDED.deep_swe_runs,
+    deep_swe_pass_at_4 = EXCLUDED.deep_swe_pass_at_4,
+    deep_swe_tasks_attempted = EXCLUDED.deep_swe_tasks_attempted,
+    deep_swe_passed_attempts = EXCLUDED.deep_swe_passed_attempts,
+    deep_swe_attempts = EXCLUDED.deep_swe_attempts,
+    deep_swe_mean_input_tokens = EXCLUDED.deep_swe_mean_input_tokens,
+    deep_swe_mean_uncached_input_tokens = EXCLUDED.deep_swe_mean_uncached_input_tokens,
+    deep_swe_mean_cache_read_tokens = EXCLUDED.deep_swe_mean_cache_read_tokens,
+    deep_swe_mean_cache_write_tokens = EXCLUDED.deep_swe_mean_cache_write_tokens,
+    deep_swe_mean_output_tokens = EXCLUDED.deep_swe_mean_output_tokens,
+    deep_swe_mean_reasoning_tokens = EXCLUDED.deep_swe_mean_reasoning_tokens,
+    deep_swe_median_agent_steps = EXCLUDED.deep_swe_median_agent_steps,
+    deep_swe_mean_duration_seconds = EXCLUDED.deep_swe_mean_duration_seconds,
     benchlm_coding_score = EXCLUDED.benchlm_coding_score,
     benchlm_evidence_status = EXCLUDED.benchlm_evidence_status,
     benchlm_model_name = EXCLUDED.benchlm_model_name,
@@ -76,6 +100,8 @@ export const UPSERT_MODELS = `${MODEL_INSERT}
     estimated_cost_per_task = EXCLUDED.estimated_cost_per_task,
     input_price_per_m = EXCLUDED.input_price_per_m,
     output_price_per_m = EXCLUDED.output_price_per_m,
+    cache_hit_price_per_m = EXCLUDED.cache_hit_price_per_m,
+    cache_write_price_per_m = EXCLUDED.cache_write_price_per_m,
     category = EXCLUDED.category,
     open_weights = EXCLUDED.open_weights,
     speed = EXCLUDED.speed, latency = EXCLUDED.latency,
@@ -105,11 +131,37 @@ export async function ensureModelsSchema(): Promise<void> {
     ALTER TABLE models ADD COLUMN IF NOT EXISTS coding_agent_cost_per_task DECIMAL(10, 4);
     ALTER TABLE models ADD COLUMN IF NOT EXISTS terminal_bench_cost_per_successful_task DECIMAL(10, 4);
     ALTER TABLE models ADD COLUMN IF NOT EXISTS deep_swe_cost_per_successful_task DECIMAL(10, 4);
+    -- DeepSWE publishes a 95% run-to-run confidence interval, the agent
+    -- harness, the reasoning effort and the split between cached and uncached
+    -- input tokens. Storing them keeps the spread visible instead of showing
+    -- a single point estimate as if it were exact.
+    ALTER TABLE models ADD COLUMN IF NOT EXISTS deep_swe_harness VARCHAR(50);
+    ALTER TABLE models ADD COLUMN IF NOT EXISTS deep_swe_reasoning_effort VARCHAR(30);
+    ALTER TABLE models ADD COLUMN IF NOT EXISTS deep_swe_ci_low DECIMAL(6, 2);
+    ALTER TABLE models ADD COLUMN IF NOT EXISTS deep_swe_ci_high DECIMAL(6, 2);
+    ALTER TABLE models ADD COLUMN IF NOT EXISTS deep_swe_runs INTEGER;
+    ALTER TABLE models ADD COLUMN IF NOT EXISTS deep_swe_pass_at_4 DECIMAL(6, 2);
+    ALTER TABLE models ADD COLUMN IF NOT EXISTS deep_swe_tasks_attempted INTEGER;
+    ALTER TABLE models ADD COLUMN IF NOT EXISTS deep_swe_passed_attempts INTEGER;
+    ALTER TABLE models ADD COLUMN IF NOT EXISTS deep_swe_attempts INTEGER;
+    ALTER TABLE models ADD COLUMN IF NOT EXISTS deep_swe_mean_input_tokens DECIMAL(16, 2);
+    ALTER TABLE models ADD COLUMN IF NOT EXISTS deep_swe_mean_uncached_input_tokens DECIMAL(16, 2);
+    ALTER TABLE models ADD COLUMN IF NOT EXISTS deep_swe_mean_cache_read_tokens DECIMAL(16, 2);
+    ALTER TABLE models ADD COLUMN IF NOT EXISTS deep_swe_mean_cache_write_tokens DECIMAL(16, 2);
+    ALTER TABLE models ADD COLUMN IF NOT EXISTS deep_swe_mean_output_tokens DECIMAL(16, 2);
+    ALTER TABLE models ADD COLUMN IF NOT EXISTS deep_swe_mean_reasoning_tokens DECIMAL(16, 2);
+    ALTER TABLE models ADD COLUMN IF NOT EXISTS deep_swe_median_agent_steps DECIMAL(10, 2);
+    ALTER TABLE models ADD COLUMN IF NOT EXISTS deep_swe_mean_duration_seconds DECIMAL(12, 2);
     ALTER TABLE models ADD COLUMN IF NOT EXISTS coding_agent_cost_per_successful_task DECIMAL(10, 4);
     ALTER TABLE models ADD COLUMN IF NOT EXISTS aa_coding_agent_index DECIMAL(5, 2);
     ALTER TABLE models ADD COLUMN IF NOT EXISTS aa_coding_agent_cost_per_task DECIMAL(10, 4);
     ALTER TABLE models ADD COLUMN IF NOT EXISTS aa_coding_agent_name VARCHAR(100);
     ALTER TABLE models ADD COLUMN IF NOT EXISTS estimated_cost_per_task DECIMAL(10, 4);
+    -- Cache pricing decides the bill on coding agents: a large share of the
+    -- input is replayed from the prompt cache. Both rates are stored so the
+    -- UI can show what the run costs with and without caching.
+    ALTER TABLE models ADD COLUMN IF NOT EXISTS cache_hit_price_per_m DECIMAL(10, 2);
+    ALTER TABLE models ADD COLUMN IF NOT EXISTS cache_write_price_per_m DECIMAL(10, 2);
     -- The catalog is imported in full: models without a score or prices keep
     -- null values instead of being dropped or faked as zero.
     ALTER TABLE models ALTER COLUMN intelligence_index DROP NOT NULL;
@@ -199,6 +251,23 @@ export function buildModelRow(
     round(deepSwe?.score, 2),
     round(deepSwe?.costPerTask, 4),
     round(deepSwe?.costPerSuccessfulTask, 4),
+    deepSwe?.harness ?? null,
+    deepSwe?.effort ?? null,
+    round(deepSwe?.ciLow, 2),
+    round(deepSwe?.ciHigh, 2),
+    deepSwe?.runs ?? null,
+    round(deepSwe?.passAt4, 2),
+    deepSwe?.tasksAttempted ?? null,
+    deepSwe?.passedAttempts ?? null,
+    deepSwe?.attempts ?? null,
+    round(deepSwe?.meanInputTokens, 2),
+    round(deepSwe?.meanUncachedInputTokens, 2),
+    round(deepSwe?.meanCacheReadTokens, 2),
+    round(deepSwe?.meanCacheWriteTokens, 2),
+    round(deepSwe?.meanOutputTokens, 2),
+    round(deepSwe?.meanReasoningTokens, 2),
+    round(deepSwe?.medianAgentSteps, 2),
+    round(deepSwe?.meanDurationSeconds, 2),
     benchLmCodingScore == null ? null : Math.round(benchLmCodingScore * 100) / 100,
     benchMatch?.model.evidenceStatus ?? null,
     benchMatch?.model.model ?? null,
@@ -211,6 +280,8 @@ export function buildModelRow(
     null, // cost_per_task - legacy field, no longer written
     model.pricing.price_1m_input_tokens,
     model.pricing.price_1m_output_tokens,
+    model.pricing.price_1m_cache_hit_tokens,
+    model.pricing.price_1m_cache_write_tokens,
     determineCategory(model.pricing.price_1m_blended_3_to_1),
     [],
     'N/A',

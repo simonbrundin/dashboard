@@ -34,9 +34,9 @@ export const RANKING_BENCHMARKS: RankingBenchmarkOption[] = [
   {
     value: 'deep-swe',
     label: 'DeepSWE v1.1',
-    scoreLabel: 'DeepSWE pass rate',
-    costLabel: 'Cost per attempt',
-    rankingLabel: 'Cost per successful task',
+    scoreLabel: 'DeepSWE-andel lösade',
+    costLabel: 'Kostnad per försök',
+    rankingLabel: 'Kostnad per lyckad uppgift',
     direction: 'asc',
     metricKind: 'cost-per-success',
     measured: true
@@ -44,9 +44,9 @@ export const RANKING_BENCHMARKS: RankingBenchmarkOption[] = [
   {
     value: 'terminal-bench-4-1',
     label: 'Terminal-Bench 4.1',
-    scoreLabel: 'Terminal-Bench 4.1 score',
-    costLabel: 'Cost per attempt',
-    rankingLabel: 'Cost per successful task',
+    scoreLabel: 'Terminal-Bench 4.1-poäng',
+    costLabel: 'Kostnad per försök',
+    rankingLabel: 'Kostnad per lyckad uppgift',
     direction: 'asc',
     metricKind: 'cost-per-success',
     measured: true
@@ -54,9 +54,9 @@ export const RANKING_BENCHMARKS: RankingBenchmarkOption[] = [
   {
     value: 'terminal-bench-4-0',
     label: 'Terminal-Bench 4.0',
-    scoreLabel: 'Terminal-Bench 4.0 score',
-    costLabel: 'Cost per attempt',
-    rankingLabel: 'Cost per successful task',
+    scoreLabel: 'Terminal-Bench 4.0-poäng',
+    costLabel: 'Kostnad per försök',
+    rankingLabel: 'Kostnad per lyckad uppgift',
     direction: 'asc',
     metricKind: 'cost-per-success',
     measured: true
@@ -64,8 +64,8 @@ export const RANKING_BENCHMARKS: RankingBenchmarkOption[] = [
   {
     value: 'aa-coding-agent',
     label: 'AA Coding Agent Index',
-    scoreLabel: 'Coding Agent Index',
-    costLabel: 'AA cost per task',
+    scoreLabel: 'Coding Agent Index-poäng',
+    costLabel: 'AA-kostnad per försök',
     rankingLabel: 'Coding Agent Index per dollar',
     direction: 'desc',
     metricKind: 'score-per-dollar',
@@ -73,20 +73,20 @@ export const RANKING_BENCHMARKS: RankingBenchmarkOption[] = [
   },
   {
     value: 'benchlm',
-    label: 'BenchLM (quality only)',
-    scoreLabel: 'BenchLM Coding score',
-    costLabel: 'No matched cost',
-    rankingLabel: 'BenchLM score (quality only)',
+    label: 'BenchLM (endast kvalitet)',
+    scoreLabel: 'BenchLM-kodpoäng',
+    costLabel: 'Ingen matchad kostnad',
+    rankingLabel: 'BenchLM-poäng (endast kvalitet)',
     direction: 'desc',
     metricKind: 'score-only',
     measured: true
   },
   {
     value: 'estimated',
-    label: 'Estimated cost (all models)',
+    label: 'Uppskattad kostnad (alla modeller)',
     scoreLabel: 'Intelligence Index',
-    costLabel: 'Estimated cost per attempt',
-    rankingLabel: 'Intelligence points per estimated dollar',
+    costLabel: 'Uppskattad kostnad per försök',
+    rankingLabel: 'Intelligence-poäng per uppskattad dollar',
     direction: 'desc',
     metricKind: 'estimated-score-per-dollar',
     measured: false
@@ -277,4 +277,198 @@ export function hasAnyCodingScore(model: ModelData): boolean {
     finiteNumber(model.terminalBenchScore) !== null ||
     finiteNumber(model.deepSweScore) !== null ||
     finiteNumber(model.benchLmCodingScore) !== null
+}
+
+// ============================================================================
+// Budget finder: cheapest models that still clear a quality threshold
+// ============================================================================
+
+export interface BudgetSourceOption {
+  value: RankingBenchmark
+  label: string
+  count: number
+  costLabel: string
+}
+
+/** Sources usable for the budget finder: code scores with their own costs. */
+export function getBudgetSourceOptions(models: ModelData[]): BudgetSourceOption[] {
+  const countWithScore = (benchmark: RankingBenchmark): number =>
+    models.filter(model => getBenchmarkScore(model, benchmark, true) !== null).length
+
+  return [
+    {
+      value: 'aa-coding-agent',
+      label: 'AA Coding Agent Index',
+      count: countWithScore('aa-coding-agent'),
+      costLabel: 'AA agent cost per task'
+    },
+    {
+      value: 'terminal-bench-4-1',
+      label: 'Terminal-Bench 4.1',
+      count: countWithScore('terminal-bench-4-1'),
+      costLabel: 'Kostnad per lyckad uppgift'
+    },
+    {
+      value: 'terminal-bench-4-0',
+      label: 'Terminal-Bench 4.0',
+      count: countWithScore('terminal-bench-4-0'),
+      costLabel: 'Kostnad per lyckad uppgift'
+    },
+    {
+      value: 'deep-swe',
+      label: 'DeepSWE v1.1',
+      count: countWithScore('deep-swe'),
+      costLabel: 'Kostnad per lyckad uppgift'
+    },
+    {
+      value: 'estimated',
+      label: 'Intelligence Index (uppskattad)',
+      count: countWithScore('estimated'),
+      costLabel: 'Uppskattad kostnad per försök'
+    }
+  ]
+}
+
+/** The measured cost that belongs to the budget source itself. */
+function getBudgetSourceCost(model: ModelData, benchmark: RankingBenchmark): number | null {
+  switch (benchmark) {
+    case 'aa-coding-agent':
+      return finiteCost(model.aaCodingAgentCostPerTask)
+    case 'terminal-bench-4-1':
+      return finiteCost(model.terminalBench41CostPerSuccessfulTask)
+    case 'terminal-bench-4-0':
+      return finiteCost(model.terminalBenchCostPerSuccessfulTask)
+    case 'deep-swe':
+      return finiteCost(model.deepSweCostPerSuccessfulTask)
+    case 'benchlm':
+    case 'estimated':
+      return null
+  }
+}
+
+export interface BudgetFinderRow {
+  model: ModelData
+  quality: number
+  /** The shown cost: measured for the source, or a token-price estimate. */
+  cost: number | null
+  costIsEstimated: boolean
+  /** Percent cheaper than the reference, same cost kind only. */
+  savingsPct: number | null
+}
+
+export interface BudgetFinderResult {
+  reference: ModelData | null
+  threshold: number | null
+  referenceCost: number | null
+  referenceCostIsEstimated: boolean
+  /** Candidates with a measured source cost, cheapest first. */
+  measuredRows: BudgetFinderRow[]
+  /** Candidates without a measured cost, ranked by token-price estimate. */
+  estimatedRows: BudgetFinderRow[]
+}
+
+function budgetSavings(referenceCost: number | null, row: BudgetFinderRow, sameKind: boolean): number | null {
+  if (referenceCost === null || !sameKind || referenceCost <= 0) return null
+  if (row.cost === null) return null
+  return Math.round(((referenceCost - row.cost) / referenceCost) * 100)
+}
+
+/**
+ * Answers "which is the cheapest model that is still smart enough": models
+ * scoring at least as high as the reference on the same source, cheapest
+ * first. Measured source costs are kept strictly separate from token-price
+ * estimates.
+ */
+export function findCheapestSufficient(
+  models: ModelData[],
+  benchmark: RankingBenchmark,
+  referenceSlug: string | null,
+  includeEstimatedScores = false
+): BudgetFinderResult {
+  const reference = referenceSlug
+    ? models.find(model => model.slug === referenceSlug) ?? null
+    : null
+  const threshold = reference ? getBenchmarkScore(reference, benchmark, includeEstimatedScores) : null
+
+  if (reference === null || threshold === null) {
+    return {
+      reference,
+      threshold: null,
+      referenceCost: null,
+      referenceCostIsEstimated: false,
+      measuredRows: [],
+      estimatedRows: []
+    }
+  }
+
+  const allEstimated = benchmark === 'estimated'
+  const candidates = models
+    .filter(model => getBenchmarkScore(model, benchmark, includeEstimatedScores) !== null)
+
+  const measuredRows: BudgetFinderRow[] = []
+  const estimatedRows: BudgetFinderRow[] = []
+
+  for (const model of candidates) {
+    const quality = getBenchmarkScore(model, benchmark, includeEstimatedScores)
+    if (quality === null || quality < threshold) continue
+
+    const measured = getBudgetSourceCost(model, benchmark)
+    const estimate = finiteCost(model.estimatedCostPerTask)
+
+    if (allEstimated || measured === null) {
+      // No source cost: the estimate is the honest fallback.
+      if (estimate === null) continue
+      const row: BudgetFinderRow = {
+        model,
+        quality,
+        cost: estimate,
+        costIsEstimated: true,
+        savingsPct: null
+      }
+      const referenceRow = allEstimated && model.slug === referenceSlug ? row : null
+      if (referenceRow) {
+        referenceRow.savingsPct = 0
+      }
+      estimatedRows.push(row)
+      continue
+    }
+
+    measuredRows.push({
+      model,
+      quality,
+      cost: measured,
+      costIsEstimated: false,
+      savingsPct: null
+    })
+  }
+
+  const finalize = (rows: BudgetFinderRow[]): BudgetFinderRow[] => {
+    rows.sort((a, b) => (a.cost ?? Infinity) - (b.cost ?? Infinity))
+    return rows.map(row => ({
+      ...row,
+      savingsPct: budgetSavings(referenceCost, row, row.costIsEstimated === referenceCostIsEstimated)
+    }))
+  }
+
+  const referenceMeasured = getBudgetSourceCost(reference, benchmark)
+  const referenceCostIsEstimated = allEstimated || referenceMeasured === null
+  const referenceCost = referenceCostIsEstimated
+    ? finiteCost(reference.estimatedCostPerTask)
+    : referenceMeasured
+
+  // Fill in savings now that the reference cost kind is known.
+  const withSavings = (rows: BudgetFinderRow[]): BudgetFinderRow[] =>
+    rows.map(row => ({
+      ...row,
+      savingsPct: budgetSavings(referenceCost ?? 0, row, row.costIsEstimated === referenceCostIsEstimated)
+    }))
+
+  return {
+    reference,
+    threshold,
+    referenceCost,
+    referenceCostIsEstimated,
+    measuredRows: finalize(withSavings(measuredRows)),
+    estimatedRows: finalize(withSavings(estimatedRows))
+  }
 }

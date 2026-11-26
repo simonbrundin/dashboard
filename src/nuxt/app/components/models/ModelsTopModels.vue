@@ -47,11 +47,11 @@ function formatFrontierCost(model: ModelData): string {
   <div>
     <div class="flex items-center gap-2 mb-3">
       <UIcon name="i-lucide-star" class="w-5 h-5 text-primary" />
-      <h3 class="font-semibold text-lg">{{ benchmarkOption.label }} frontier</h3>
-      <UBadge variant="subtle" color="primary" size="sm">Best trade-offs</UBadge>
+      <h3 class="font-semibold text-lg">{{ benchmarkOption.label }}-frontier</h3>
+      <UBadge variant="subtle" color="primary" size="sm">Bästa avvägningar</UBadge>
     </div>
     <p class="text-sm text-muted-foreground mb-3">
-      Pareto-optimal models using only {{ benchmarkOption.label }} score and its matching cost data.
+      Pareto-optimala modeller som bara använder {{ benchmarkOption.label }}-poängen och dess matchade kostnadsdata.
     </p>
     <div class="flex flex-wrap gap-2">
       <UCard
@@ -75,7 +75,7 @@ function formatFrontierCost(model: ModelData): string {
         </div>
         <div class="grid grid-cols-2 gap-2 text-xs">
           <div>
-            <span class="text-muted-foreground">Score:</span>
+            <span class="text-muted-foreground">Poäng:</span>
             <span class="font-semibold ml-1">
               {{ getBenchmarkScore(model, benchmark, includeEstimatedScores)?.toFixed(1) ?? '—' }}
             </span>
@@ -85,10 +85,10 @@ function formatFrontierCost(model: ModelData): string {
             <span class="font-semibold ml-1">{{ formatMetric(model) }}</span>
           </div>
           <div class="col-span-2">
-            <span class="text-muted-foreground">Cost:</span>
+            <span class="text-muted-foreground">Kostnad:</span>
             <span class="font-semibold ml-1">{{ formatFrontierCost(model) }}</span>
             <span v-if="benchmark === 'terminal-bench-4-1' || benchmark === 'terminal-bench-4-0' || benchmark === 'deep-swe'" class="text-muted-foreground ml-1">
-              ({{ formatCost(getBenchmarkCostPerAttempt(model, benchmark)) }} per attempt)
+              ({{ formatCost(getBenchmarkCostPerAttempt(model, benchmark)) }} per försök)
             </span>
           </div>
         </div>

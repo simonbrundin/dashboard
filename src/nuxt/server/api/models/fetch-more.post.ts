@@ -131,7 +131,9 @@ export default defineEventHandler(async (event) => {
     await ensureModelsSchema()
 
     sendProgress(stream, { phase: 'fetching', message: 'Hämtar modeller från Artificial Analysis...', progress: 0, total: 0 })
-    const models = await fetchModelsFromAA(apiKey)
+    // A user-triggered sync always bypasses the AA cache: the catalog changes
+    // upstream and a cached list would leave removed or renamed models behind.
+    const models = await fetchModelsFromAA(apiKey, { forceRefresh: true })
     const [benchModels, benchmarkCosts, codingAgents] = await Promise.all([
       fetchBenchLMModels(),
       fetchCodingBenchmarkCosts(),
@@ -139,11 +141,23 @@ export default defineEventHandler(async (event) => {
     ])
 
     const newModelsAdded = await syncModels(models, benchModels, benchmarkCosts, codingAgents, stream)
+
+    // A full sync should not leave removed or renamed AA models in the local
+    // ranking.
+    const importedSlugs = models.map(model => model.slug)
+    const removedRows = await query<{ slug: string }>(
+      'DELETE FROM models WHERE NOT (slug = ANY($1::text[])) RETURNING slug',
+      [importedSlugs]
+    )
+
     const { pricesAdded, total } = await scrapeMissingPrices(stream)
+
+    const removedCount = removedRows.length
+    const summary = `Synkat klart: ${models.length} modeller, ${newModelsAdded} nya, ${removedCount} borttagna, ${pricesAdded} priser hämtade`
 
     sendProgress(stream, {
       phase: 'done',
-      message: 'Klart!',
+      message: summary,
       progress: total,
       total,
       success: true,

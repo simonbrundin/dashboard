@@ -81,18 +81,6 @@ export function useModelActions(
     return false
   }
 
-  async function importModels() {
-    error.value = null
-    try {
-      const result = await $fetch<{ success: boolean; total: number }>('/api/models/import', { method: 'POST' })
-      if (result.success) {
-        onSuccess?.()
-      }
-    } catch (e: unknown) {
-      error.value = extractErrorMessage(e, 'Import failed')
-    }
-  }
-
   async function fetchMorePrices() {
     error.value = null
     statusMessage.value = 'Startar...'
@@ -114,28 +102,10 @@ export function useModelActions(
     }
   }
 
-  async function refreshPrices() {
-    error.value = null
-    try {
-      progress.start(models.value.length)
-
-      const result = await $fetch<{ success: boolean; updated: number }>('/api/models/refresh-prices', { method: 'POST' })
-      if (result.success) {
-        onSuccess?.()
-      }
-    } catch (e: unknown) {
-      error.value = extractErrorMessage(e, 'Failed to refresh')
-    } finally {
-      progress.stop()
-    }
-  }
-
   return {
     progress,
     statusMessage,
     error,
-    importModels,
-    fetchMorePrices,
-    refreshPrices
+    fetchMorePrices
   }
 }

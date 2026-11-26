@@ -39,16 +39,16 @@ function formatScore(model?: ModelData): string {
 }
 
 function getBestValueTitle(): string {
-  if (props.benchmark === 'benchlm') return 'BenchLM quality score'
-  if (props.benchmark === 'estimated') return 'Best estimated intelligence value'
-  if (props.benchmark === 'aa-coding-agent') return 'Best Coding Agent value'
-  return 'Lowest cost per successful task'
+  if (props.benchmark === 'benchlm') return 'Bästa BenchLM-kodpoäng'
+  if (props.benchmark === 'estimated') return 'Bäst prisvärd (uppskattat)'
+  if (props.benchmark === 'aa-coding-agent') return 'Bäst prisvärd (kod, mätt)'
+  return 'Billigast per lyckad uppgift'
 }
 
 function getCostTitle(): string {
-  if (props.benchmark === 'aa-coding-agent') return 'Lowest AA cost per task'
-  if (props.benchmark === 'estimated') return 'Lowest estimated cost per attempt'
-  return 'Lowest cost per attempt'
+  if (props.benchmark === 'aa-coding-agent') return 'Lägst AA-kostnad per uppgift'
+  if (props.benchmark === 'estimated') return 'Lägst uppskattad kostnad'
+  return 'Lägst kostnad per uppgift'
 }
 </script>
 
@@ -75,7 +75,7 @@ function getCostTitle(): string {
           </a>
           <p class="text-sm text-green-500">{{ formatMetric(bestValue) }}</p>
           <p v-if="bestValue" class="text-xs text-muted-foreground">
-            {{ benchmarkOption.label }} · score {{ formatScore(bestValue) }}
+            {{ benchmarkOption.label }} · poäng {{ formatScore(bestValue) }}
           </p>
         </div>
       </div>
@@ -90,9 +90,9 @@ function getCostTitle(): string {
           <UIcon name="i-lucide-info" class="w-6 h-6 text-muted-foreground" />
         </div>
         <div>
-          <p class="text-sm text-muted-foreground">No price-aligned value ranking</p>
-          <p class="text-sm font-medium">BenchLM provides a quality score, not a matching task cost.</p>
-          <p class="text-xs text-muted-foreground">Choose DeepSWE, Terminal-Bench, or AA Coding Agent for a cost comparison.</p>
+          <p class="text-sm text-muted-foreground">Ingen prisanknuten värderingsranking</p>
+          <p class="text-sm font-medium">BenchLM ger en kvalitetspoäng, men ingen matchad uppgiftskostnad.</p>
+          <p class="text-xs text-muted-foreground">Välj DeepSWE, Terminal-Bench eller AA Coding Agent för en kostnadsjämförelse.</p>
         </div>
       </div>
     </UCard>
@@ -103,7 +103,7 @@ function getCostTitle(): string {
           <UIcon name="i-lucide-code-2" class="w-6 h-6 text-purple-500" />
         </div>
         <div>
-          <p class="text-sm text-muted-foreground">Highest {{ benchmarkOption.label }} score</p>
+          <p class="text-sm text-muted-foreground">Högst {{ benchmarkOption.label }}-poäng</p>
           <a
             v-if="topScore"
             :href="`https://artificialanalysis.ai/models/${topScore.slug}`"

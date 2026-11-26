@@ -3,41 +3,45 @@
     <div class="flex items-start gap-3">
       <UIcon name="i-lucide-info" class="w-5 h-5 text-muted-foreground mt-0.5" />
       <div class="text-sm text-muted-foreground">
-        <p class="font-medium text-foreground mb-1">Methodology</p>
+        <p class="font-medium text-foreground mb-1">Metodik</p>
         <p>
-          The ranking is benchmark-specific. Select one source at a time; scores from one benchmark are never
-          divided by costs from another.
+          Rankingen är benchmark-specifik. Välj en källa i taget - poäng från ett benchmark delas aldrig in i
+          kostnader från ett annat.
         </p>
         <p class="mt-2">
-          <strong class="text-foreground">DeepSWE v1.1 and Terminal-Bench 4.0</strong> show the measured
-          pass rate and cost per attempt. Cost per successful task is
-          <code>cost_per_attempt / pass_rate</code>, and the ranking orders this cost from lowest to highest.
-          The pass rate is not divided into the cost a second time.
+          <strong class="text-foreground">DeepSWE v1.1 och Terminal-Bench</strong> visar andelen lösade uppgifter
+          och kostnaden per försök. Kostnaden per lyckad uppgift är
+          <code>kostnad_per_försök / andel_lösade</code>, och rankingen sorterar den kostnaden från lägst till
+          högst. Andelen lösade uppgifter delas inte in i kostnaden en andra gång.
         </p>
         <p class="mt-2">
-          <strong class="text-foreground">AA Coding Agent Index</strong> uses the score and task cost from
-          that same index. Its value metric is <code>index_score / cost_per_task</code>.
+          <strong class="text-foreground">AA Coding Agent Index</strong> använder poängen och kostnaden per
+          försök från samma index. Dess värdevärde är <code>indexpoäng / kostnad_per_försök</code>.
         </p>
         <p class="mt-2">
-          <strong class="text-foreground">BenchLM</strong> is a quality-only view because there is no matched
-          BenchLM task cost. Exact, Supported matches are included by default. Family matches and Estimated
-          evidence are opt-in and do not receive an invented price.
+          <strong class="text-foreground">BenchLM</strong> är en kvalitetsvy eftersom det saknas en matchad
+          BenchLM-kostnad. Exakta och Supported-matchar ingår från början. Familjmatchar och uppskattat
+          underlag är opt-in och får inte något påhittat pris.
         </p>
         <p class="mt-2">
-          Pareto frontiers compare score and cost only within the selected benchmark. A zero cost is treated as
-          free; missing score or cost stays unavailable rather than becoming zero. Token prices and performance
-          from the general Artificial Analysis model list are not substituted for benchmark task costs.
+          Pareto-frontier jämför poäng och kostnad bara inom det valda benchmarket. En noll kostnad är gratis;
+          saknad poäng eller kostnad förblir otillgänglig i stället för att bli noll. Tokenpriser och prestanda
+          från AA:s allmänna modelllista ersätter aldrig benchmarkens uppgiftskostnader.
+        </p>
+        <p class="mt-2">
+          <strong class="text-foreground">Kvoter</strong> räknas bara om till dollar när underlaget publiceras i
+          dollar - annars visas de som anropskvoter eller som mjuka gränser som inte är omräknade.
         </p>
         <p class="mt-2 text-xs">
           <NuxtLink
             to="/models/methodology"
             class="text-primary hover:underline"
           >
-            Read full methodology and limitations
+            Läs hela metodik och begränsningar
           </NuxtLink>.
         </p>
         <p class="mt-2 text-xs">
-          Sources:
+          Källor:
           <a
             href="https://artificialanalysis.ai/"
             target="_blank"
@@ -53,7 +57,7 @@
             class="text-primary hover:underline"
           >
             BenchLM
-          </a>, and
+          </a>, och
           <a
             href="https://deepswe.datacurve.ai/blog/deepswe-v1-1"
             target="_blank"
@@ -62,7 +66,7 @@
           >
             Data-Curve DeepSWE v1.1
           </a>.
-          BenchLM data is CC BY-NC 4.0. Refresh/import model data to retrieve current values.
+          BenchLM-data är CC BY-NC 4.0. Uppdatera modelldata för att hämta aktuella värden.
         </p>
       </div>
     </div>

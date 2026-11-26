@@ -15,9 +15,12 @@ import {
 import {
   getCategoryColor,
   formatCodingValue,
+  formatConfidenceInterval,
   formatCost,
+  formatModelName,
   formatCostPerSuccessfulTask
 } from '~/utils/modelFormatters'
+import { AGENT_BENCHMARKS } from '~/utils/agentBenchmarks'
 
 const props = defineProps<{
   models: ModelData[]
@@ -32,6 +35,25 @@ const emit = defineEmits<{
 }>()
 
 const benchmarkOption = computed(() => getBenchmarkOption(props.benchmark))
+
+/** The agent harness the selected benchmark was run with. */
+const agentBenchmark = computed(() =>
+  AGENT_BENCHMARKS.find(benchmark => benchmark.id === props.benchmark) ?? null
+)
+
+/** The agent of a single row, when the benchmark names it per row. */
+function getAgent(model: ModelData): string | null {
+  const benchmark = agentBenchmark.value
+  if (!benchmark) return null
+  return benchmark.harnessFor?.(model) ?? benchmark.harness
+}
+
+/** The published confidence interval of a single row, when it has one. */
+function getConfidence(model: ModelData): string | null {
+  const published = agentBenchmark.value?.confidenceFor?.(model)
+  if (!published) return null
+  return formatConfidenceInterval(published.low, published.high)
+}
 
 function getScore(model: ModelData): number | null {
   return getBenchmarkScore(model, props.benchmark, props.includeEstimatedScores)
@@ -67,7 +89,7 @@ function getIntelligencePercent(index: number | null): number {
       <thead>
         <tr class="border-b border-border">
           <th class="text-left py-3 px-4 font-medium text-muted-foreground">
-            Model
+            Modell
           </th>
           <th
             class="text-right py-3 px-4 font-medium text-muted-foreground cursor-pointer hover:bg-muted/50 select-none"
@@ -82,8 +104,8 @@ function getIntelligencePercent(index: number | null): number {
               />
             </span>
           </th>
-          <th class="text-center py-3 px-4 font-medium text-muted-foreground">
-            Category
+          <th class="text-center py-3 px-4 font-medium text-muted-foreground" title="Prisklass baserad på tokenpriser">
+            Kategori
           </th>
           <th
             class="text-right py-3 px-4 font-medium text-muted-foreground cursor-pointer hover:bg-muted/50 select-none"
@@ -130,7 +152,7 @@ function getIntelligencePercent(index: number | null): number {
             @click="emit('sort', 'speed')"
           >
             <span class="flex items-center justify-end gap-1">
-              Speed
+              Hastighet
               <UIcon
                 v-if="sortBy === 'speed'"
                 :name="sortDirection === 'desc' ? 'i-lucide-arrow-down' : 'i-lucide-arrow-up'"
@@ -138,8 +160,8 @@ function getIntelligencePercent(index: number | null): number {
               />
             </span>
           </th>
-          <th class="text-center py-3 px-4 font-medium text-muted-foreground">
-            Open
+          <th class="text-center py-3 px-4 font-medium text-muted-foreground" title="Öppna vikter">
+            Öppen
           </th>
         </tr>
       </thead>
@@ -161,9 +183,12 @@ function getIntelligencePercent(index: number | null): number {
                   rel="noopener noreferrer"
                   class="font-medium hover:underline hover:text-primary"
                 >
-                  {{ model.name }}
+                  {{ formatModelName(model.name) }}
                 </a>
                 <p class="text-xs text-muted-foreground">{{ model.provider }}</p>
+                <p v-if="getAgent(model)" class="text-[11px] text-muted-foreground">
+                  agent: {{ getAgent(model) }}
+                </p>
               </div>
             </div>
           </td>
@@ -172,7 +197,7 @@ function getIntelligencePercent(index: number | null): number {
               {{ formatRankingMetric(model) }}
             </span>
             <span v-else class="text-sm text-muted-foreground">
-              {{ getScore(model) === null ? 'No benchmark score' : 'No matched cost' }}
+              {{ getScore(model) === null ? 'Ingen benchmark-poäng' : 'Ingen matchad kostnad' }}
             </span>
           </td>
           <td class="py-4 px-4 text-center">
@@ -194,6 +219,9 @@ function getIntelligencePercent(index: number | null): number {
             </div>
             <p v-if="getScoreEvidence(model)" class="text-[11px] text-muted-foreground mt-1">
               {{ getScoreEvidence(model) }}
+            </p>
+            <p v-if="getConfidence(model)" class="text-[11px] text-muted-foreground">
+              95 % CI: {{ getConfidence(model) }}
             </p>
           </td>
           <td class="py-4 px-4 text-right">

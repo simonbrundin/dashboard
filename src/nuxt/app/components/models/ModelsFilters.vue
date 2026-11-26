@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SortColumn } from '~/composables/useModelFilters'
+import type { EffortFilter, SortColumn } from '~/composables/useModelFilters'
 import type { Category } from '~/utils/modelFormatters'
 import {
   getBenchmarkOption,
@@ -15,6 +15,7 @@ const props = defineProps<{
   includeEstimatedScores: boolean
   minBenchmarkScore: number
   maxBenchmarkScore: number
+  selectedEffort: EffortFilter
   categoryStats: {
     all: number
     frontier: number
@@ -23,6 +24,7 @@ const props = defineProps<{
     budget: number
     openWeights: number
   }
+  effortStats: Record<string, number>
 }>()
 
 const emit = defineEmits<{
@@ -30,12 +32,45 @@ const emit = defineEmits<{
   'update:selectedBenchmark': [value: RankingBenchmark]
   'update:sortBy': [value: SortColumn]
   'update:minBenchmarkScore': [value: number]
+  'update:selectedEffort': [value: EffortFilter]
   toggleOpenWeights: []
   toggleEstimatedScores: []
 }>()
 
 const categories: Category[] = ['all', 'frontier', 'high', 'mid', 'budget']
+
+/** The category names in Swedish. */
+const CATEGORY_LABELS: Record<Category, string> = {
+  all: 'Alla',
+  frontier: 'Frontier',
+  high: 'Hög',
+  mid: 'Mellan',
+  budget: 'Budget'
+}
 const benchmarkOptions = RANKING_BENCHMARKS.map(({ value, label }) => ({ value, label }))
+
+const EFFORT_FILTERS: EffortFilter[] = ['all', 'max', 'xhigh', 'high', 'medium', 'low', 'non-reasoning']
+
+/** The effort levels in the same words the benchmark sources use. */
+const EFFORT_LABELS: Record<string, string> = {
+  max: 'Max',
+  xhigh: 'Xhigh',
+  high: 'High',
+  medium: 'Medium',
+  low: 'Low',
+  'non-reasoning': 'Utan resonemang'
+}
+
+const effortOptions = computed(() =>
+  EFFORT_FILTERS
+    .filter(effort => effort === 'all' || (props.effortStats[effort] ?? 0) > 0)
+    .map(effort => ({
+      value: effort,
+      label: effort === 'all'
+        ? `Alla (${props.categoryStats.all})`
+        : `${EFFORT_LABELS[effort] ?? effort} (${props.effortStats[effort] ?? 0})`
+    }))
+)
 
 const sortOptions = computed(() => {
   const selected = getBenchmarkOption(props.selectedBenchmark)
@@ -44,11 +79,11 @@ const sortOptions = computed(() => {
     { value: 'score', label: selected.scoreLabel },
     {
       value: 'cost',
-      label: selected.metricKind === 'cost-per-success' ? 'Cost per successful task' : selected.costLabel,
+      label: selected.metricKind === 'cost-per-success' ? 'Kostnad per lyckad uppgift' : selected.costLabel,
       disabled: props.selectedBenchmark === 'benchlm'
     },
     { value: 'intelligence', label: 'Intelligence Index' },
-    { value: 'speed', label: 'Fastest speed' }
+    { value: 'speed', label: 'Snabbast' }
   ]
 })
 
@@ -79,7 +114,7 @@ function updateMinimumScore(value: number | number[] | undefined) {
     </div>
 
     <div class="flex items-center gap-2">
-      <span class="text-sm text-muted-foreground">Category:</span>
+      <span class="text-sm text-muted-foreground">Kategori:</span>
       <div class="flex gap-1">
         <UButton
           v-for="cat in categories"
@@ -89,7 +124,7 @@ function updateMinimumScore(value: number | number[] | undefined) {
           size="xs"
           @click="emit('update:selectedCategory', cat)"
         >
-          {{ cat === 'all' ? 'All' : cat.charAt(0).toUpperCase() + cat.slice(1) }}
+          {{ CATEGORY_LABELS[cat] }}
           <span class="ml-1 opacity-60">
             ({{ cat === 'all' ? categoryStats.all : categoryStats[cat] }})
           </span>
@@ -98,7 +133,7 @@ function updateMinimumScore(value: number | number[] | undefined) {
     </div>
 
     <div class="flex items-center gap-2">
-      <span class="text-sm text-muted-foreground">Sort by:</span>
+      <span class="text-sm text-muted-foreground">Sortera efter:</span>
       <USelect
         :model-value="sortBy"
         :items="sortOptions"
@@ -108,8 +143,19 @@ function updateMinimumScore(value: number | number[] | undefined) {
       />
     </div>
 
+    <div class="flex items-center gap-2">
+      <span class="text-sm text-muted-foreground">Ansträngning:</span>
+      <USelect
+        :model-value="selectedEffort"
+        :items="effortOptions"
+        size="xs"
+        class="w-40"
+        @update:model-value="emit('update:selectedEffort', $event as EffortFilter)"
+      />
+    </div>
+
     <div class="flex items-center gap-3">
-      <span class="text-sm text-muted-foreground">Minimum score:</span>
+      <span class="text-sm text-muted-foreground">Minsta poäng:</span>
       <USlider
         :model-value="minBenchmarkScore"
         :min="0"
@@ -120,7 +166,7 @@ function updateMinimumScore(value: number | number[] | undefined) {
         @update:model-value="updateMinimumScore"
       />
       <span class="text-sm font-semibold w-8 text-primary">
-        {{ minBenchmarkScore === 0 ? 'All' : `≥ ${minBenchmarkScore}` }}
+        {{ minBenchmarkScore === 0 ? 'Alla' : `≥ ${minBenchmarkScore}` }}
       </span>
     </div>
 
@@ -138,7 +184,7 @@ function updateMinimumScore(value: number | number[] | undefined) {
           :class="{ 'translate-x-4': includeEstimatedScores, 'translate-x-0': !includeEstimatedScores }"
         />
       </button>
-      <span class="text-sm text-muted-foreground">Include BenchLM family / estimated scores</span>
+      <span class="text-sm text-muted-foreground">Inkludera BenchLM-familj / uppskattade poäng</span>
     </div>
 
     <div class="flex items-center gap-2">
@@ -154,8 +200,8 @@ function updateMinimumScore(value: number | number[] | undefined) {
           :class="{ 'translate-x-4': showOnlyOpenWeights, 'translate-x-0': !showOnlyOpenWeights }"
         />
       </button>
-      <span class="text-sm text-muted-foreground">Open weights only</span>
-      <span class="text-xs text-muted-foreground">({{ categoryStats.openWeights }} models)</span>
+      <span class="text-sm text-muted-foreground">Endast öppna vikter</span>
+      <span class="text-xs text-muted-foreground">({{ categoryStats.openWeights }} modeller)</span>
     </div>
   </div>
 </template>

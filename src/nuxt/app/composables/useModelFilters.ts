@@ -1,5 +1,6 @@
 import type { ModelData } from '~/data/models'
 import type { Category } from '~/utils/modelFormatters'
+import { getReasoningEffort } from '~/utils/modelFormatters'
 import {
   getBenchmarkCostPerAttempt,
   getBenchmarkOption,
@@ -10,6 +11,7 @@ import {
 } from '~/utils/modelScoring'
 
 export type SortColumn = 'ranking' | 'score' | 'intelligence' | 'cost' | 'speed'
+export type EffortFilter = 'all' | 'low' | 'medium' | 'high' | 'xhigh' | 'max' | 'non-reasoning'
 
 function compareNullable(
   a: number | null,
@@ -33,6 +35,9 @@ export function useModelFilters(models: Ref<ModelData[]>) {
   const showUnrankable = ref(false)
   const includeEstimatedScores = ref(false)
   const minBenchmarkScore = ref(0)
+  // The reasoning effort is part of a measurement's identity: a "max" run
+  // and a "low" run of the same model are not the same thing.
+  const selectedEffort = ref<EffortFilter>('all')
 
   const maxBenchmarkScore = computed(() =>
     models.value.reduce((max, model) =>
@@ -62,11 +67,24 @@ export function useModelFilters(models: Ref<ModelData[]>) {
     openWeights: rankableModels.value.filter(model => model.openWeights).length
   }))
 
+  const effortStats = computed(() => {
+    const counts: Record<string, number> = {}
+    for (const model of rankableModels.value) {
+      const effort = getReasoningEffort(model)
+      counts[effort] = (counts[effort] ?? 0) + 1
+    }
+    return counts
+  })
+
   const filteredModels = computed(() => {
     let result = showUnrankable.value ? modelsAboveThreshold.value : rankableModels.value
 
     if (selectedCategory.value !== 'all') {
       result = result.filter(model => model.category === selectedCategory.value)
+    }
+
+    if (selectedEffort.value !== 'all') {
+      result = result.filter(model => getReasoningEffort(model) === selectedEffort.value)
     }
 
     if (showOnlyOpenWeights.value) {
@@ -145,8 +163,10 @@ export function useModelFilters(models: Ref<ModelData[]>) {
     includeEstimatedScores,
     minBenchmarkScore,
     maxBenchmarkScore,
+    selectedEffort,
     modelsAboveThreshold,
     categoryStats,
+    effortStats,
     filteredModels,
     sortedModels,
     setSelectedBenchmark,

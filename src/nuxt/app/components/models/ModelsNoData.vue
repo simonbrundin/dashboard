@@ -13,9 +13,9 @@ const emit = defineEmits<{
     <div class="flex flex-col items-center gap-4">
       <UIcon name="i-lucide-database" class="w-12 h-12 text-muted-foreground" />
       <div>
-        <p class="font-semibold text-lg">No Data Available</p>
+        <p class="font-semibold text-lg">Ingen data tillgänglig</p>
         <p class="text-sm text-muted-foreground mt-1">
-          Click "Scrape Data" to fetch the latest models from Artificial Analysis.
+          Tryck på "Hämta data" för att hämta de senaste modellerna från Artificial Analysis.
         </p>
       </div>
       <UButton
@@ -23,7 +23,7 @@ const emit = defineEmits<{
         icon="i-lucide-refresh-cw"
         @click="emit('fetch')"
       >
-        Update Data
+        Hämta data
       </UButton>
     </div>
   </UCard>

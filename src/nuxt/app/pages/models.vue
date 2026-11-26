@@ -11,8 +11,6 @@ const {
   getStats,
   modelsWithMeasuredCost,
   modelsWithCodingScore,
-  modelsWithProxyCost,
-  modelsWithoutProxyCost,
   modelsWithEstimatedCost,
   modelsWithoutPrices,
   totalInDb
@@ -33,10 +31,15 @@ const {
   maxBenchmarkScore,
   modelsAboveThreshold,
   categoryStats,
+  effortStats,
+  selectedEffort,
   sortedModels,
   setSelectedBenchmark,
   handleSort
 } = useModelFilters(modelsData)
+
+// The page leads with one recommendation; everything else is opt-in.
+const showAllData = ref(false)
 
 const benchmarkOption = computed(() => getBenchmarkOption(selectedBenchmark.value))
 const rankingDescription = computed(() => {
@@ -77,27 +80,27 @@ onMounted(async () => {
 
 // Head
 useHead({
-  title: 'AI Coding Model Benchmark & Cost Comparison | Dashboard',
+  title: 'Kodbenchmark och kostnadsjämförelse för AI-modeller | Dashboard',
   meta: [
     {
       name: 'description',
-      content: 'Compare coding benchmark scores and source-aligned cost per successful task across AI models.'
+      content: 'Jämför kodbenchmarkspoäng och källanpassad kostnad per lyckad uppgift mellan AI-modeller.'
     }
   ]
 })
 
 useSeoMeta({
-  title: 'AI Coding Model Benchmark & Cost Comparison',
-  description: 'Compare coding benchmark scores and source-aligned task costs.',
-  ogTitle: 'AI Coding Model Benchmark & Cost Comparison',
-  ogDescription: 'Compare coding quality and cost within each benchmark.'
+  title: 'Kodbenchmark och kostnadsjämförelse för AI-modeller',
+  description: 'Jämför kodbenchmarkspoäng och källanpassade uppgiftskostnader.',
+  ogTitle: 'Kodbenchmark och kostnadsjämförelse för AI-modeller',
+  ogDescription: 'Jämför kodkvalitet och kostnad inom varje benchmark.'
 })
 </script>
 
 <template>
   <UDashboardPanel id="models">
     <template #header>
-      <UDashboardNavbar title="AI Coding Model Benchmark & Cost Comparison">
+      <UDashboardNavbar title="Kodmodeller — vad ska du köra?">
         <template #leading>
           <UDashboardSidebarCollapse />
         </template>
@@ -105,29 +108,11 @@ useSeoMeta({
           <UButton
             variant="outline"
             size="sm"
-            icon="i-lucide-download"
-            @click="actions.importModels"
-          >
-            Synka modeller ({{ totalInDb }})
-          </UButton>
-          <UButton
-            v-if="modelsWithoutProxyCost.length > 0"
-            variant="outline"
-            size="sm"
-            :loading="progress.show.value"
-            icon="i-lucide-tag"
-            @click="actions.fetchMorePrices"
-          >
-            Hämta priser ({{ modelsWithoutProxyCost.length }} utan)
-          </UButton>
-          <UButton
-            variant="outline"
-            size="sm"
             :loading="progress.show.value"
             icon="i-lucide-refresh-cw"
-            @click="actions.refreshPrices"
+            @click="actions.fetchMorePrices"
           >
-            Uppdatera priser ({{ modelsWithProxyCost.length }})
+            Synka modeller ({{ totalInDb }})
           </UButton>
           <UButton
             to="/models/methodology"
@@ -151,16 +136,6 @@ useSeoMeta({
 
     <template #body>
       <div class="p-6 space-y-6">
-        <!-- Header Info -->
-        <ModelsHeader
-          :total="totalInDb"
-          :with-measured-cost="modelsWithMeasuredCost.length"
-          :with-estimated-cost="modelsWithEstimatedCost.length"
-          :without-prices="modelsWithoutPrices.length"
-          :with-coding-score="modelsWithCodingScore.length"
-          :updated-at="metaData?.updatedAt"
-        />
-
         <!-- Progress Bar -->
         <ModelsProgress
           v-if="progress.show.value"
@@ -186,7 +161,7 @@ useSeoMeta({
               color="error"
               @click="actions.error.value = null"
             >
-              Dismiss
+              Stäng
             </UButton>
           </template>
         </UAlert>
@@ -199,43 +174,83 @@ useSeoMeta({
         />
 
         <template v-if="modelsData.length > 0">
-          <!-- Filters -->
-          <ModelsFilters
-            :selected-category="selectedCategory"
-            :selected-benchmark="selectedBenchmark"
-            :sort-by="sortBy"
-            :show-only-open-weights="showOnlyOpenWeights"
-            :include-estimated-scores="includeEstimatedScores"
-            :min-benchmark-score="minBenchmarkScore"
-            :max-benchmark-score="maxBenchmarkScore"
-            :category-stats="categoryStats"
-            @update:selected-category="selectedCategory = $event"
-            @update:selected-benchmark="setSelectedBenchmark($event)"
-            @update:sort-by="handleSort($event)"
-            @update:min-benchmark-score="minBenchmarkScore = $event"
-            @toggle-open-weights="showOnlyOpenWeights = !showOnlyOpenWeights"
-            @toggle-estimated-scores="includeEstimatedScores = !includeEstimatedScores"
-          />
+          <!-- The single answer this page exists for -->
+          <ModelsRecommendation :models="modelsData" />
 
-          <!-- Stats Cards -->
-          <ModelsStatsCards
-            :best-value="bestValueModels[0]"
-            :top-score="topScoreModels[0]"
-            :lowest-cost="lowestCostModels[0]"
-            :benchmark="selectedBenchmark"
-            :include-estimated-scores="includeEstimatedScores"
-          />
+          <UButton
+            variant="ghost"
+            block
+            size="sm"
+            :icon="showAllData ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'"
+            :trailing="true"
+            @click="showAllData = !showAllData"
+          >
+            {{ showAllData ? 'Visa mindre' : 'Visa all data: alla benchmark-vyer, filter och prenumerationsdetaljer' }}
+          </UButton>
 
-          <!-- Pareto Optimal Section -->
-          <ModelsTopModels
-            v-if="paretoOptimalModels.length > 0"
-            :models="paretoOptimalModels"
-            :benchmark="selectedBenchmark"
-            :include-estimated-scores="includeEstimatedScores"
-          />
+          <div v-if="showAllData" class="space-y-6">
+            <!-- Header Info -->
+            <ModelsHeader
+              :total="totalInDb"
+              :with-measured-cost="modelsWithMeasuredCost.length"
+              :with-estimated-cost="modelsWithEstimatedCost.length"
+              :without-prices="modelsWithoutPrices.length"
+              :with-coding-score="modelsWithCodingScore.length"
+              :updated-at="metaData?.updatedAt"
+            />
 
-          <!-- Full Comparison Table -->
-          <div v-if="sortedModels.length > 0">
+            <!-- Filters -->
+            <ModelsFilters
+              :selected-category="selectedCategory"
+              :selected-benchmark="selectedBenchmark"
+              :sort-by="sortBy"
+              :show-only-open-weights="showOnlyOpenWeights"
+              :include-estimated-scores="includeEstimatedScores"
+              :min-benchmark-score="minBenchmarkScore"
+              :max-benchmark-score="maxBenchmarkScore"
+              :selected-effort="selectedEffort"
+              :category-stats="categoryStats"
+              :effort-stats="effortStats"
+              @update:selected-category="selectedCategory = $event"
+              @update:selected-benchmark="setSelectedBenchmark($event)"
+              @update:sort-by="handleSort($event)"
+              @update:min-benchmark-score="minBenchmarkScore = $event"
+              @update:selected-effort="selectedEffort = $event"
+              @toggle-open-weights="showOnlyOpenWeights = !showOnlyOpenWeights"
+              @toggle-estimated-scores="includeEstimatedScores = !includeEstimatedScores"
+            />
+
+            <!-- Stats Cards -->
+            <ModelsStatsCards
+              :best-value="bestValueModels[0]"
+              :top-score="topScoreModels[0]"
+              :lowest-cost="lowestCostModels[0]"
+              :benchmark="selectedBenchmark"
+              :include-estimated-scores="includeEstimatedScores"
+            />
+
+            <!-- Pareto Optimal Section -->
+            <ModelsTopModels
+              v-if="paretoOptimalModels.length > 0"
+              :models="paretoOptimalModels"
+              :benchmark="selectedBenchmark"
+              :include-estimated-scores="includeEstimatedScores"
+            />
+
+            <!-- Budget finder: cheapest models that clear a quality threshold -->
+            <ModelsBudgetFinder
+              :models="modelsData"
+              :include-estimated-scores="includeEstimatedScores"
+            />
+
+            <!-- Subscription vs pay-per-task comparison -->
+            <ModelsSubscriptionComparison :models="modelsData" />
+
+            <!-- Normalised price per million tokens -->
+            <ModelsUnitEconomics :models="modelsData" />
+
+            <!-- Full Comparison Table -->
+            <div v-if="sortedModels.length > 0">
             <div class="flex items-center justify-between mb-4">
               <div>
                 <h3 class="font-semibold text-lg">{{ benchmarkOption.label }} comparison</h3>
@@ -251,7 +266,7 @@ useSeoMeta({
                     type="checkbox"
                     class="w-4 h-4 rounded border-border text-primary focus:ring-primary"
                   >
-                  <span class="text-muted-foreground">Show models without a ranking metric</span>
+                  <span class="text-muted-foreground">Visa modeller utan mätvärde</span>
                 </label>
                 <span class="text-sm text-muted-foreground">
                   {{ sortedModels.length }} modeller
@@ -267,18 +282,19 @@ useSeoMeta({
               :include-estimated-scores="includeEstimatedScores"
               @sort="handleSort"
             />
-          </div>
-          <UAlert
-            v-else
-            color="neutral"
-            variant="soft"
-            title="No ranked models for this benchmark"
-          >
-            There are no matching score/cost pairs for {{ benchmarkOption.label }} in the current data. Select another benchmark or synchronize the source data.
-          </UAlert>
+            </div>
+            <UAlert
+              v-else
+              color="neutral"
+              variant="soft"
+              title="Inga jämförbara modeller för den här vyn"
+            >
+              Inga score/kostnad-par för {{ benchmarkOption.label }} i nuvarande data. Välj en annan vy eller synka källdata.
+            </UAlert>
 
-          <!-- Methodology Note -->
-          <ModelsMethodology />
+            <!-- Methodology Note -->
+            <ModelsMethodology />
+          </div>
         </template>
       </div>
     </template>

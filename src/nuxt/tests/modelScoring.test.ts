@@ -2,11 +2,13 @@ import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import type { ModelData } from '../app/data/models.ts'
 import {
+  findCheapestSufficient,
   getBenchmarkCostPerAttempt,
   getBenchmarkCostPerSuccessfulTask,
   getBenchmarkOption,
   getBenchmarkRankingMetric,
   getBenchmarkScore,
+  getBudgetSourceOptions,
   RANKING_BENCHMARKS
 } from '../app/utils/modelScoring.ts'
 import {
@@ -102,7 +104,7 @@ test('Terminal-Bench ranking uses cost per successful task without dividing the 
     value: 0.125,
     direction: 'asc',
     kind: 'cost-per-success',
-    label: 'Cost per successful task'
+    label: 'Kostnad per lyckad uppgift'
   })
   assert.equal(getBenchmarkCostPerAttempt(candidate, 'terminal-bench-4-1'), 0.1)
   assert.equal(getBenchmarkCostPerSuccessfulTask(candidate, 'terminal-bench-4-1'), 0.125)
@@ -161,7 +163,7 @@ test('BenchLM is a quality-only ranking and has no inferred cost', () => {
     value: 85,
     direction: 'desc',
     kind: 'score-only',
-    label: 'BenchLM score (quality only)'
+    label: 'BenchLM-poäng (endast kvalitet)'
   })
   assert.equal(getBenchmarkCostPerAttempt(candidate, 'benchlm'), null)
   assert.equal(getBenchmarkCostPerSuccessfulTask(candidate, 'benchlm'), null)
@@ -190,7 +192,7 @@ test('the estimated view combines an estimate with the intelligence index', () =
     value: 120,
     direction: 'desc',
     kind: 'estimated-score-per-dollar',
-    label: 'Intelligence points per estimated dollar'
+    label: 'Intelligence-poäng per uppskattad dollar'
   })
   assert.equal(getBenchmarkCostPerAttempt(candidate, 'estimated'), 0.5)
   assert.equal(getBenchmarkCostPerSuccessfulTask(candidate, 'estimated'), null)
@@ -351,6 +353,23 @@ const EMPTY_COLUMNS = new Set([
   'deep_swe_score',
   'deep_swe_cost_per_task',
   'deep_swe_cost_per_successful_task',
+  'deep_swe_harness',
+  'deep_swe_reasoning_effort',
+  'deep_swe_ci_low',
+  'deep_swe_ci_high',
+  'deep_swe_runs',
+  'deep_swe_pass_at_4',
+  'deep_swe_tasks_attempted',
+  'deep_swe_passed_attempts',
+  'deep_swe_attempts',
+  'deep_swe_mean_input_tokens',
+  'deep_swe_mean_uncached_input_tokens',
+  'deep_swe_mean_cache_read_tokens',
+  'deep_swe_mean_cache_write_tokens',
+  'deep_swe_mean_output_tokens',
+  'deep_swe_mean_reasoning_tokens',
+  'deep_swe_median_agent_steps',
+  'deep_swe_mean_duration_seconds',
   'benchlm_coding_score',
   'aa_intelligence_cost_per_task',
   'aa_coding_agent_index',
@@ -364,10 +383,17 @@ const ROW_COLUMNS = [
   'terminal_bench_score', 'terminal_bench_cost_per_task', 'terminal_bench_cost_per_successful_task',
   'terminal_bench_41_score', 'terminal_bench_41_cost_per_task', 'terminal_bench_41_cost_per_successful_task',
   'deep_swe_score', 'deep_swe_cost_per_task', 'deep_swe_cost_per_successful_task',
+  'deep_swe_harness', 'deep_swe_reasoning_effort', 'deep_swe_ci_low', 'deep_swe_ci_high',
+  'deep_swe_runs', 'deep_swe_pass_at_4', 'deep_swe_tasks_attempted', 'deep_swe_passed_attempts',
+  'deep_swe_attempts', 'deep_swe_mean_input_tokens', 'deep_swe_mean_uncached_input_tokens',
+  'deep_swe_mean_cache_read_tokens', 'deep_swe_mean_cache_write_tokens',
+  'deep_swe_mean_output_tokens', 'deep_swe_mean_reasoning_tokens',
+  'deep_swe_median_agent_steps', 'deep_swe_mean_duration_seconds',
   'benchlm_coding_score', 'benchlm_evidence_status', 'benchlm_model_name', 'benchlm_match_type',
   'aa_coding_agent_index', 'aa_coding_agent_cost_per_task', 'aa_coding_agent_name',
   'aa_intelligence_cost_per_task', 'estimated_cost_per_task', 'cost_per_task',
-  'input_price_per_m', 'output_price_per_m', 'category',
+  'input_price_per_m', 'output_price_per_m', 'cache_hit_price_per_m', 'cache_write_price_per_m',
+  'category',
   'strengths', 'context_window', 'open_weights', 'speed', 'latency'
 ]
 
@@ -422,7 +448,74 @@ test('measured columns stay null for models outside the benchmarks', () => {
   }
 })
 
-test('model measurement keys use the release slug and the effort', () => {
+test('budget finder returns the cheapest models at or above the reference score', () => {
+  const candidates: ModelData[] = [
+    model({ slug: 'sonnet', name: 'Sonnet', aaCodingAgentIndex: 56, aaCodingAgentCostPerTask: 11.4, estimatedCostPerTask: 9 }),
+    model({ slug: 'cheap-but-smart', name: 'Cheap Smart', aaCodingAgentIndex: 56.3, aaCodingAgentCostPerTask: 4.2, estimatedCostPerTask: 3 }),
+    model({ slug: 'cheaper-but-weaker', name: 'Cheap Weak', aaCodingAgentIndex: 40, aaCodingAgentCostPerTask: 0.5 }),
+    model({ slug: 'smart-no-cost', name: 'Smart No Cost', aaCodingAgentIndex: 60, estimatedCostPerTask: 7.5 })
+  ]
+
+  const result = findCheapestSufficient(candidates, 'aa-coding-agent', 'sonnet')
+
+  assert.equal(result.threshold, 56)
+  // Weaker models must not appear.
+  const slugs = [...result.measuredRows, ...result.estimatedRows].map(r => r.model.slug)
+  assert.ok(slugs.includes('cheap-but-smart'))
+  assert.ok(slugs.includes('smart-no-cost'))
+  assert.ok(!slugs.includes('cheaper-but-weaker'))
+
+  // Measured rows come first and are sorted cheapest first.
+  assert.deepEqual(result.measuredRows.map(r => r.model.slug), ['cheap-but-smart', 'sonnet'])
+  const cheap = result.measuredRows[0]!
+  assert.equal(cheap.savingsPct, Math.round(((11.4 - 4.2) / 11.4) * 100))
+
+  // The no-cost model is ranked by its estimate in a separate group.
+  const noCost = result.estimatedRows[0]!
+  assert.equal(noCost.costIsEstimated, true)
+  assert.equal(noCost.savingsPct, null)
+})
+
+test('budget finder keeps the reference itself in the list with zero savings', () => {
+  const candidates: ModelData[] = [
+    model({ slug: 'sonnet', name: 'Sonnet', aaCodingAgentIndex: 56, aaCodingAgentCostPerTask: 11.4 })
+  ]
+
+  const result = findCheapestSufficient(candidates, 'aa-coding-agent', 'sonnet')
+  assert.equal(result.measuredRows.length, 1)
+  assert.equal(result.measuredRows[0]!.savingsPct, 0)
+})
+
+test('the estimated budget source uses the intelligence index and token estimates only', () => {
+  const candidates: ModelData[] = [
+    model({ slug: 'a', intelligenceIndex: 50, estimatedCostPerTask: 1 }),
+    model({ slug: 'b', intelligenceIndex: 50, estimatedCostPerTask: null }),
+    model({ slug: 'ref', intelligenceIndex: 45, estimatedCostPerTask: 5 })
+  ]
+
+  const result = findCheapestSufficient(candidates, 'estimated', 'ref')
+  assert.equal(result.threshold, 45)
+  assert.equal(result.referenceCostIsEstimated, true)
+  assert.deepEqual(result.measuredRows, [])
+  assert.deepEqual(result.estimatedRows.map(r => r.model.slug), ['a', 'ref'])
+})
+
+test('budget source options report how many models each source covers', () => {
+  const candidates: ModelData[] = [
+    model({ slug: 'x', aaCodingAgentIndex: 50, deepSweScore: 30 }),
+    model({ slug: 'y', aaCodingAgentIndex: 60 })
+  ]
+
+  const options = getBudgetSourceOptions(candidates)
+  const aa = options.find(o => o.value === 'aa-coding-agent')
+  const ds = options.find(o => o.value === 'deep-swe')
+  assert.equal(aa?.count, 2)
+  assert.equal(ds?.count, 1)
+  // BenchLM is quality-only and must not be a budget source.
+  assert.ok(!options.some(o => o.value === 'benchlm'))
+})
+
+ test('model measurement keys use the release slug and the effort', () => {
   assert.equal(modelMeasurementKey('gpt-6-astra-low', 'GPT-6 Astra (Low)'), 'gpt-6-astra|low')
   assert.equal(modelMeasurementKey('kimi-k3-1-pro', 'Kimi K3.1 Pro'), 'kimi-k3-1-pro|max')
 })

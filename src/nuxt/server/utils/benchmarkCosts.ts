@@ -38,6 +38,50 @@ export interface TerminalBenchMeasurement extends BenchmarkMeasurement {
   version: TerminalBenchVersion
 }
 
+/**
+ * A DeepSWE row with the statistics the leaderboard publishes.
+ *
+ * The confidence interval is the leaderboard's own: a 95% run-to-run
+ * interval over repeated whole-benchmark passes. It is stored as published so
+ * the UI can show the spread instead of a single point estimate.
+ */
+export interface DeepSweMeasurement extends BenchmarkMeasurement {
+  /** Reasoning effort of the measured configuration. */
+  effort: ReasoningEffort | null
+  /** Agent harness used for the run, e.g. "mini-swe-agent". */
+  harness: string | null
+  /** Lower bound of the 95% confidence interval on the pass rate, in percent. */
+  ciLow: number | null
+  /** Upper bound of the 95% confidence interval on the pass rate, in percent. */
+  ciHigh: number | null
+  /** Number of repeated benchmark passes behind the interval. */
+  runs: number | null
+  /** pass@4: tasks solved by at least one of four attempts, in percent. */
+  passAt4: number | null
+  /** Tasks that were attempted. */
+  tasksAttempted: number | null
+  /** Attempts that passed. */
+  passedAttempts: number | null
+  /** Total scored attempts. */
+  attempts: number | null
+  /** Mean input tokens per attempt. */
+  meanInputTokens: number | null
+  /** Mean input tokens that were not served from the prompt cache. */
+  meanUncachedInputTokens: number | null
+  /** Mean input tokens served from the prompt cache. */
+  meanCacheReadTokens: number | null
+  /** Mean tokens written to the prompt cache. */
+  meanCacheWriteTokens: number | null
+  /** Mean output tokens per attempt. */
+  meanOutputTokens: number | null
+  /** Mean reasoning tokens per attempt. */
+  meanReasoningTokens: number | null
+  /** Median number of agent steps per task. */
+  medianAgentSteps: number | null
+  /** Mean wall-clock time per task, in seconds. */
+  meanDurationSeconds: number | null
+}
+
 export interface TerminalBenchRow {
   releaseSlug: string
   effort: ReasoningEffort
@@ -50,7 +94,7 @@ export interface CodingBenchmarkCosts {
   /** Terminal-Bench measurements keyed by release slug, effort and version. */
   terminalBench: Map<string, TerminalBenchMeasurement>
   /** DeepSWE measurements keyed by release slug and effort. */
-  deepSwe: Map<string, BenchmarkMeasurement>
+  deepSwe: Map<string, DeepSweMeasurement>
   /** Median token profile per effort, used for cost estimates. */
   referenceProfiles: Map<ReasoningEffort, TokenProfile>
 }
@@ -335,40 +379,117 @@ interface DeepSweRow {
   effort: ReasoningEffort
   score: number
   costPerTask: number
+  harness: string | null
+  ciLow: number | null
+  ciHigh: number | null
+  runs: number | null
+  passAt4: number | null
+  tasksAttempted: number | null
+  passedAttempts: number | null
+  attempts: number | null
+  meanInputTokens: number | null
+  meanUncachedInputTokens: number | null
+  meanCacheReadTokens: number | null
+  meanCacheWriteTokens: number | null
+  meanOutputTokens: number | null
+  meanReasoningTokens: number | null
+  medianAgentSteps: number | null
+  meanDurationSeconds: number | null
 }
 
-function parseDeepSweRows(html: string): DeepSweRow[] {
-  const rows: DeepSweRow[] = []
-  const rowPattern = /model:"([^"]+)"[^}]*?reasoning_effort:"([^"]+)"[^}]*?pass_rate:([0-9.eE+-]+)[^}]*?mean_cost_usd:([0-9.eE+-]+)/gs
+/** The row header of a DeepSWE measurement, in the order the page emits it. */
+const DEEP_SWE_ROW_PATTERN =
+  /\{model:"([^"]+)",harness:"([^"]*)",(?:provider:"([^"]*)",)?reasoning_effort:"([^"]+)",config:"([^"]*)"/g
 
-  for (const match of html.matchAll(rowPattern)) {
-    const releaseSlug = match[1]
-    const effort = normalizeEffort(match[2])
-    const passRate = asFiniteNumber(match[3])
-    const costPerTask = asFiniteNumber(match[4])
-    if (!releaseSlug || !effort || passRate === null || costPerTask === null) continue
-    if (costPerTask < 0) continue
+function numberIn(chunk: string, key: string): number | null {
+  const match = new RegExp(`${key}:([0-9.eE+-]+)`).exec(chunk)
+  return match ? asFiniteNumber(match[1]) : null
+}
+
+/**
+ * Parses the DeepSWE rows from the embedded flight payload.
+ *
+ * Each row is parsed from its own chunk so a malformed row cannot hide the
+ * rest. The rows publish the agent harness, the reasoning effort, a 95%
+ * confidence interval on the pass rate and the split between cached and
+ * uncached input tokens.
+ */
+export function parseDeepSweRows(html: string): DeepSweRow[] {
+  const headers = [...html.matchAll(DEEP_SWE_ROW_PATTERN)]
+  const rows: DeepSweRow[] = []
+
+  for (let index = 0; index < headers.length; index++) {
+    const header = headers[index]!
+    const start = header.index ?? 0
+    const end = headers[index + 1]?.index ?? html.length
+    const chunk = html.slice(start, end)
+
+    const releaseSlug = header[1]
+    const harness = header[2] || null
+    const effort = normalizeEffort(header[4])
+    if (!releaseSlug || !effort) continue
+
+    const passRate = numberIn(chunk, 'pass_rate')
+    const costPerTask = numberIn(chunk, 'mean_cost_usd')
+    if (passRate === null || costPerTask === null || costPerTask < 0) continue
+
+    const ciLow = numberIn(chunk, 'ci_lo')
+    const ciHigh = numberIn(chunk, 'ci_hi')
+    const passAt4 = numberIn(chunk, 'pass_at_4')
 
     rows.push({
       releaseSlug,
       effort,
       score: passRate <= 1 ? passRate * 100 : passRate,
-      costPerTask
+      costPerTask,
+      harness,
+      ciLow: ciLow === null ? null : (ciLow <= 1 ? ciLow * 100 : ciLow),
+      ciHigh: ciHigh === null ? null : (ciHigh <= 1 ? ciHigh * 100 : ciHigh),
+      runs: numberIn(chunk, 'n_runs'),
+      passAt4: passAt4 === null ? null : (passAt4 <= 1 ? passAt4 * 100 : passAt4),
+      tasksAttempted: numberIn(chunk, 'n_tasks_attempted'),
+      passedAttempts: numberIn(chunk, 'n_passed'),
+      attempts: numberIn(chunk, 'n_attempted'),
+      meanInputTokens: numberIn(chunk, 'mean_input_tokens'),
+      meanUncachedInputTokens: numberIn(chunk, 'mean_uncached_input_tokens'),
+      meanCacheReadTokens: numberIn(chunk, 'mean_cache_read_tokens'),
+      meanCacheWriteTokens: numberIn(chunk, 'mean_cache_write_tokens'),
+      meanOutputTokens: numberIn(chunk, 'mean_output_tokens'),
+      meanReasoningTokens: numberIn(chunk, 'mean_reasoning_tokens'),
+      medianAgentSteps: numberIn(chunk, 'median_agent_steps'),
+      meanDurationSeconds: numberIn(chunk, 'mean_duration_seconds')
     })
   }
 
   return rows
 }
 
-async function fetchDeepSweCosts(): Promise<Map<string, BenchmarkMeasurement>> {
+async function fetchDeepSweCosts(): Promise<Map<string, DeepSweMeasurement>> {
   const html = await $fetch<string>(DEEP_SWE_URL)
-  const measurements = new Map<string, BenchmarkMeasurement>()
+  const measurements = new Map<string, DeepSweMeasurement>()
 
   for (const row of parseDeepSweRows(html)) {
     measurements.set(measurementKey(row.releaseSlug, row.effort), {
       score: row.score,
       costPerTask: row.costPerTask,
-      costPerSuccessfulTask: costPerSuccessfulTask(row.costPerTask, row.score)
+      costPerSuccessfulTask: costPerSuccessfulTask(row.costPerTask, row.score),
+      effort: row.effort,
+      harness: row.harness,
+      ciLow: row.ciLow,
+      ciHigh: row.ciHigh,
+      runs: row.runs,
+      passAt4: row.passAt4,
+      tasksAttempted: row.tasksAttempted,
+      passedAttempts: row.passedAttempts,
+      attempts: row.attempts,
+      meanInputTokens: row.meanInputTokens,
+      meanUncachedInputTokens: row.meanUncachedInputTokens,
+      meanCacheReadTokens: row.meanCacheReadTokens,
+      meanCacheWriteTokens: row.meanCacheWriteTokens,
+      meanOutputTokens: row.meanOutputTokens,
+      meanReasoningTokens: row.meanReasoningTokens,
+      medianAgentSteps: row.medianAgentSteps,
+      meanDurationSeconds: row.meanDurationSeconds
     })
   }
 
@@ -505,8 +626,8 @@ export function getTerminalBenchBenchmark(
 export function getDeepSweBenchmark(
   modelSlug: string,
   modelName: string,
-  costs: Map<string, BenchmarkMeasurement>
-): BenchmarkMeasurement | null {
+  costs: Map<string, DeepSweMeasurement>
+): DeepSweMeasurement | null {
   const key = measurementKey(baseReleaseSlug(modelSlug), extractEffortFromName(modelName))
   return costs.get(key) ?? null
 }
@@ -514,7 +635,7 @@ export function getDeepSweBenchmark(
 export function getDeepSweCost(
   modelSlug: string,
   modelName: string,
-  costs: Map<string, BenchmarkMeasurement>
+  costs: Map<string, DeepSweMeasurement>
 ): number | null {
   return getDeepSweBenchmark(modelSlug, modelName, costs)?.costPerTask ?? null
 }

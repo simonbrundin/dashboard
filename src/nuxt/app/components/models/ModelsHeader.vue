@@ -20,17 +20,17 @@ defineProps<{
         </div>
         <div>
           <h2 class="font-semibold text-lg">
-            Coding Benchmark & Cost Comparison
+            Kodbenchmark och kostnadsjämförelse
           </h2>
           <p class="text-sm text-muted-foreground mt-1">
             <span class="font-semibold">{{ total }}</span> modeller i databasen.
-            <span v-if="withCodingScore > 0"> · {{ withCodingScore }} med benchmark-scores</span>
-            <span v-if="withMeasuredCost > 0"> · {{ withMeasuredCost }} med mätt task-kostnad</span>
+            <span v-if="withCodingScore > 0"> · {{ withCodingScore }} med benchmark-poäng</span>
+            <span v-if="withMeasuredCost > 0"> · {{ withMeasuredCost }} med mätt kostnad per uppgift</span>
             <span v-if="withEstimatedCost > 0"> · {{ withEstimatedCost }} med uppskattad kostnad</span>
             <span v-if="withoutPrices > 0"> · {{ withoutPrices }} utan priser</span>
           </p>
           <p v-if="updatedAt" class="text-xs text-muted-foreground mt-1">
-            Last updated: {{ formatDate(updatedAt) }}
+            Senast uppdaterad: {{ formatDate(updatedAt) }}
           </p>
         </div>
       </div>

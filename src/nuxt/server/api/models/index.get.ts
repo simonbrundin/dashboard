@@ -13,6 +13,23 @@ interface ModelRow {
   terminal_bench_41_cost_per_task?: number | string | null
   terminal_bench_41_cost_per_successful_task?: number | string | null
   deep_swe_score?: number | string | null
+  deep_swe_harness?: string | null
+  deep_swe_reasoning_effort?: string | null
+  deep_swe_ci_low?: number | string | null
+  deep_swe_ci_high?: number | string | null
+  deep_swe_runs?: number | string | null
+  deep_swe_pass_at_4?: number | string | null
+  deep_swe_tasks_attempted?: number | string | null
+  deep_swe_passed_attempts?: number | string | null
+  deep_swe_attempts?: number | string | null
+  deep_swe_mean_input_tokens?: number | string | null
+  deep_swe_mean_uncached_input_tokens?: number | string | null
+  deep_swe_mean_cache_read_tokens?: number | string | null
+  deep_swe_mean_cache_write_tokens?: number | string | null
+  deep_swe_mean_output_tokens?: number | string | null
+  deep_swe_mean_reasoning_tokens?: number | string | null
+  deep_swe_median_agent_steps?: number | string | null
+  deep_swe_mean_duration_seconds?: number | string | null
   benchlm_coding_score?: number | string | null
   benchlm_evidence_status?: string | null
   benchlm_model_name?: string | null
@@ -31,6 +48,8 @@ interface ModelRow {
   cost_per_task?: number | string | null
   input_price_per_m?: number | string | null
   output_price_per_m?: number | string | null
+  cache_hit_price_per_m?: number | string | null
+  cache_write_price_per_m?: number | string | null
   category: string | null
   strengths?: string[] | string | null
   context_window: string
@@ -52,6 +71,23 @@ interface ApiModel {
   terminalBench41CostPerTask: number | null
   terminalBench41CostPerSuccessfulTask: number | null
   deepSweScore: number | null
+  deepSweHarness: string | null
+  deepSweReasoningEffort: string | null
+  deepSweCiLow: number | null
+  deepSweCiHigh: number | null
+  deepSweRuns: number | null
+  deepSwePassAt4: number | null
+  deepSweTasksAttempted: number | null
+  deepSwePassedAttempts: number | null
+  deepSweAttempts: number | null
+  deepSweMeanInputTokens: number | null
+  deepSweMeanUncachedInputTokens: number | null
+  deepSweMeanCacheReadTokens: number | null
+  deepSweMeanCacheWriteTokens: number | null
+  deepSweMeanOutputTokens: number | null
+  deepSweMeanReasoningTokens: number | null
+  deepSweMedianAgentSteps: number | null
+  deepSweMeanDurationSeconds: number | null
   benchLmCodingScore: number | null
   benchLmEvidenceStatus: string | null
   benchLmModelName: string | null
@@ -71,6 +107,8 @@ interface ApiModel {
   costSource: 'measured-coding' | 'proxy' | 'unknown'
   inputPricePerM: number | null
   outputPricePerM: number | null
+  cacheHitPricePerM: number | null
+  cacheWritePricePerM: number | null
   category: string | null
   strengths: string[]
   contextWindow: string
@@ -134,6 +172,23 @@ export default defineEventHandler(async () => {
         aaIntelligenceCostPerTask: aaIntelligenceCost ?? legacyCost,
         terminalBenchCostPerTask: terminalBenchCost,
         deepSweScore: parseNullableNumber(row.deep_swe_score),
+        deepSweHarness: row.deep_swe_harness ?? null,
+        deepSweReasoningEffort: row.deep_swe_reasoning_effort ?? null,
+        deepSweCiLow: parseNullableNumber(row.deep_swe_ci_low),
+        deepSweCiHigh: parseNullableNumber(row.deep_swe_ci_high),
+        deepSweRuns: parseNullableNumber(row.deep_swe_runs),
+        deepSwePassAt4: parseNullableNumber(row.deep_swe_pass_at_4),
+        deepSweTasksAttempted: parseNullableNumber(row.deep_swe_tasks_attempted),
+        deepSwePassedAttempts: parseNullableNumber(row.deep_swe_passed_attempts),
+        deepSweAttempts: parseNullableNumber(row.deep_swe_attempts),
+        deepSweMeanInputTokens: parseNullableNumber(row.deep_swe_mean_input_tokens),
+        deepSweMeanUncachedInputTokens: parseNullableNumber(row.deep_swe_mean_uncached_input_tokens),
+        deepSweMeanCacheReadTokens: parseNullableNumber(row.deep_swe_mean_cache_read_tokens),
+        deepSweMeanCacheWriteTokens: parseNullableNumber(row.deep_swe_mean_cache_write_tokens),
+        deepSweMeanOutputTokens: parseNullableNumber(row.deep_swe_mean_output_tokens),
+        deepSweMeanReasoningTokens: parseNullableNumber(row.deep_swe_mean_reasoning_tokens),
+        deepSweMedianAgentSteps: parseNullableNumber(row.deep_swe_median_agent_steps),
+        deepSweMeanDurationSeconds: parseNullableNumber(row.deep_swe_mean_duration_seconds),
         deepSweCostPerTask: deepSweCost,
         codingAgentCostPerTask: codingAgentCost,
         terminalBenchCostPerSuccessfulTask: terminalBenchSuccessfulCost,
@@ -147,6 +202,8 @@ export default defineEventHandler(async () => {
         costSource,
         inputPricePerM: parseNullableNumber(row.input_price_per_m),
         outputPricePerM: parseNullableNumber(row.output_price_per_m),
+        cacheHitPricePerM: parseNullableNumber(row.cache_hit_price_per_m),
+        cacheWritePricePerM: parseNullableNumber(row.cache_write_price_per_m),
         category: row.category,
         strengths: parseStrengths(row.strengths),
         contextWindow: row.context_window,

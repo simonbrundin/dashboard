@@ -1,5 +1,37 @@
 export type Category = 'all' | 'frontier' | 'high' | 'mid' | 'budget'
 
+/** The reasoning efforts the benchmarks publish, from least to most. */
+export const REASONING_EFFORTS = ['low', 'medium', 'high', 'xhigh', 'max'] as const
+
+export type ReasoningEffortLabel = (typeof REASONING_EFFORTS)[number] | 'non-reasoning' | 'unknown'
+
+/**
+ * The reasoning effort of a model configuration.
+ *
+ * The benchmarks publish one row per effort, so the effort is part of the
+ * identity of a measurement - comparing a "max" run with a "low" run is not
+ * comparing the same thing.
+ */
+export function getReasoningEffort(model: { name: string; deepSweReasoningEffort?: string | null }): ReasoningEffortLabel {
+  if (model.deepSweReasoningEffort) {
+    const effort = model.deepSweReasoningEffort.toLowerCase()
+    if ((REASONING_EFFORTS as readonly string[]).includes(effort)) {
+      return effort as ReasoningEffortLabel
+    }
+    if (effort.includes('non-reasoning')) return 'non-reasoning'
+  }
+
+  const qualifiers = /\(([^()]*)\)\s*$/.exec(model.name)?.[1]
+  if (!qualifiers) return 'unknown'
+  const effort = qualifiers.split(',')[0]?.trim().toLowerCase() ?? ''
+  if (effort.length === 0) return 'unknown'
+  if ((REASONING_EFFORTS as readonly string[]).includes(effort)) {
+    return effort as ReasoningEffortLabel
+  }
+  if (effort.includes('non-reasoning')) return 'non-reasoning'
+  return 'unknown'
+}
+
 export function getCategoryColor(category: string | null | undefined): string {
   const colors: Record<Exclude<Category, 'all'>, string> = {
     frontier: 'text-purple-500 bg-purple-500/10',
@@ -30,6 +62,24 @@ export function getValueRating(ratio: number | null | undefined): ValueRating {
   return { stars: 1, label: 'Basic' }
 }
 
+/**
+ * Shortens model names for comparison views: "Claude Sonnet 5.5 (Max, Default
+ * Fallback)" -> "Claude Sonnet 5.5 · Max". Configuration qualifiers matter for
+ * honesty, so they are kept - just separated from the product name.
+ */
+export function formatModelName(name: string): string {
+  const match = /^(?<base>.*?)\((?<qualifiers>[^()]+)\)$/.exec(name)
+  const base = match?.groups?.base
+  const qualifiers = match?.groups?.qualifiers
+  if (!base || !qualifiers) return name
+  const parts = qualifiers
+    .split(',')
+    .map(part => part.trim())
+    .filter(part => part.length > 0 && !/^Default Fallback$/i.test(part))
+  if (parts.length === 0) return base
+  return `${base} · ${parts.join(' · ')}`
+}
+
 export function formatCodingValue(value: number | null | undefined): string {
   if (value == null || Number.isNaN(value)) return '—'
   if (!isFinite(value)) return 'Free'
@@ -54,6 +104,39 @@ export function formatCostPerSuccessfulTask(cost: number | string | null | undef
   return formatted.endsWith('/task')
     ? `${formatted.slice(0, -5)}/success`
     : formatted
+}
+
+/**
+ * Formats a cost with the unit the measurement actually has.
+ *
+ * A cost per successful task and a cost per attempt are different numbers
+ * and must not be shown with the same label.
+ */
+/**
+ * Formats a cost as an amount.
+ *
+ * The unit is added by `metricUnitLabel`, because a cost per successful task
+ * and a cost per attempt are different numbers and must not be shown with
+ * the same label.
+ */
+export function formatMetricCost(cost: number | string | null | undefined): string {
+  const formatted = formatCost(cost)
+  if (!formatted.endsWith('/task')) return formatted
+  return formatted.slice(0, -5)
+}
+
+/** The Swedish label for the metric a cost is measured in. */
+export function metricUnitLabel(isPerAttempt: boolean): string {
+  return isPerAttempt ? 'per försök' : 'per lyckad uppgift'
+}
+
+/** Formats a confidence interval, e.g. "65.1-71.4 %". */
+export function formatConfidenceInterval(
+  low: number | null | undefined,
+  high: number | null | undefined
+): string | null {
+  if (low == null || high == null) return null
+  return `${low.toFixed(1)}-${high.toFixed(1)} %`
 }
 
 export function formatDate(dateStr: string | null | undefined): string {
