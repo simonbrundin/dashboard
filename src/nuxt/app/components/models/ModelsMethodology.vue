@@ -29,8 +29,16 @@
           från AA:s allmänna modelllista ersätter aldrig benchmarkens uppgiftskostnader.
         </p>
         <p class="mt-2">
-          <strong class="text-foreground">Kvoter</strong> räknas bara om till dollar när underlaget publiceras i
-          dollar - annars visas de som anropskvoter eller som mjuka gränser som inte är omräknade.
+          <strong class="text-foreground">Kvoter</strong> räknas bara om till dollar när underlaget
+          publiceras i dollar - annars visas de som anropskvoter eller som mjuka gränser som inte är
+          omräknade. En plan med kvot i dollar kan vinna en prisjämförelse. En plan med mjuka
+          gränser kan inte, eftersom antalet körningar kvoten täcker är okänt - den redovisas bara
+          som ett möjligt billigare alternativ med sin brytpunkt.
+        </p>
+        <p class="mt-2">
+          <strong class="text-foreground">Fronten och beslutstabellen</strong> visar de modeller som
+          ingenting annat slår på både pris och kvalitet, med poäng, konfidensintervall, agent,
+          kostnad per lyckad uppgift och månadskostnad vid din egen användning i samma rad.
         </p>
         <p class="mt-2 text-xs">
           <NuxtLink

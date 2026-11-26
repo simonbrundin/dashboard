@@ -212,10 +212,39 @@ useSeoMeta({
                 sifffran med ≤. Anthropics API-credits är separata från agentkvoten i apparna: de gäller bara
                 API-anrop.
               </p>
+              <p class="text-muted-foreground mt-2">
+                <strong class="text-foreground">En plan med kvot i dollar kan vinna en prisjämförelse.
+                En plan med mjuka gränser kan inte.</strong> För den senare är antalet körningar kvoten
+                täcker okänt, så kostnaden per uppgift är ett antagande. Den redovisas därför i en egen
+                lista - <em>Kan bli billigare - men bara om kvoten räcker</em> - med brytpunkten mot
+                API-priset i stället för ett pris per uppgift. Ett antagande får aldrig vinna en
+                jämförelse mot en mätning.
+              </p>
             </section>
 
             <section>
-              <h2 class="font-semibold text-base">12. Enhetspris per miljon token</h2>
+              <h2 class="font-semibold text-base">12. Fronten och beslutstabellen</h2>
+              <p class="text-muted-foreground mt-2">
+                Utan referensmodell visar sidan kvalitets- och prisfronten: de mätta modeller som
+                ingenting annat slår på både pris och kvalitet. En modell är dominated om en annan
+                är lika bra eller bättre och samtidigt billigare. Allt annat är antingen dyrare
+                eller sämre och kan därför väljas bort.
+              </p>
+              <p class="text-muted-foreground mt-2">
+                Beslutstabellen samlar allt vetting-underlag i en rad per modell: benchmarkpoäng,
+                95 % konfidensintervall, agent/harness, kostnad per lyckad uppgift, månadskostnad vid
+                din egen användning och den billigaste prenumerationen som täcker modellen. Tabellen
+                kan begränsas till fronten eller visa alla mätta modeller.
+              </p>
+              <p class="text-muted-foreground mt-2">
+                Månadskostnaden räknas på <span class="font-medium">agentkörningar per dag</span>, inte
+                på antal meddelanden. En agentkörning består av många anrop, så de två är olika
+                enheter.
+              </p>
+            </section>
+
+            <section>
+              <h2 class="font-semibold text-base">13. Enhetspris per miljon token</h2>
               <p class="text-muted-foreground mt-2">
                 API-priser och prenumerationspriser jämförs i samma mått: en miljon inputtokens plus en miljon
                 outputtokens. Mixen är deklarerad, inte dold.
@@ -233,7 +262,7 @@ useSeoMeta({
             </section>
 
             <section>
-              <h2 class="font-semibold text-base">13. Användningsgränser per modell</h2>
+              <h2 class="font-semibold text-base">14. Användningsgränser per modell</h2>
               <p class="text-muted-foreground mt-2">
                 Gränsvyn visar vad leverantören själv publicerar per modell, uppdelat i timgräns,
                 dagsgräns och månadsgräns för spend. De tre är olika saker och blandas aldrig ihop.
@@ -266,7 +295,7 @@ useSeoMeta({
             </section>
 
             <section>
-              <h2 class="font-semibold text-base">14. Viktigt om tolkningen</h2>
+              <h2 class="font-semibold text-base">15. Viktigt om tolkningen</h2>
               <p class="text-muted-foreground mt-2">
                 Publicerade benchmarkkostnader är uppskattningar, inte en garanti för fakturan för ett visst
                 repository-uppgift. De verkliga kostnaderna beror på prompten, kontextlängden, reasoning-effort, harness,

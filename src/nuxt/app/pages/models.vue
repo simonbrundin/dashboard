@@ -2,6 +2,7 @@
 import { useModelFilters } from '~/composables/useModelFilters'
 import { useModelStats } from '~/composables/useModelStats'
 import { getBenchmarkOption } from '~/utils/modelScoring'
+import { useAgentTasksPerDay } from '~/composables/useAgentBenchmark'
 
 // Data composables
 const {
@@ -40,6 +41,9 @@ const {
 
 // The page leads with one recommendation; everything else is opt-in.
 const showAllData = ref(false)
+
+// The workload drives every monthly cost on the page.
+const tasksPerDay = useAgentTasksPerDay()
 
 const benchmarkOption = computed(() => getBenchmarkOption(selectedBenchmark.value))
 const rankingDescription = computed(() => {
@@ -176,6 +180,12 @@ useSeoMeta({
         <template v-if="modelsData.length > 0">
           <!-- The single answer this page exists for -->
           <ModelsRecommendation :models="modelsData" />
+
+          <!-- Every measured model with quality, cost and monthly price -->
+          <ModelsDecisionTable
+            :models="modelsData"
+            :tasks-per-day="tasksPerDay"
+          />
 
           <UButton
             variant="ghost"

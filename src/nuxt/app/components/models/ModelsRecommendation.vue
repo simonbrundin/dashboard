@@ -1,26 +1,29 @@
 <script setup lang="ts">
 import type { ModelData } from '~/data/models'
-import { buildRecommendation } from '~/utils/recommendation'
+import { buildRecommendation, type RecommendationOption } from '~/utils/recommendation'
 import {
   formatConfidenceInterval,
   formatMetricCost,
   formatModelName,
   metricUnitLabel
 } from '~/utils/modelFormatters'
-import { AGENT_BENCHMARKS, type AgentBenchmarkId } from '~/utils/agentBenchmarks'
+import { AGENT_BENCHMARKS } from '~/utils/agentBenchmarks'
 import { getModelUsageLimits, usageLimitRows } from '~/utils/usageLimits'
+import { useAgentBenchmarkId, useAgentTasksPerDay } from '~/composables/useAgentBenchmark'
 
 const props = defineProps<{
   models: ModelData[]
 }>()
 
-// The quality bar: "at least as smart as this model".
-const referenceSlug = ref<string | undefined>(undefined)
+// The quality bar: "at least as smart as this model". Without a reference the
+// page answers with the quality/cost frontier instead, which needs no input.
+const referenceSlug = ref<string | null>(null)
 // Which benchmark the bar and the costs come from. Score and cost are never
-// mixed across benchmarks.
-const benchmarkId = ref<AgentBenchmarkId | null>(null)
+// mixed across benchmarks. The decision table reads the same value, so both
+// views always describe the same measurement.
+const benchmarkId = useAgentBenchmarkId()
 // How many agent tasks the user runs per day.
-const tasksPerDay = ref(5)
+const tasksPerDay = useAgentTasksPerDay()
 
 // Reference candidates: every model that has a score in at least one of the
 // agent benchmarks.
@@ -39,18 +42,14 @@ const candidates = computed(() => {
   })
 })
 
-watch(candidates, (list) => {
-  if (!list.some(model => model.slug === referenceSlug.value)) {
-    const preferred = list.find(model => model.slug?.includes('sonnet'))
-      ?? list.find(model => model.slug?.includes('gpt-6-2-astra'))
-      ?? list[Math.floor(list.length / 4)]
-      ?? list[0]
-    referenceSlug.value = preferred?.slug
-  }
-}, { immediate: true })
-
-// The benchmarks the chosen reference model is measured in.
+// The benchmarks the chosen reference model is measured in. Without a
+// reference every benchmark with measurements is available.
 const availableBenchmarks = computed(() => {
+  if (referenceSlug.value === null) {
+    return AGENT_BENCHMARKS.filter(benchmark =>
+      props.models.some(model => benchmark.score(model) != null)
+    )
+  }
   const reference = candidates.value.find(model => model.slug === referenceSlug.value)
   if (!reference) return []
   return AGENT_BENCHMARKS.filter(benchmark => benchmark.score(reference) != null)
@@ -65,13 +64,16 @@ watch(availableBenchmarks, (list) => {
 const result = computed(() =>
   buildRecommendation(
     props.models,
-    referenceSlug.value ?? null,
+    referenceSlug.value,
     tasksPerDay.value,
     benchmarkId.value
   )
 )
 
 const benchmarkLabel = computed(() => result.value.benchmark?.label ?? '')
+
+/** True when no reference model is chosen: the answer is the frontier. */
+const frontierMode = computed(() => referenceSlug.value === null)
 
 /** The published usage limits of the recommended model. */
 const bestLimits = computed(() => {
@@ -96,6 +98,33 @@ const shownApiOptions = computed(() => [
   ...result.value.estimatedOptions.slice(0, 2)
 ])
 
+/** The score, its confidence interval and the agent behind it. */
+function scoreLine(option: RecommendationOption): string {
+  const parts: string[] = []
+  if (option.score != null) {
+    parts.push(
+      `${option.score.toFixed(1)} ${result.value.benchmark?.isPassRate ? '%' : 'poäng'}`
+    )
+  }
+  const ci = formatConfidenceInterval(option.ciLow, option.ciHigh)
+  if (ci) parts.push(`95 % CI ${ci}`)
+  if (option.agent) parts.push(`agent ${option.agent}`)
+  return parts.join(' · ')
+}
+
+/** The cost of this option per month at the user's usage level. */
+function monthlyCost(option: RecommendationOption): number | null {
+  if (!option.costIsVerifiable) return null
+  return option.costPerTask * tasksPerDay.value * 30
+}
+
+/** The number of tasks per month where a plan costs the same as the API. */
+function breakEvenText(option: RecommendationOption): string {
+  if (option.breakEvenTasksPerMonth === null) return 'går inte att räkna ut'
+  if (option.breakEvenTasksPerMonth < 1) return 'redan vid 1 körning/månad'
+  return `vid ${Math.ceil(option.breakEvenTasksPerMonth)} körningar/månad`
+}
+
 function referenceLabel(): string {
   const reference = result.value.reference
   if (!reference) return ''
@@ -106,6 +135,13 @@ function referenceLabel(): string {
 function agentLabel(agent: string | null): string | null {
   return agent ?? null
 }
+
+/** The frontier, best quality first. */
+const frontierOptions = computed(() =>
+  [...result.value.frontier].sort(
+    (a, b) => (b.score ?? 0) - (a.score ?? 0) || a.costPerTask - b.costPerTask
+  )
+)
 </script>
 
 <template>
@@ -114,8 +150,8 @@ function agentLabel(agent: string | null): string | null {
       <div>
         <h2 class="font-semibold text-xl">Vilken modell ska du köra — och genom vad?</h2>
         <p class="text-sm text-muted-foreground mt-1">
-          Välj en modell du vet klarar dina koduppgifter. Vi räknar ut vad den nivån kostar via
-          API och jämför med prenumerationer vid din användning.
+          Välj benchmark och hur mycket du kör. Kvalitet, kostnad och osäkerhet kommer från samma
+          körning - inga siffror blandas mellan källor.
         </p>
       </div>
     </template>
@@ -131,10 +167,13 @@ function agentLabel(agent: string | null): string | null {
         />
       </div>
       <div class="flex items-center gap-2">
-        <span class="text-sm text-muted-foreground">Lika smart som:</span>
+        <span class="text-sm text-muted-foreground">Jämför med:</span>
         <USelect
           v-model="referenceSlug"
-          :items="candidates.map(m => ({ value: m.slug ?? '', label: formatModelName(m.name) }))"
+          :items="[
+            { value: null, label: 'Ingen referens - visa fronten' },
+            ...candidates.map(m => ({ value: m.slug ?? '', label: formatModelName(m.name) }))
+          ]"
           size="sm"
           class="w-72"
         />
@@ -153,189 +192,263 @@ function agentLabel(agent: string | null): string | null {
       </div>
     </div>
 
-    <div v-if="result.best && result.threshold !== null">
-      <!-- The direct answer -->
-      <div class="rounded-lg border border-green-500/30 bg-green-500/10 p-5">
-        <p class="text-sm text-muted-foreground">
-          Rekommendation på {{ referenceLabel() }}-nivå
-          ({{ result.threshold.toFixed(1) }} {{ result.benchmark?.isPassRate ? '%' : 'poäng' }}
-          på {{ benchmarkLabel }}):
-        </p>
-        <p class="text-lg font-semibold mt-1">
-          {{ result.best.kind === 'plan' ? `Kör ${result.best.label} med ${formatModelName(result.best.model.name)}` : `Kör ${result.best.label} via API (${result.best.model.provider})` }}
-        </p>
-        <p class="text-sm mt-1">
-          <span class="font-semibold text-green-600 dark:text-green-400">
-            {{ result.best.costIsLowerBound ? '≤ ' : '' }}{{ formatMetricCost(result.best.costPerTask) }}
+    <!-- The frontier: what is actually worth choosing between -->
+    <div v-if="frontierMode && result.frontier.length > 0" class="rounded-lg border border-border bg-muted/40 p-5">
+      <p class="text-sm text-muted-foreground">
+        Fronten i {{ benchmarkLabel }}: {{ result.frontier.length }} mätta modeller som ingenting
+        annat slår på både pris och kvalitet. Resten är antingen dyrare eller sämre.
+      </p>
+      <ul class="mt-3 space-y-2">
+        <li
+          v-for="option in frontierOptions"
+          :key="option.model.slug"
+          class="flex items-start justify-between gap-4 text-sm border-b border-border/50 pb-2"
+        >
+          <span>
+            <span class="font-medium">{{ option.label }}</span>
+            <span class="block text-xs text-muted-foreground">
+              {{ scoreLine(option) || 'poäng saknas' }}
+            </span>
           </span>
-          {{ metricUnitLabel(result.best.costIsPerAttempt) }}
-          <template v-if="result.best.kind === 'plan'">
-            vid din användning · {{ result.best.plan?.pricePerMonth.toFixed(2) }}$/mån
-            <template v-if="result.best.breakEvenTasksPerMonth !== null">
-              · lönar sig redan vid {{ result.best.breakEvenTasksPerMonth < 1 ? '1 körning/månad' : `${Math.ceil(result.best.breakEvenTasksPerMonth)} körningar/månad` }}
-            </template>
-            <template v-else>
-              · kvoten dras enligt listpris
-            </template>
-          </template>
-          <template v-else>
-            (mätt på {{ benchmarkLabel }})
-          </template>
-        </p>
-        <p class="text-xs text-muted-foreground mt-2">
-          <template v-if="result.best.agent">
-            Agent: {{ agentLabel(result.best.agent) }} ·
-          </template>
-          <template v-if="result.best.passRate !== null">
-            Löser {{ result.best.passRate.toFixed(1) }} % av uppgifterna
-            <template v-if="formatConfidenceInterval(result.best.ciLow, result.best.ciHigh)">
-              (95 % CI {{ formatConfidenceInterval(result.best.ciLow, result.best.ciHigh) }})
-            </template>
-            ·
-          </template>
-          <template v-if="result.best.costPerAttempt !== null && !result.best.costIsPerAttempt">
-            {{ formatMetricCost(result.best.costPerAttempt) }} per försök ·
-          </template>
-          <template v-if="result.benchmark?.harness && !result.best.agent">
-            Harness: {{ result.benchmark.harness }} ·
-          </template>
-          Gränsen kommer från samma mätning som kostnaden.
-        </p>
-        <p v-if="result.best.costIsLowerBound" class="text-xs text-muted-foreground mt-1">
-          ≤ betyder att planens användningsgränser inte publiceras som dollarbelopp. Kostnaden
-          gäller så länge gränserna räcker vid din användning.
-        </p>
-        <p v-if="bestLimits.length > 0" class="text-xs text-muted-foreground mt-1">
-          Gränser:
-          <template v-for="(limit, index) in bestLimits" :key="limit.period + index">
-            <span v-if="index > 0"> · </span>{{ limit.text }}
-          </template>
-        </p>
-      </div>
+          <span class="tabular-nums text-right">
+            <span class="font-medium">{{ formatMetricCost(option.costPerTask) }}</span>
+            <span class="block text-xs text-muted-foreground">
+              {{ metricUnitLabel(option.costIsPerAttempt) }}
+              <template v-if="monthlyCost(option) !== null">
+                · {{ formatMetricCost(monthlyCost(option)) }}/mån
+              </template>
+            </span>
+          </span>
+        </li>
+      </ul>
+      <p class="text-xs text-muted-foreground mt-3">
+        Kostnaden är mätt för en agentkörning i {{ benchmarkLabel }}. Priset per månad räknas på
+        {{ tasksPerDay }} körningar per dag.
+      </p>
+    </div>
 
-      <!-- The alternative without a subscription -->
-      <div
-        v-if="result.bestWithoutPlan && result.bestWithoutPlan !== result.best && result.best.kind === 'plan'"
-        class="rounded-lg border border-border bg-muted/40 p-4 mt-3"
-      >
-        <p class="text-sm">
-          <span class="font-medium">Utan prenumeration:</span>
-          {{ result.bestWithoutPlan.label }} via {{ result.bestWithoutPlan.model.provider }}
-          — {{ formatMetricCost(result.bestWithoutPlan.costPerTask) }}
-          {{ metricUnitLabel(result.bestWithoutPlan.costIsPerAttempt) }}.
-        </p>
-      </div>
+    <!-- The direct answer -->
+    <div
+      v-else-if="result.best && result.threshold !== null"
+      class="rounded-lg border border-green-500/30 bg-green-500/10 p-5"
+    >
+      <p class="text-sm text-muted-foreground">
+        Rekommendation på {{ referenceLabel() }}-nivå
+        ({{ result.threshold.toFixed(1) }} {{ result.benchmark?.isPassRate ? '%' : 'poäng' }}
+        på {{ benchmarkLabel }}):
+      </p>
+      <p class="text-lg font-semibold mt-1">
+        {{ result.best.kind === 'plan' ? `Kör ${result.best.label} med ${formatModelName(result.best.model.name)}` : `Kör ${result.best.label} via API (${result.best.model.provider})` }}
+      </p>
+      <p class="text-sm mt-1">
+        <span class="font-semibold text-green-600 dark:text-green-400">
+          {{ result.best.costIsLowerBound ? '≤ ' : '' }}{{ formatMetricCost(result.best.costPerTask) }}
+        </span>
+        {{ metricUnitLabel(result.best.costIsPerAttempt) }}
+        <template v-if="result.best.kind === 'plan'">
+          vid din användning · {{ result.best.plan?.pricePerMonth.toFixed(2) }}$/mån
+          <template v-if="result.best.includedTasksPerMonth">
+            · ≈{{ Math.floor(result.best.includedTasksPerMonth) }} körningar/mån inkluderat
+          </template>
+          <template v-else-if="result.best.breakEvenTasksPerMonth !== null">
+            · lönar sig redan {{ breakEvenText(result.best) }}
+          </template>
+        </template>
+        <template v-else>
+          (mätt på {{ benchmarkLabel }})
+        </template>
+      </p>
+      <p class="text-xs text-muted-foreground mt-2">
+        <template v-if="result.best.score !== null">
+          {{ result.best.score.toFixed(1) }} {{ result.benchmark?.isPassRate ? '% lösning' : 'poäng' }}
+          <template v-if="formatConfidenceInterval(result.best.ciLow, result.best.ciHigh)">
+            (95 % CI {{ formatConfidenceInterval(result.best.ciLow, result.best.ciHigh) }})
+          </template>
+          ·
+        </template>
+        <template v-if="result.best.agent">
+          Agent: {{ agentLabel(result.best.agent) }} ·
+        </template>
+        <template v-if="result.best.passRate !== null">
+          Löser {{ result.best.passRate.toFixed(1) }} % av uppgifterna ·
+        </template>
+        <template v-if="result.best.costPerAttempt !== null && !result.best.costIsPerAttempt">
+          {{ formatMetricCost(result.best.costPerAttempt) }} per försök ·
+        </template>
+        Gränsen kommer från samma mätning som kostnaden.
+      </p>
+      <p v-if="result.best.costIsLowerBound" class="text-xs text-muted-foreground mt-1">
+        ≤ betyder att planens användningsgränser inte publiceras som dollarbelopp. Kostnaden
+        gäller så länge gränserna räcker vid din användning.
+      </p>
+      <p v-if="bestLimits.length > 0" class="text-xs text-muted-foreground mt-1">
+        Gränser:
+        <template v-for="(limit, index) in bestLimits" :key="limit.period + index">
+          <span v-if="index > 0"> · </span>{{ limit.text }}
+        </template>
+      </p>
+    </div>
 
-      <!-- Alternatives -->
-      <div class="mt-5 grid gap-4 md:grid-cols-2">
-        <div v-if="result.planOptions.length > 0">
-          <h3 class="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">Med prenumeration</h3>
-          <ul class="space-y-2">
-            <li
-              v-for="option in result.planOptions"
-              :key="option.plan?.id"
-              class="flex items-center justify-between gap-3 text-sm border-b border-border/50 pb-2"
-            >
-              <span>
-                {{ option.label }}
-                <span class="block text-xs text-muted-foreground">
-                  {{ formatModelName(option.model.name) }}{{ option.plan && !option.plan.priceVerified ? ' · pris ej verifierat' : '' }}
-                  <template v-if="option.agent"> · agent {{ option.agent }}</template>
-                </span>
-              </span>
-              <span class="tabular-nums text-right">
-                <span class="font-medium">
-                  {{ option.costIsLowerBound ? '≤ ' : '' }}{{ formatMetricCost(option.costPerTask) }}
-                </span>
-                <span class="block text-xs text-muted-foreground">
-                  {{ metricUnitLabel(option.costIsPerAttempt) }} ·
-                  <template v-if="option.quotaKind === 'quota-units'">kvot i anrop · antalet uppgifter går inte att räkna ut</template>
-                  <template v-else-if="option.quotaKind === 'credits-usd' && option.includedTasksPerMonth">
-                    ≈{{ Math.floor(option.includedTasksPerMonth) }} körningar/mån inkluderat
-                  </template>
-                  <template v-else-if="option.costIsLowerBound">
-                    kvoten saknar publicerat dollarvärde<template v-if="option.plan?.quota?.publishedRange"> · {{ option.plan.quota.publishedRange }}</template>
-                  </template>
-                  <template v-else>{{ option.plan?.pricePerMonth.toFixed(0) }}$/mån</template>
-                </span>
-              </span>
-            </li>
-          </ul>
-        </div>
-        <div v-if="shownApiOptions.length > 0">
-          <h3 class="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">Utan prenumeration (API)</h3>
-          <ul class="space-y-2">
-            <li
-              v-for="option in shownApiOptions"
-              :key="option.model.slug"
-              class="flex items-center justify-between gap-3 text-sm border-b border-border/50 pb-2"
-              :class="option.qualityKnown ? '' : 'opacity-75'"
-            >
-              <span>
-                {{ option.label }}
-                <span class="block text-xs text-muted-foreground">
-                  via {{ option.model.provider }}
-                  <template v-if="option.agent"> · agent {{ option.agent }}</template>
-                  <template v-if="!option.qualityKnown"> · ≈ uppskattad kostnad, kodnivå ej mätt här</template>
-                </span>
-              </span>
-              <span class="font-medium tabular-nums">
-                {{ option.qualityKnown ? '' : '≈ ' }}{{ formatMetricCost(option.costPerTask) }}
-                <span class="block text-xs font-normal text-muted-foreground">
-                  {{ metricUnitLabel(option.costIsPerAttempt) }}
-                </span>
-              </span>
-            </li>
-          </ul>
-        </div>
-      </div>
+    <!-- A plan with an unpublished quota can be cheaper, but not provably -->
+    <div
+      v-if="result.conditionalPlanOptions.length > 0"
+      class="rounded-lg border border-border bg-muted/40 p-4 mt-3"
+    >
+      <p class="text-sm font-medium">Kan bli billigare - men bara om kvoten räcker</p>
+      <ul class="mt-2 space-y-2">
+        <li
+          v-for="option in result.conditionalPlanOptions"
+          :key="option.plan?.id"
+          class="flex items-start justify-between gap-4 text-sm border-b border-border/50 pb-2"
+        >
+          <span>
+            <span>{{ option.label }}</span>
+            <span class="block text-xs text-muted-foreground">
+              {{ formatModelName(option.model.name) }}
+              <template v-if="option.score !== null">
+                · {{ scoreLine(option) }}
+              </template>
+            </span>
+          </span>
+          <span class="tabular-nums text-right text-xs text-muted-foreground">
+            {{ option.plan?.pricePerMonth.toFixed(0) }}$/mån
+            <span class="block">
+              API-likvärdigt {{ breakEvenText(option) }}
+            </span>
+            <span class="block">
+              kvot: {{ option.quotaLabel ?? 'ej publicerad' }}
+            </span>
+          </span>
+        </li>
+      </ul>
+      <p class="text-xs text-muted-foreground mt-2">
+        Kvoten saknar publicerat dollarvärde, så antalet körningar den täcker går inte att räkna
+        ut. Därför kan planen inte vinna en prisjämförelse - den kan bara vara billigare.
+      </p>
+    </div>
 
-      <!-- Plans that are not measured in this benchmark -->
-      <div v-if="result.unmeasuredPlanOptions.length > 0" class="mt-4">
+    <!-- The alternative without a subscription -->
+    <div
+      v-if="result.bestWithoutPlan && result.bestWithoutPlan !== result.best && result.best.kind === 'plan'"
+      class="rounded-lg border border-border bg-muted/40 p-4 mt-3"
+    >
+      <p class="text-sm">
+        <span class="font-medium">Utan prenumeration:</span>
+        {{ result.bestWithoutPlan.label }} via {{ result.bestWithoutPlan.model.provider }}
+        — {{ formatMetricCost(result.bestWithoutPlan.costPerTask) }}
+        {{ metricUnitLabel(result.bestWithoutPlan.costIsPerAttempt) }}.
+      </p>
+    </div>
+
+    <!-- Alternatives -->
+    <div class="mt-5 grid gap-4 md:grid-cols-2">
+      <div v-if="result.planOptions.length > 0">
         <h3 class="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
-          Ej mätt i {{ benchmarkLabel }} — kan inte jämföras
+          Med prenumeration - kvot i dollar
         </h3>
         <ul class="space-y-2">
           <li
-            v-for="option in result.unmeasuredPlanOptions"
+            v-for="option in result.planOptions"
             :key="option.plan?.id"
-            class="flex items-center justify-between gap-3 text-sm border-b border-border/50 pb-2 opacity-75"
+            class="flex items-start justify-between gap-3 text-sm border-b border-border/50 pb-2"
           >
             <span>
               {{ option.label }}
               <span class="block text-xs text-muted-foreground">
-                {{ formatModelName(option.model.name) }} · ≈ kodnivå ej mätt i det här benchmarket
+                {{ formatModelName(option.model.name) }}{{ option.plan && !option.plan.priceVerified ? ' · pris ej verifierat' : '' }}
+                <template v-if="option.score !== null"> · {{ scoreLine(option) }}</template>
               </span>
             </span>
             <span class="tabular-nums text-right">
               <span class="font-medium">
-                {{ option.costIsLowerBound ? '≤ ' : '' }}≈{{ formatMetricCost(option.costPerTask) }}
+                {{ formatMetricCost(option.costPerTask) }}
               </span>
               <span class="block text-xs text-muted-foreground">
-                {{ metricUnitLabel(option.costIsPerAttempt) }} · kodnivå ej mätt
+                {{ metricUnitLabel(option.costIsPerAttempt) }}
+                <template v-if="option.includedTasksPerMonth">
+                  · ≈{{ Math.floor(option.includedTasksPerMonth) }} körningar/mån inkluderat
+                </template>
               </span>
             </span>
           </li>
         </ul>
       </div>
-
-      <!-- Models that clear the bar but have no measured cost -->
-      <p v-if="result.unpricedOptions.length > 0" class="text-xs text-muted-foreground mt-4">
-        {{ result.unpricedOptions.length }} modeller klarar nivån i {{ benchmarkLabel }} men saknar
-        publicerad kostnad för samma körning, så de går inte att prissätta här.
-      </p>
-
-      <p class="text-xs text-muted-foreground mt-5">
-        Kvalitetsnivå och kostnad kommer från samma benchmark och samma körning
-        ({{ benchmarkLabel }}{{ result.benchmark?.harness ? ` · ${result.benchmark.harness}` : '' }}),
-        aldrig från två källor som blandas ihop. Token-uppskattningar används inte i rankningen.
-        Planernas användningsgränser ingår i beräkningen: credits-planer räknas med inkluderad kvot
-        och listpris för överkostnad, medan planer med mjuka gränser (5-timmarsfönster) bara kan visas
-        som en undre gräns (≤).
-      </p>
+      <div v-if="shownApiOptions.length > 0">
+        <h3 class="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">Utan prenumeration (API)</h3>
+        <ul class="space-y-2">
+          <li
+            v-for="option in shownApiOptions"
+            :key="option.model.slug"
+            class="flex items-start justify-between gap-3 text-sm border-b border-border/50 pb-2"
+            :class="option.qualityKnown ? '' : 'opacity-75'"
+          >
+            <span>
+              {{ option.label }}
+              <span class="block text-xs text-muted-foreground">
+                via {{ option.model.provider }}
+                <template v-if="option.score !== null"> · {{ scoreLine(option) }}</template>
+                <template v-if="!option.qualityKnown"> · ≈ uppskattad kostnad, kodnivå ej mätt här</template>
+              </span>
+            </span>
+            <span class="font-medium tabular-nums">
+              {{ option.qualityKnown ? '' : '≈ ' }}{{ formatMetricCost(option.costPerTask) }}
+              <span class="block text-xs font-normal text-muted-foreground">
+                {{ metricUnitLabel(option.costIsPerAttempt) }}
+              </span>
+            </span>
+          </li>
+        </ul>
+      </div>
     </div>
-    <p v-else class="text-sm text-muted-foreground">
-      Välj en referensmodell för att se rekommendationen.
+
+    <!-- Plans that are not measured in this benchmark -->
+    <div v-if="result.unmeasuredPlanOptions.length > 0" class="mt-4">
+      <h3 class="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
+        Ej mätt i {{ benchmarkLabel }} — kan inte jämföras
+      </h3>
+      <ul class="space-y-2">
+        <li
+          v-for="option in result.unmeasuredPlanOptions"
+          :key="option.plan?.id"
+          class="flex items-center justify-between gap-3 text-sm border-b border-border/50 pb-2 opacity-75"
+        >
+          <span>
+            {{ option.label }}
+            <span class="block text-xs text-muted-foreground">
+              {{ formatModelName(option.model.name) }} · ≈ kodnivå ej mätt i det här benchmarket
+            </span>
+          </span>
+          <span class="tabular-nums text-right">
+            <span class="font-medium">
+              {{ option.costIsLowerBound ? '≤ ' : '' }}≈{{ formatMetricCost(option.costPerTask) }}
+            </span>
+            <span class="block text-xs text-muted-foreground">
+              {{ metricUnitLabel(option.costIsPerAttempt) }} · kodnivå ej mätt
+            </span>
+          </span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Models that clear the bar but have no measured cost -->
+    <p v-if="result.unpricedOptions.length > 0" class="text-xs text-muted-foreground mt-4">
+      {{ result.unpricedOptions.length }} modeller klarar nivån i {{ benchmarkLabel }} men saknar
+      publicerad kostnad för samma körning, så de går inte att prissätta här.
+    </p>
+
+    <p class="text-xs text-muted-foreground mt-5">
+      Kvalitetsnivå och kostnad kommer från samma benchmark och samma körning
+      ({{ benchmarkLabel }}{{ result.benchmark?.harness ? ` · ${result.benchmark.harness}` : '' }}),
+      aldrig från två källor som blandas ihop. Token-uppskattningar används inte i rankningen.
+      En plan med kvot i dollar räknas med inkluderad kvot och listpris för överkostnad. En plan
+      med mjuka gränser har ingen publicerad dollarkvot och kan därför aldrig vinna en
+      prisjämförelse - den redovisas bara som ett möjligt billigare alternativ.
+      </p>
+    <p
+      v-if="frontierMode && result.frontier.length === 0"
+      class="text-sm text-muted-foreground"
+    >
+      Välj en referensmodell, eller stå på fronten, för att se rekommendationen.
     </p>
   </UCard>
 </template>

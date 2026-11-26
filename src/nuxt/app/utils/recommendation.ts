@@ -53,6 +53,21 @@ export interface RecommendationOption {
   apiCreditsUsdPerMonth?: number | null
   /** True when the usage exceeds the plan's included allowance. */
   hasOverage?: boolean
+  /**
+   * True when the cost per task is a number that can be trusted on its own.
+   *
+   * A measured API cost always qualifies. A plan qualifies only when its
+   * quota is published in dollars, because then the included allowance can be
+   * calculated exactly. A plan with a request quota or a soft limit does not
+   * qualify: its cost per task is only an assumption, so it may never win a
+   * price comparison.
+   */
+  costIsVerifiable: boolean
+  /**
+   * The published quota, for the case where the cost cannot be calculated.
+   * E.g. "inga 5-timmarsgränser" or "1 500 anrop/5 h".
+   */
+  quotaLabel?: string | null
 }
 
 export interface Recommendation {
@@ -65,6 +80,12 @@ export interface Recommendation {
   bestWithoutPlan: RecommendationOption | null
   /** Plans priced with a measurement from the chosen benchmark. */
   planOptions: RecommendationOption[]
+  /**
+   * Plans whose quota is not published in dollars. Their cost per task cannot
+   * be calculated, so they never win a price comparison - but they can be
+   * cheaper than the API if their unpublished quota holds.
+   */
+  conditionalPlanOptions: RecommendationOption[]
   /** API models priced with a measurement from the chosen benchmark. */
   apiOptions: RecommendationOption[]
   /** Plans whose models are not measured in this benchmark. They stay visible
@@ -76,6 +97,12 @@ export interface Recommendation {
   estimatedOptions: RecommendationOption[]
   /** Models that are not measured in this benchmark at all. */
   notMeasuredCount: number
+  /**
+   * The models that are not dominated: no other measured model is both
+   * cheaper and at least as good. This is the quality/cost frontier, and it
+   * is the answer when no reference model is chosen.
+   */
+  frontier: RecommendationOption[]
 }
 
 /** The agent that produced a measurement, per benchmark. */
@@ -112,11 +139,21 @@ export function pickRecommendationBenchmark(
   reference: ModelData | null,
   preferred?: AgentBenchmarkId | null
 ): AgentBenchmark | null {
-  if (!reference) return null
-
   if (preferred) {
     const benchmark = getAgentBenchmark(preferred)
-    return benchmark.score(reference) != null ? benchmark : null
+    if (reference && benchmark.score(reference) == null) return null
+    return models.some(model => benchmark.score(model) != null) ? benchmark : null
+  }
+
+  // Without a reference the benchmark with the most measured models wins:
+  // that is the one where the frontier means something.
+  if (!reference) {
+    return [...AGENT_BENCHMARKS]
+      .filter(benchmark => models.some(model => benchmark.score(model) != null))
+      .sort((a, b) =>
+        models.filter(model => b.score(model) != null).length
+        - models.filter(model => a.score(model) != null).length
+      )[0] ?? null
   }
 
   const usable = AGENT_BENCHMARKS.filter(benchmark => {
@@ -127,15 +164,6 @@ export function pickRecommendationBenchmark(
   return usable[0] ?? null
 }
 
-/**
- * The end-user answer: "which model should I run, through what?".
- *
- * The threshold and every cost come from one benchmark, so a score is never
- * compared against a cost from a different measurement. The ranking metric is
- * the cost per successful task when the benchmark publishes a pass rate - a
- * model that fails most attempts is not cheap, and cost per attempt hides
- * that.
- */
 export function buildRecommendation(
   models: ModelData[],
   referenceSlug: string | null,
@@ -149,23 +177,28 @@ export function buildRecommendation(
   const benchmark = pickRecommendationBenchmark(models, reference, preferredBenchmark)
   const threshold = benchmark && reference ? benchmark.score(reference) : null
 
-  if (reference === null || benchmark === null || threshold === null) {
+  if (benchmark === null) {
     return {
-      benchmark,
+      benchmark: null,
       threshold: null,
       reference,
       best: null,
       bestWithoutPlan: null,
       planOptions: [],
+      conditionalPlanOptions: [],
       apiOptions: [],
       unmeasuredPlanOptions: [],
       unpricedOptions: [],
       estimatedOptions: [],
-      notMeasuredCount: 0
+      notMeasuredCount: 0,
+      frontier: []
     }
   }
 
-  const qualifies = (model: ModelData): boolean => (benchmark.score(model) ?? -1) >= threshold
+  // Without a reference there is no threshold: every measured model is a
+  // candidate and the frontier decides what matters.
+  const qualifies = (model: ModelData): boolean =>
+    threshold === null ? true : (benchmark.score(model) ?? -1) >= threshold
 
   /** Builds an option from a model that has a measurement in this benchmark. */
   const toOption = (model: ModelData): RecommendationOption | null => {
@@ -190,7 +223,8 @@ export function buildRecommendation(
       apiCostPerTask: metric,
       breakEvenTasksPerMonth: null,
       apiCostIsEstimated: false,
-      qualityKnown: true
+      qualityKnown: true,
+      costIsVerifiable: true
     }
   }
 
@@ -221,7 +255,8 @@ export function buildRecommendation(
       apiCostPerTask: 0,
       breakEvenTasksPerMonth: null,
       apiCostIsEstimated: false,
-      qualityKnown: true
+      qualityKnown: true,
+      costIsVerifiable: false
     }))
 
   // Models that are not measured in this benchmark at all. Their coding level
@@ -245,11 +280,13 @@ export function buildRecommendation(
       apiCostPerTask: estimateCost(model)!,
       breakEvenTasksPerMonth: null,
       apiCostIsEstimated: true,
-      qualityKnown: false
+      qualityKnown: false,
+      costIsVerifiable: false
     }))
     .sort((a, b) => a.costPerTask - b.costPerTask)
 
   const planOptions: RecommendationOption[] = []
+  const conditionalPlanOptions: RecommendationOption[] = []
   const unmeasuredPlanOptions: RecommendationOption[] = []
   const usageMonth = tasksPerDay * 30
   for (const plan of SUBSCRIPTION_PLANS) {
@@ -259,8 +296,8 @@ export function buildRecommendation(
     if (planModels.length === 0) continue
 
     // The best model in the plan is the one a subscriber would actually use.
-    // It must be measured in the same benchmark, otherwise the plan cannot be
-    // priced against the threshold.
+    // It must be measured in the same benchmark, otherwise the plan cannot
+    // be priced against the threshold.
     const measuredPlanModels = planModels.filter(model => benchmark.score(model) != null)
     if (measuredPlanModels.length === 0) {
       // No model of this plan is measured in this benchmark. The plan stays
@@ -292,7 +329,9 @@ export function buildRecommendation(
         includedTasksPerMonth: planCost.includedTasksPerMonth,
         quotaKind: planCost.quotaKind,
         hasOverage: planCost.hasOverage,
-        costIsLowerBound: planCost.costIsLowerBound
+        costIsLowerBound: planCost.costIsLowerBound,
+        costIsVerifiable: false,
+        quotaLabel: quotaLabel(plan)
       })
       continue
     }
@@ -323,7 +362,7 @@ export function buildRecommendation(
     const creditCoverage = computeApiCreditCoverage(plan, costPerAttempt)
     const confidence = confidenceFor(best, benchmark)
 
-    planOptions.push({
+    const option: RecommendationOption = {
       kind: 'plan',
       label: `${plan.vendor} ${plan.name}`,
       model: best,
@@ -344,13 +383,28 @@ export function buildRecommendation(
       quotaKind: planCost.quotaKind,
       hasOverage: planCost.hasOverage,
       costIsLowerBound: planCost.costIsLowerBound,
-      apiCreditsUsdPerMonth: creditCoverage.creditUsd || null
-    })
+      apiCreditsUsdPerMonth: creditCoverage.creditUsd || null,
+      costIsVerifiable: planCost.quotaKind === 'credits-usd',
+      quotaLabel: quotaLabel(plan)
+    }
+
+    // A plan whose quota is not published in dollars cannot be priced. It may
+    // still be the cheapest way to run the work, but only if its unpublished
+    // quota holds - so it never wins a price comparison.
+    if (option.costIsVerifiable) planOptions.push(option)
+    else conditionalPlanOptions.push(option)
   }
 
   planOptions.sort((a, b) => a.costPerTask - b.costPerTask)
+  // A conditional plan is ranked by how quickly it pays off: the number of
+  // tasks per month where the plan price equals the API price.
+  conditionalPlanOptions.sort(
+    (a, b) => (a.breakEvenTasksPerMonth ?? Infinity) - (b.breakEvenTasksPerMonth ?? Infinity)
+  )
   unmeasuredPlanOptions.sort((a, b) => a.costPerTask - b.costPerTask)
 
+  // Only options whose cost can be trusted may win. A plan with an
+  // unpublished quota is shown next to the winner, never as the winner.
   const ranked = [...planOptions, ...apiOptions].sort((a, b) => a.costPerTask - b.costPerTask)
 
   return {
@@ -360,13 +414,51 @@ export function buildRecommendation(
     best: ranked[0] ?? null,
     bestWithoutPlan: apiOptions[0] ?? null,
     planOptions,
+    conditionalPlanOptions,
     apiOptions,
     unmeasuredPlanOptions,
     unpricedOptions,
     estimatedOptions,
-    notMeasuredCount: notMeasured.length
+    notMeasuredCount: notMeasured.length,
+    frontier: paretoFrontier(apiOptions)
   }
 }
+
+/**
+ * The models that nothing else beats on both price and quality.
+ *
+ * A model is dominated when another measured model is at least as good and
+ * no more expensive. What is left is the trade-off the user actually has to
+ * make.
+ */
+export function paretoFrontier(options: RecommendationOption[]): RecommendationOption[] {
+  return options
+    .filter(option => option.score != null)
+    .filter(option => !options.some(other =>
+      other !== option
+      && other.score != null
+      && option.score != null
+      && other.costPerTask <= option.costPerTask
+      && other.score >= option.score
+      && (other.costPerTask < option.costPerTask || other.score > option.score)
+    ))
+    .sort((a, b) => a.costPerTask - b.costPerTask)
+}
+
+/** The published quota of a plan, in words. */
+function quotaLabel(plan: SubscriptionPlan): string | null {
+  const quota = plan.quota
+  if (!quota) return null
+  if (quota.publishedRange) return quota.publishedRange
+  if (quota.requestsPerWindow != null) {
+    return quota.windowHours != null
+      ? `${quota.requestsPerWindow.toLocaleString('sv-SE')} anrop/${quota.windowHours} h`
+      : `${quota.requestsPerWindow.toLocaleString('sv-SE')} anrop`
+  }
+  if (quota.amountUsdPerMonth != null) return `$${quota.amountUsdPerMonth}/mån i credits`
+  return null
+}
+
 
 /** Token-price estimate for a model, when the agent run was not measured. */
 function estimateCost(model: ModelData): number | null {

@@ -47,16 +47,40 @@ test('recommends the cheapest option that clears the reference level', () => {
   const result = buildRecommendation([SONNET, NEON, ASTRA], 'claude-sonnet-5-5', 5)
 
   assert.equal(result.threshold, 56.3)
-  // A credits plan is costed exactly: $10/month buys $15 of usage, the rest
-  // is billed at list price. Google AI Pro has soft limits, so its cost per
-  // task is only a lower bound - and it wins on that basis.
-  assert.equal(result.best?.kind, 'plan')
-  assert.equal(result.best?.plan?.id, 'google-ai-pro')
-  assert.equal(result.best?.costIsLowerBound, true)
-  assert.ok(result.best!.costPerTask < result.apiOptions[0]!.costPerTask)
+  // Google AI Pro has soft limits, so its cost per task is only an
+  // assumption and it may not win a price comparison. The winner is the
+  // cheapest option whose cost is actually known.
+  assert.equal(result.best?.kind, 'api')
+  assert.equal(result.best?.model.slug, 'gemini-4-neon')
+  assert.equal(result.best?.costPerTask, 6.86)
+  // The soft-limit plan is still visible - as a conditional alternative.
+  const googlePro = result.conditionalPlanOptions.find(option => option.plan?.id === 'google-ai-pro')
+  assert.ok(googlePro)
+  assert.equal(googlePro.costIsVerifiable, false)
   // The no-subscription answer uses the cheapest qualifying API model.
   assert.equal(result.bestWithoutPlan?.model.slug, 'gemini-4-neon')
   assert.equal(result.bestWithoutPlan?.costPerTask, 6.86)
+})
+
+test('a plan with a dollar quota can win the recommendation', () => {
+  const result = buildRecommendation([SONNET], 'claude-sonnet-5-5', 5)
+
+  const copilot = result.planOptions.find(option => option.plan?.id === 'copilot-pro')
+  assert.ok(copilot)
+  assert.equal(copilot.costIsVerifiable, true)
+  // The plan with the largest published allowance wins: its cost per task is
+  // the only one that is calculated, not assumed.
+  assert.equal(result.best?.kind, 'plan')
+  assert.equal(result.best?.plan?.id, 'copilot-max')
+  assert.ok(result.best!.costPerTask < result.apiOptions[0]!.costPerTask)
+})
+
+test('a plan with an unpublished quota never wins a price comparison', () => {
+  const result = buildRecommendation([SONNET, NEON], 'claude-sonnet-5-5', 5)
+
+  assert.equal(result.best?.kind, 'api')
+  assert.ok(result.conditionalPlanOptions.every(option => option.costIsVerifiable === false))
+  assert.ok(result.conditionalPlanOptions.length > 0)
 })
 
 test('a credits plan never beats the plain API by more than the allowance', () => {
@@ -88,7 +112,26 @@ test('a lower reference level opens up cheaper models and plans', () => {
 
   assert.equal(result.threshold, 53.5)
   assert.ok(result.apiOptions.some(option => option.model.slug === 'gpt-6-2-astra'))
-  assert.ok(result.planOptions.some(option => option.plan?.id === 'chatgpt-plus'))
+  // ChatGPT Plus has soft limits, so it is a conditional alternative rather
+  // than a priced option.
+  assert.ok(result.conditionalPlanOptions.some(option => option.plan?.id === 'chatgpt-plus'))
+})
+
+test('without a reference the answer is the quality/cost frontier', () => {
+  const result = buildRecommendation([SONNET, NEON, ASTRA], null, 5)
+
+  assert.equal(result.threshold, null)
+  assert.ok(result.frontier.length > 0)
+  // Every model on the frontier is either the cheapest or the best.
+  for (const option of result.frontier) {
+    const dominated = result.apiOptions.some(other =>
+      other !== option
+      && other.costPerTask <= option.costPerTask
+      && (other.score ?? 0) >= (option.score ?? 0)
+      && (other.costPerTask < option.costPerTask || (other.score ?? 0) > (option.score ?? 0))
+    )
+    assert.equal(dominated, false)
+  }
 })
 
 test('at very low usage the recommendation still shows both answers', () => {
