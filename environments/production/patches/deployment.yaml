@@ -8,7 +8,7 @@ spec:
       containers:
         - name: dashboard-app
           # Updated by .github/workflows/commit.nuxt.yaml.
-          image: ghcr.io/simonbrundin/dashboard:2f077782c93712720ed2e53f7a0dffdc81cfbbab
+          image: ghcr.io/simonbrundin/dashboard:fedeb5d00a29ee65f0e84576a510ee7f865dbf16
           env:
             - name: NODE_ENV
               value: "production"
