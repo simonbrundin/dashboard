@@ -33,6 +33,10 @@ RUN apk add --no-cache curl && \
 COPY --from=builder /app/.output .output
 COPY --from=builder --chown=nuxt:nodejs /app/package.json .
 
+# Se environments/dev/Dockerfile: ikon-samlingarna måste finnas i runner-steget
+# annars svarar ikon-API:et 404 och SSR hämtar ikonerna från Iconifys CDN.
+COPY --from=builder --chown=nuxt:nodejs /app/node_modules/@iconify-json ./node_modules/@iconify-json
+
 USER nuxt
 
 EXPOSE 3000

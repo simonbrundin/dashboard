@@ -24,4 +24,6 @@ spec:
             type: PathPrefix
             value: /
       timeouts:
-        request: 30s
+        # Dashboardens SSR kan blocka på DB/API-anrop (t.ex. ikon-CDN, uptime-kuma).
+        # 30 s gav 504 under perioder med nätverksproblem.
+        request: 120s

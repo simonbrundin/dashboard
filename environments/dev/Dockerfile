@@ -40,6 +40,12 @@ RUN apk add --no-cache curl && \
 COPY --from=builder /app/.output .output
 COPY --from=builder --chown=nuxt:nodejs /app/package.json .
 
+# @nuxt/icon importerar ikon-samlingarna (t.ex. lucide) som externa moduler,
+# vilket Nitro inte baktar in i .output. Utan paketen i runner-steget svarar
+# ikon-API:et 404 och SSR faller tillbaka mot Iconifys CDN, vilket gör varje
+# sidladdning långsam (och ger 504 via Envoy).
+COPY --from=builder --chown=nuxt:nodejs /app/node_modules/@iconify-json ./node_modules/@iconify-json
+
 USER nuxt
 
 EXPOSE 3000
