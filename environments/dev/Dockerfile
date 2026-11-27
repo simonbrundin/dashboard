@@ -11,6 +11,7 @@ COPY app ./app
 COPY nuxt.config.ts ./nuxt.config.ts
 COPY tsconfig.json ./tsconfig.json
 COPY server ./server
+COPY shared ./shared
 COPY public ./public
 
 RUN npx nuxt prepare && npx nuxt build

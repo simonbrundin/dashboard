@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - src/nuxt/**
+      - .github/workflows/commit.nuxt.yaml
   workflow_dispatch:
 jobs:
   unit-tests:
@@ -30,6 +31,8 @@ jobs:
           cp src/nuxt/nuxt.config.ts environments/dev/
           cp src/nuxt/tsconfig.json environments/dev/
           cp -r src/nuxt/server environments/dev/
+          # Nuxt 4 har en shared/-katalog som importeras av server/ och app/
+          cp -r src/nuxt/shared environments/dev/
           cp -r src/nuxt/public environments/dev/
 
       - name: Set up Docker Buildx
@@ -70,6 +73,8 @@ jobs:
           cp src/nuxt/nuxt.config.ts environments/dev/
           cp src/nuxt/tsconfig.json environments/dev/
           cp -r src/nuxt/server environments/dev/
+          # Nuxt 4 har en shared/-katalog som importeras av server/ och app/
+          cp -r src/nuxt/shared environments/dev/
           cp -r src/nuxt/public environments/dev/
 
       - name: Set up Docker Buildx
